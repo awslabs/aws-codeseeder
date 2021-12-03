@@ -19,7 +19,13 @@ from aws_codeseeder.services import cfn, s3
 
 
 def deploy_seedkit(seedkit_name: str, managed_policy_arns: Optional[List[str]]) -> None:
-    """Deploy seedkit resources (Bucket, KMS Key, Role, Policy, CodeBuild Project) into the environment
+    """Deploys the seedkit resources into the environment.
+
+    Resources deployed include: S3 Bucket, CodeArtifact Domain, CodeArtifact Repository, CodeBuild Project,
+    IAM Role, IAM Managed Policy, and KMS Key. All resource names will include the seedkit_name and IAM Role and Policy
+    grant least privilege access to only the resources associated with this Seedkit. Seedkits are deployed to an
+    AWS Region, names on global resources (S3, IAM) include a region identifier to avoid conflicts and ensure the same
+    Seedkit name can be deployed to multiple regions.
 
     :param seedkit_name: Name of the seedkit to deploy. All resources will include this in their naming conventions
     :type seedkit_name: str
@@ -43,7 +49,7 @@ def deploy_seedkit(seedkit_name: str, managed_policy_arns: Optional[List[str]]) 
 
 
 def destroy_seedkit(seedkit_name: str) -> None:
-    """Destroys the seedkit resources (Bucket, KMS Key, Role, Policy, CodeBuild Project)
+    """Destroys the resources associated with the seedkit.
 
     :param seedkit_name: Name of the seedkit to destroy.
     :type seedkit_name: str

@@ -35,6 +35,19 @@ def _prep_modules_directory() -> str:
 
 
 def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
+    """Deploy local Python modules to the CodeArtifact Domain/Repository associated with a Seedkit
+
+    This is a utility function that attempts to package and deploy local Python projects to CodeArtifact for use in
+    CodeBuild executions.
+
+    :param seedkit_name: Name of a previously deployed Seedkit
+    :type seedkit_name: str
+    :param python_modules: List of local Python modules/projects to deploy. Each module is of the form
+        "[package-name]:[directory]" where [package-name] is the name of the Python package and [directory] is the
+        local location of the module/project.
+    :type python_modules: List[str]
+    :raises ValueError: If module names are of the wrong form
+    """
     stack_name: str = cfn.get_stack_name(seedkit_name=seedkit_name)
     LOGGER.info("Deploying Modules for Seedkit %s with Stack Name %s", seedkit_name, stack_name)
     LOGGER.debug("Python Modules: %s", python_modules)
@@ -48,7 +61,7 @@ def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
 
     if any([":" not in pm for pm in python_modules]):
         raise ValueError(
-            "Invalid `python_module`. Modules are identified with '[module-name]:[directory]': %s", python_modules
+            "Invalid `python_module`. Modules are identified with '[package-name]:[directory]': %s", python_modules
         )
 
     out_dir = _prep_modules_directory()
