@@ -13,5 +13,5 @@
 #    limitations under the License.
 
 __title__: str = "aws-codeseeder"
-__description__: str = "A toolkit utilizing AWS CodeBuild to manage remote execution and deployement."
+__description__: str = "A framework utilizing AWS CodeBuild to manage remote code execution."
 __license__: str = "Apache License 2.0"

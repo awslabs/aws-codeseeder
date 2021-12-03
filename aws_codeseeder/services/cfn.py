@@ -45,7 +45,7 @@ def _wait_for_changeset(changeset_id: str, stack_name: str) -> bool:
     return True
 
 
-def _create_changeset(stack_name: str, template_str: str, toolkit_tag: str, template_path: str = "") -> Tuple[str, str]:
+def _create_changeset(stack_name: str, template_str: str, seedkit_tag: str, template_path: str = "") -> Tuple[str, str]:
     now = datetime.utcnow().isoformat()
     description = f"Created by AWS CodeSeeder CLI at {now} UTC"
     changeset_name = CHANGESET_PREFIX + str(int(time.time()))
@@ -57,7 +57,7 @@ def _create_changeset(stack_name: str, template_str: str, toolkit_tag: str, temp
         "ChangeSetType": changeset_type,
         "Capabilities": ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"],
         "Description": description,
-        "Tags": ({"Key": "codeseeder-toolkit-name", "Value": toolkit_tag},),
+        "Tags": ({"Key": "codeseeder-seedkit-name", "Value": seedkit_tag},),
     }
     if template_str:
         kwargs.update({"TemplateBody": template_str})
@@ -86,8 +86,8 @@ def _wait_for_execute(stack_name: str, changeset_type: str) -> None:
     waiter.wait(StackName=stack_name, WaiterConfig=waiter_config)
 
 
-def get_stack_name(toolkit_name: str) -> str:
-    return f"aws-codeseeder-{toolkit_name}"
+def get_stack_name(seedkit_name: str) -> str:
+    return f"aws-codeseeder-{seedkit_name}"
 
 
 def get_stack_status(stack_name: str) -> str:
@@ -116,7 +116,7 @@ def does_stack_exist(stack_name: str) -> Tuple[bool, Dict[str, str]]:
         raise
 
 
-def deploy_template(stack_name: str, filename: str, toolkit_tag: str, s3_bucket: Optional[str] = None) -> None:
+def deploy_template(stack_name: str, filename: str, seedkit_tag: str, s3_bucket: Optional[str] = None) -> None:
     LOGGER.debug("Deploying template %s", filename)
     if not os.path.isfile(filename):
         raise FileNotFoundError(f"CloudFormation template not found at {filename}")
@@ -132,13 +132,13 @@ def deploy_template(stack_name: str, filename: str, toolkit_tag: str, s3_bucket:
         LOGGER.debug("s3_template_path: %s", s3_template_path)
         s3.upload_file(src=local_template_path, bucket=s3_bucket, key=key)
         changeset_id, changeset_type = _create_changeset(
-            stack_name=stack_name, template_str="", toolkit_tag=toolkit_tag, template_path=s3_template_path
+            stack_name=stack_name, template_str="", seedkit_tag=seedkit_tag, template_path=s3_template_path
         )
     else:
         with open(filename, "r") as handle:
             template_str = handle.read()
         changeset_id, changeset_type = _create_changeset(
-            stack_name=stack_name, template_str=template_str, toolkit_tag=toolkit_tag
+            stack_name=stack_name, template_str=template_str, seedkit_tag=seedkit_tag
         )
     has_changes = _wait_for_changeset(changeset_id, stack_name)
     if has_changes:

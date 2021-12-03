@@ -69,18 +69,18 @@ class RegistryEntry:
     remote_functions: Dict[str, RemoteFunctionFn] = dataclasses.field(default_factory=dict)
 
 
-TOOLKIT_REGISTRY: Dict[str, RegistryEntry] = {}
+SEEDKIT_REGISTRY: Dict[str, RegistryEntry] = {}
 
 
 def configure(
-    toolkit_name: str,
+    seedkit_name: str,
 ) -> ConfigureDecorator:
     def decorator(func: ConfigureFn) -> ConfigureFn:
-        stack_name = cfn.get_stack_name(toolkit_name=toolkit_name)
+        stack_name = cfn.get_stack_name(seedkit_name=seedkit_name)
         stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
         if not stack_exists:
-            raise ValueError(f"Toolkit/Stack named {toolkit_name} is not yet deployed")
-        TOOLKIT_REGISTRY[toolkit_name] = RegistryEntry(config_function=func, stack_outputs=stack_outputs)
+            raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
+        SEEDKIT_REGISTRY[seedkit_name] = RegistryEntry(config_function=func, stack_outputs=stack_outputs)
 
         return func
 
@@ -88,7 +88,7 @@ def configure(
 
 
 def remote_function(
-    toolkit_name: str,
+    seedkit_name: str,
     *,
     function_module: Optional[str] = None,
     function_name: Optional[str] = None,
@@ -108,18 +108,18 @@ def remote_function(
     bundle_id: Optional[str] = None,
 ) -> RemoteFunctionDecorator:
     def decorator(func: Callable[..., Any]) -> RemoteFunctionFn:
-        stack_name = cfn.get_stack_name(toolkit_name=toolkit_name)
+        stack_name = cfn.get_stack_name(seedkit_name=seedkit_name)
         stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
         if not stack_exists:
-            raise ValueError(f"Toolkit/Stack named {toolkit_name} is not yet deployed")
-        if toolkit_name not in TOOLKIT_REGISTRY:
-            TOOLKIT_REGISTRY[toolkit_name] = RegistryEntry(stack_outputs=stack_outputs)
+            raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
+        if seedkit_name not in SEEDKIT_REGISTRY:
+            SEEDKIT_REGISTRY[seedkit_name] = RegistryEntry(stack_outputs=stack_outputs)
 
         fn_module = function_module if function_module else func.__module__
         fn_name = function_name if function_name else func.__name__
         fn_id = f"{fn_module}:{fn_name}"
 
-        registry_entry = TOOLKIT_REGISTRY[toolkit_name]
+        registry_entry = SEEDKIT_REGISTRY[seedkit_name]
         config_object = registry_entry.config_object
 
         python_modules = decorator.python_modules  # type: ignore
@@ -138,7 +138,7 @@ def remote_function(
             if registry_entry.config_function:
                 registry_entry.config_function(configuration=config_object)
 
-                LOGGER.info("Toolkit Configuration Complete")
+                LOGGER.info("Seedkit Configuration Complete")
             registry_entry.configured = True
 
         # update modules and requirements after configuration
@@ -174,7 +174,7 @@ def remote_function(
                 LOGGER.info("Beginning Remote Execution: %s", fn_id)
                 fn_args = {"fn_id": fn_id, "args": args, "kwargs": kwargs}
                 LOGGER.debug("fn_args: %s", fn_args)
-                registry_entry = TOOLKIT_REGISTRY[toolkit_name]
+                registry_entry = SEEDKIT_REGISTRY[seedkit_name]
                 stack_outputs = registry_entry.stack_outputs
 
                 cmds_install = [

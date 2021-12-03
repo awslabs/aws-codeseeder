@@ -34,14 +34,14 @@ def _prep_modules_directory() -> str:
     return out_dir
 
 
-def deploy_modules(toolkit_name: str, python_modules: List[str]) -> None:
-    stack_name: str = cfn.get_stack_name(toolkit_name=toolkit_name)
-    LOGGER.info("Deploying Modules for Toolkit %s with Stack Name %s", toolkit_name, stack_name)
+def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
+    stack_name: str = cfn.get_stack_name(seedkit_name=seedkit_name)
+    LOGGER.info("Deploying Modules for Seedkit %s with Stack Name %s", seedkit_name, stack_name)
     LOGGER.debug("Python Modules: %s", python_modules)
 
     stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
     if not stack_exists:
-        LOGGER.warn("Toolkit/Stack does not exist")
+        LOGGER.warn("Seedkit/Stack does not exist")
         return
     domain = stack_outputs.get("CodeArtifactDomain")
     repository = stack_outputs.get("CodeArtifactRepository")
@@ -59,7 +59,7 @@ def deploy_modules(toolkit_name: str, python_modules: List[str]) -> None:
         bundle.generate_dir(out_dir=out_dir, dir=dir, name=module)
 
     for module, dir in modules.items():
-        LOGGER.info("Deploy Module %s to Toolkit Domain/Repository %s/%s", module, domain, repository)
+        LOGGER.info("Deploy Module %s to Seedkit Domain/Repository %s/%s", module, domain, repository)
         subprocess.check_call(
             [os.path.join(out_dir, FILENAME), cast(str, domain), cast(str, repository), module, module]
         )

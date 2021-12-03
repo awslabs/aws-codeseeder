@@ -29,8 +29,8 @@ FILENAME = "template.yaml"
 RESOURCES_FILENAME = os.path.join(CLI_ROOT, "resources", FILENAME)
 
 
-def synth(toolkit_name: str, deploy_id: Optional[str] = None, managed_policy_arns: Optional[List[str]] = None) -> str:
-    out_dir = create_output_dir("toolkit")
+def synth(seedkit_name: str, deploy_id: Optional[str] = None, managed_policy_arns: Optional[List[str]] = None) -> str:
+    out_dir = create_output_dir("seedkit")
     output_filename = os.path.join(out_dir, FILENAME)
 
     LOGGER.debug("Reading %s", RESOURCES_FILENAME)
@@ -47,7 +47,7 @@ def synth(toolkit_name: str, deploy_id: Optional[str] = None, managed_policy_arn
     with open(output_filename, "w") as file:
         file.write(
             output_template.safe_substitute(
-                toolkit_name=toolkit_name,
+                seedkit_name=seedkit_name,
                 account_id=get_account_id(),
                 region=get_region(),
                 deploy_id=deploy_id if deploy_id else "".join(random.choice(string.ascii_lowercase) for i in range(6)),

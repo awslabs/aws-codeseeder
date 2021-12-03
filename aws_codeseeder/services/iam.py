@@ -12,16 +12,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import os
-import time
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, cast
-
-import botocore.exceptions
-
-from aws_codeseeder import LOGGER
-from aws_codeseeder.services import boto3_client
-
 
 def role_has_attached_policies(role_name: str) -> bool:
     pass

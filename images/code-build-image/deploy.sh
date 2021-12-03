@@ -18,7 +18,7 @@
 set -ex
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-REPOSITORY=softwarelabe-remote-toolkit/code-build-base
+REPOSITORY=softwarelabe-remote-seedkit/code-build-base
 VERSION=$(cat ${DIR}/VERSION)
 
 cd ${DIR}

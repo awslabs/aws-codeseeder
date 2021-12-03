@@ -1,14 +1,14 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: |
-  AWS CodeSeeder - codeseeder-${toolkit_name}
+  AWS CodeSeeder - codeseeder-${seedkit_name}
 Resources:
   Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: codeseeder-${toolkit_name}-${account_id}-${deploy_id}
+      BucketName: codeseeder-${seedkit_name}-${account_id}-${deploy_id}
       Tags:
-        - Key: codeseeder-toolkit-name
-          Value: codeseeder-${toolkit_name}
+        - Key: codeseeder-seedkit-name
+          Value: codeseeder-${seedkit_name}
       VersioningConfiguration:
         Status: Suspended
       PublicAccessBlockConfiguration:
@@ -30,11 +30,11 @@ Resources:
             NoncurrentVersionExpirationInDays: 1
             Prefix: cli/remote/
 
-  ToolkitResourcesPolicy:
+  SeedkitResourcesPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: Managed Policy granting access to the AWS CodeSeeder resources
-      ManagedPolicyName: codeseeder-${toolkit_name}-${region}-resources
+      ManagedPolicyName: codeseeder-${seedkit_name}-${region}-resources
       Path: /
       PolicyDocument:
         Statement:
@@ -52,7 +52,7 @@ Resources:
               - codebuild:StartBuild
               - codebuild:BatchGetBuilds
             Resource:
-              - arn:aws:codebuild:${region}:${account_id}:project/codeseeder-${toolkit_name}
+              - arn:aws:codebuild:${region}:${account_id}:project/codeseeder-${seedkit_name}
           - Effect: Allow
             Action:
               - ssm:Get*
@@ -66,7 +66,7 @@ Resources:
               - ssm:DeleteParameter
               - ssm:DeleteParameters
             Resource:
-              - arn:aws:ssm:${region}:${account_id}:parameter/codeseeder/${toolkit_name}/*
+              - arn:aws:ssm:${region}:${account_id}:parameter/codeseeder/${seedkit_name}/*
           - Effect: Allow
             Action:
               - ssm:DescribeParameters
@@ -76,7 +76,7 @@ Resources:
             Action:
               - kms:*
             Resource:
-              - arn:aws:kms:${region}:${account_id}:alias/codeseeder-${toolkit_name}*
+              - arn:aws:kms:${region}:${account_id}:alias/codeseeder-${seedkit_name}*
               - arn:aws:kms:${region}:${account_id}:key/*
           - Effect: Allow
             Action:
@@ -89,12 +89,12 @@ Resources:
             Action:
               - codecommit:*
             Resource:
-              - arn:aws:codecommit:${region}:${account_id}:codeseeder-${toolkit_name}-*
+              - arn:aws:codecommit:${region}:${account_id}:codeseeder-${seedkit_name}-*
           - Effect: Allow
             Action:
               - secretsmanager:*
             Resource:
-              - arn:aws:secretsmanager:${region}:${account_id}:secret:codeseeder-${toolkit_name}-*
+              - arn:aws:secretsmanager:${region}:${account_id}:secret:codeseeder-${seedkit_name}-*
               - arn:aws:secretsmanager:${region}:${account_id}:secret:*-docker-credentials
           - Effect: Allow
             Action:
@@ -107,8 +107,8 @@ Resources:
               - codeartifact:TagResource
               - codeartifact:Associate*
             Resource:
-              - arn:aws:codeartifact:${region}:${account_id}:domain/aws-codeseeder-${toolkit_name}*
-              - arn:aws:codeartifact:${region}:${account_id}:repository/aws-codeseeder-${toolkit_name}*
+              - arn:aws:codeartifact:${region}:${account_id}:domain/aws-codeseeder-${seedkit_name}*
+              - arn:aws:codeartifact:${region}:${account_id}:repository/aws-codeseeder-${seedkit_name}*
           - Effect: Allow
             Action:
               - codeartifact:GetAuthorizationToken
@@ -131,8 +131,8 @@ Resources:
               - s3:DeleteObjectVersion
               - s3:DeleteBucket
             Resource:
-              - arn:aws:s3:::codeseeder-${toolkit_name}-${account_id}-${deploy_id}/*
-              - arn:aws:s3:::codeseeder-${toolkit_name}-${account_id}-${deploy_id}
+              - arn:aws:s3:::codeseeder-${seedkit_name}-${account_id}-${deploy_id}/*
+              - arn:aws:s3:::codeseeder-${seedkit_name}-${account_id}-${deploy_id}
           - Effect: Allow
             Action:
               - s3:GetEncryptionConfiguration
@@ -141,7 +141,7 @@ Resources:
             Action:
               - logs:*
             Resource:
-              - arn:aws:logs:${region}:${account_id}:log-group:/aws/codebuild/codeseeder-${toolkit_name}*
+              - arn:aws:logs:${region}:${account_id}:log-group:/aws/codebuild/codeseeder-${seedkit_name}*
           - Effect: Allow
             Action:
               - cloudformation:DescribeStacks
@@ -153,7 +153,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       Path: ${role_prefix}
-      RoleName: codeseeder-${toolkit_name}-${region}-codebuild
+      RoleName: codeseeder-${seedkit_name}-${region}-codebuild
       MaxSessionDuration: 10000
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
@@ -171,18 +171,18 @@ Resources:
               Service: cloudformation.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - !Ref ToolkitResourcesPolicy
+        - !Ref SeedkitResourcesPolicy
       Tags:
-        - Key: codeseeder-toolkit-name
-          Value: codeseeder-${toolkit_name}
+        - Key: codeseeder-seedkit-name
+          Value: codeseeder-${seedkit_name}
 
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: codeseeder-${toolkit_name}
+      Name: codeseeder-${seedkit_name}
       Tags:
-        - Key: codeseeder-toolkit-name
-          Value: codeseeder-${toolkit_name}
+        - Key: codeseeder-seedkit-name
+          Value: codeseeder-${seedkit_name}
       Description: AWS CodeSeeder CLI backend.
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Artifacts:
@@ -196,7 +196,7 @@ Resources:
             Value:
               Ref: AWS::AccountId
           - Name: AWS_CODESEEDER_NAME
-            Value: ${toolkit_name}
+            Value: ${seedkit_name}
           - Name: CODESEEDER_DOCKER_SECRET
             Value: "NONE"
       Source:
@@ -215,14 +215,14 @@ Resources:
       LogsConfig:
         CloudWatchLogs:
           Status: ENABLED
-          GroupName: /aws/codebuild/codeseeder-${toolkit_name}
+          GroupName: /aws/codebuild/codeseeder-${seedkit_name}
         S3Logs:
           Status: DISABLED
 
   KmsKeyAlias:
     Type: AWS::KMS::Alias
     Properties:
-      AliasName: alias/codeseeder-${toolkit_name}-${deploy_id}
+      AliasName: alias/codeseeder-${seedkit_name}-${deploy_id}
       TargetKeyId:
         Ref: KmsKey
 
@@ -230,12 +230,12 @@ Resources:
     Type: AWS::KMS::Key
     Properties:
       Tags:
-        - Key: codeseeder-toolkit-name
-          Value: codeseeder-${toolkit_name}
-      Description: AWS CodeSeeder Key for ${toolkit_name}.
+        - Key: codeseeder-seedkit-name
+          Value: codeseeder-${seedkit_name}
+      Description: AWS CodeSeeder Key for ${seedkit_name}.
       KeyPolicy:
         Version: '2012-10-17'
-        Id: codeseeder-${toolkit_name}
+        Id: codeseeder-${seedkit_name}
         Statement:
           - Sid: Enable IAM User Permissions
             Effect: Allow
@@ -266,10 +266,10 @@ Resources:
   CodeArtifactDomain:
     Type: AWS::CodeArtifact::Domain
     Properties:
-      DomainName: aws-codeseeder-${toolkit_name}
+      DomainName: aws-codeseeder-${seedkit_name}
       Tags:
-        - Key: codeseeder-toolkit-name
-          Value: codeseeder-${toolkit_name}
+        - Key: codeseeder-seedkit-name
+          Value: codeseeder-${seedkit_name}
 
   CodeArtifactRepository:
     Type: AWS::CodeArtifact::Repository
@@ -282,20 +282,20 @@ Resources:
       ExternalConnections:
         - "public:pypi"
       Tags:
-        - Key: codeseeder-toolkit-name
-          Value: codeseeder-${toolkit_name}
+        - Key: codeseeder-seedkit-name
+          Value: codeseeder-${seedkit_name}
 
 
 Outputs:
   DeployId:
     Value: '${deploy_id}'
     Export:
-      Name: codeseeder-${toolkit_name}-deploy-id
+      Name: codeseeder-${seedkit_name}-deploy-id
 
   Bucket:
     Value: !Ref Bucket
     Export:
-      Name: codeseeder-${toolkit_name}-bucket
+      Name: codeseeder-${seedkit_name}-bucket
 
   KmsKeyArn:
     Value:
@@ -303,17 +303,17 @@ Outputs:
         - KmsKey
         - Arn
     Export:
-      Name: codeseeder-${toolkit_name}-kms-arn
+      Name: codeseeder-${seedkit_name}-kms-arn
 
-  ToolkitResourcesPolicyArn:
-    Value: !Ref ToolkitResourcesPolicy
+  SeedkitResourcesPolicyArn:
+    Value: !Ref SeedkitResourcesPolicy
     Export:
-      Name: codeseeder-${toolkit_name}-resources-policy
+      Name: codeseeder-${seedkit_name}-resources-policy
 
   CodeBuildRole:
     Value: !Ref CodeBuildRole
     Export:
-      Name: codeseeder-${toolkit_name}-codebuild-role
+      Name: codeseeder-${seedkit_name}-codebuild-role
 
   CodeBuildRoleArn:
     Value:
@@ -321,12 +321,12 @@ Outputs:
         - CodeBuildRole
         - Arn
     Export:
-      Name: codeseeder-${toolkit_name}-codebuild-role-arn
+      Name: codeseeder-${seedkit_name}-codebuild-role-arn
 
   CodeBuildProject:
     Value: !Ref CodeBuildProject
     Export:
-      Name: codeseeder-${toolkit_name}-codebuild-project
+      Name: codeseeder-${seedkit_name}-codebuild-project
 
   CodeBuildProjectArn:
     Value:
@@ -334,7 +334,7 @@ Outputs:
         - CodeBuildProject
         - Arn
     Export:
-      Name: codeseeder-${toolkit_name}-codebuild-project-arn
+      Name: codeseeder-${seedkit_name}-codebuild-project-arn
 
   CodeArtifactDomain:
     Value:
@@ -342,7 +342,7 @@ Outputs:
         - CodeArtifactDomain
         - Name
     Export:
-      Name: codeseeder-${toolkit_name}-codeartifact-domain
+      Name: codeseeder-${seedkit_name}-codeartifact-domain
 
   CodeArtifactRepository:
     Value:
@@ -350,4 +350,4 @@ Outputs:
         - CodeArtifactRepository
         - Name
     Export:
-      Name: codeseeder-${toolkit_name}-codeartifact-repository
+      Name: codeseeder-${seedkit_name}-codeartifact-repository

@@ -20,7 +20,7 @@ from typing import Optional, Tuple
 import click
 
 from aws_codeseeder import LOGGER
-from aws_codeseeder.commands import module_commands, toolkit_commands
+from aws_codeseeder.commands import module_commands, seedkit_commands
 
 DEBUG_LOGGING_FORMAT = "[%(asctime)s][%(filename)-13s:%(lineno)3d] %(message)s"
 DEBUG_LOGGING_FORMAT_REMOTE = "[%(filename)-13s:%(lineno)3d] %(message)s"
@@ -56,10 +56,10 @@ def destroy() -> None:
 
 ################################################################################
 #
-# Toolkit Commands
+# Seedkit Commands
 #
 ################################################################################
-@deploy.command(name="toolkit")
+@deploy.command(name="seedkit")
 @click.argument(
     "name",
     type=str,
@@ -72,15 +72,15 @@ def destroy() -> None:
     help="Enable detailed logging.",
     show_default=True,
 )
-def deploy_toolkit(name: str, policy_arn: Tuple[str, ...], debug: bool) -> None:
+def deploy_seedkit(name: str, policy_arn: Tuple[str, ...], debug: bool) -> None:
     if debug:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
     else:
         set_log_level(level=logging.INFO, format="%(message)s")
-    toolkit_commands.deploy_toolkit(toolkit_name=name, managed_policy_arns=[p for p in policy_arn])
+    seedkit_commands.deploy_seedkit(seedkit_name=name, managed_policy_arns=[p for p in policy_arn])
 
 
-@destroy.command(name="toolkit")
+@destroy.command(name="seedkit")
 @click.argument(
     "name",
     type=str,
@@ -92,12 +92,12 @@ def deploy_toolkit(name: str, policy_arn: Tuple[str, ...], debug: bool) -> None:
     help="Enable detailed logging.",
     show_default=True,
 )
-def destroy_toolkit(name: str, debug: bool) -> None:
+def destroy_seedkit(name: str, debug: bool) -> None:
     if debug:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
     else:
         set_log_level(level=logging.INFO, format="%(message)s")
-    toolkit_commands.destroy_toolkit(toolkit_name=name)
+    seedkit_commands.destroy_seedkit(seedkit_name=name)
 
 
 ################################################################################
@@ -123,7 +123,7 @@ def deploy_modules(name: str, module: Tuple[str, ...], debug: bool) -> None:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
     else:
         set_log_level(level=logging.INFO, format="%(message)s")
-    module_commands.deploy_modules(toolkit_name=name, python_modules=[m for m in module])
+    module_commands.deploy_modules(seedkit_name=name, python_modules=[m for m in module])
 
 
 ################################################################################
