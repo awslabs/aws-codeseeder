@@ -17,7 +17,7 @@ import shutil
 import subprocess
 from typing import List, cast
 
-from aws_codeseeder import CLI_ROOT, LOGGER, bundle, create_output_dir
+from aws_codeseeder import CLI_ROOT, LOGGER, _bundle, create_output_dir
 from aws_codeseeder.services import cfn
 
 FILENAME = "update_repo.sh"
@@ -40,13 +40,19 @@ def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
     This is a utility function that attempts to package and deploy local Python projects to CodeArtifact for use in
     CodeBuild executions.
 
-    :param seedkit_name: Name of a previously deployed Seedkit
-    :type seedkit_name: str
-    :param python_modules: List of local Python modules/projects to deploy. Each module is of the form
+    Parameters
+    ----------
+    seedkit_name : str
+        Name of a previously deployed Seedkit
+    python_modules : List[str]
+        List of local Python modules/projects to deploy. Each module is of the form
         "[package-name]:[directory]" where [package-name] is the name of the Python package and [directory] is the
-        local location of the module/project.
-    :type python_modules: List[str]
-    :raises ValueError: If module names are of the wrong form
+        local location of the module/project
+
+    Raises
+    ------
+    ValueError
+        If module names are of the wrong form
     """
     stack_name: str = cfn.get_stack_name(seedkit_name=seedkit_name)
     LOGGER.info("Deploying Modules for Seedkit %s with Stack Name %s", seedkit_name, stack_name)
@@ -69,7 +75,7 @@ def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
 
     for module, dir in modules.items():
         LOGGER.info("Creating working directory for Module %s", module)
-        bundle.generate_dir(out_dir=out_dir, dir=dir, name=module)
+        _bundle.generate_dir(out_dir=out_dir, dir=dir, name=module)
 
     for module, dir in modules.items():
         LOGGER.info("Deploy Module %s to Seedkit Domain/Repository %s/%s", module, domain, repository)

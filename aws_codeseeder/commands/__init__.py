@@ -11,3 +11,8 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
+
+from aws_codeseeder.commands._module_commands import deploy_modules
+from aws_codeseeder.commands._seedkit_commands import deploy_seedkit, destroy_seedkit
+
+__all__ = ["deploy_modules", "deploy_seedkit", "destroy_seedkit"]

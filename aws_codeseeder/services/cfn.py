@@ -87,10 +87,40 @@ def _wait_for_execute(stack_name: str, changeset_type: str) -> None:
 
 
 def get_stack_name(seedkit_name: str) -> str:
+    """Helper function to calculate the name of a CloudFormation Stack for a given Seedkit
+
+    Parameters
+    ----------
+    seedkit_name : str
+        Name of the Seedkit
+
+    Returns
+    -------
+    str
+        Name of the Stack Name associated with the Seedkit
+    """
     return f"aws-codeseeder-{seedkit_name}"
 
 
 def get_stack_status(stack_name: str) -> str:
+    """Retrieve the status of a CloudFormation Stack
+
+    Parameters
+    ----------
+    stack_name : str
+        Name of the CloudFormation Stack to query
+
+    Returns
+    -------
+    str
+        The status of the CloudFormation Stack, see official `boto3` documentation for potential status values:
+        https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudformation.html#CloudFormation.Client.describe_stacks
+
+    Raises
+    ------
+    ValueError
+        If the Stack is not found
+    """
     client = boto3_client("cloudformation")
     try:
         resp = client.describe_stacks(StackName=stack_name)
@@ -102,6 +132,18 @@ def get_stack_status(stack_name: str) -> str:
 
 
 def does_stack_exist(stack_name: str) -> Tuple[bool, Dict[str, str]]:
+    """Checks for existence of a CloudFormation Stack while also returning Stack Outputs if it does exist
+
+    Parameters
+    ----------
+    stack_name : str
+        Name of the CloudFormation Stack to query
+
+    Returns
+    -------
+    Tuple[bool, Dict[str, str]]
+        Tuple2 with a boolean indicating Stack existence and a dict of any Stack Outputs
+    """
     client = boto3_client("cloudformation")
     try:
         resp = client.describe_stacks(StackName=stack_name)
@@ -117,6 +159,29 @@ def does_stack_exist(stack_name: str) -> Tuple[bool, Dict[str, str]]:
 
 
 def deploy_template(stack_name: str, filename: str, seedkit_tag: str, s3_bucket: Optional[str] = None) -> None:
+    """Deploy a local CloudFormation Template
+
+    The function will automatically calculate a ChangeSet if the Stack already exists and update accordingly. If the
+    local template file is too large, it will be uploaded to the optional `s3_buckeet` and deployed from there.
+
+    Parameters
+    ----------
+    stack_name : str
+        Name of the CloudFormation Stack to deploy
+    filename : str
+        Name of the local CloudFormation template file
+    seedkit_tag : str
+        Name of the Seedkit to Tag resources in the Stack with
+    s3_bucket : Optional[str], optional
+        S3 Bucket to upload the template file to if it is too large (> 51200), by default None
+
+    Raises
+    ------
+    FileNotFoundError
+        If the local template file is not found
+    ValueError
+        If the S3 Bucket is not found
+    """
     LOGGER.debug("Deploying template %s", filename)
     if not os.path.isfile(filename):
         raise FileNotFoundError(f"CloudFormation template not found at {filename}")
@@ -147,6 +212,13 @@ def deploy_template(stack_name: str, filename: str, seedkit_tag: str, s3_bucket:
 
 
 def destroy_stack(stack_name: str) -> None:
+    """Destroy the CloudFormation Stack
+
+    Parameters
+    ----------
+    stack_name : str
+        Name of the CloudFormation Stack to destroy
+    """
     LOGGER.debug("Destroying stack %s", stack_name)
     client = boto3_client("cloudformation")
     client.delete_stack(StackName=stack_name)

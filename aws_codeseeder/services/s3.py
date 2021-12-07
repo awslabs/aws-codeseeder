@@ -41,6 +41,18 @@ def _delete_objects(bucket: str, chunk: List[Dict[str, str]]) -> None:
 
 
 def list_keys(bucket: str) -> List[Dict[str, str]]:
+    """List the keys/objects in an S3 Buket
+
+    Parameters
+    ----------
+    bucket : str
+        S3 Bucket name
+
+    Returns
+    -------
+    List[Dict[str, str]]
+        List of Keys and VersionIds
+    """
     client_s3 = boto3_client("s3")
     paginator = client_s3.get_paginator("list_object_versions")
     response_iterator = paginator.paginate(Bucket=bucket, PaginationConfig={"PageSize": 1_000})
@@ -61,6 +73,15 @@ def list_keys(bucket: str) -> List[Dict[str, str]]:
 
 
 def delete_objects(bucket: str, keys: Optional[List[str]] = None) -> None:
+    """Delete objects from an S3 Bucket
+
+    Parameters
+    ----------
+    bucket : str
+        S3 Bucket name
+    keys : Optional[List[str]], optional
+        List of keys to delete, all if None, by default None
+    """
     if keys is None:
         keys_pairs: List[Dict[str, str]] = list_keys(bucket=bucket)
     else:
@@ -72,6 +93,18 @@ def delete_objects(bucket: str, keys: Optional[List[str]] = None) -> None:
 
 
 def delete_bucket(bucket: str) -> None:
+    """Delete an S3 Bucket
+
+    Parameters
+    ----------
+    bucket : str
+        S3 Bucket Name
+
+    Raises
+    ------
+    ex
+        If error other that NoSuchBucket
+    """
     client_s3 = boto3_client("s3")
     try:
         LOGGER.debug("Cleaning up bucket: %s", bucket)
@@ -87,17 +120,49 @@ def delete_bucket(bucket: str) -> None:
 
 
 def upload_file(src: str, bucket: str, key: str) -> None:
+    """Upload file to S3 Bucket
+
+    Parameters
+    ----------
+    src : str
+        Local source file
+    bucket : str
+        S3 Bucket
+    key : str
+        Key name to upload to
+    """
     client_s3 = boto3_client("s3")
     client_s3.upload_file(Filename=src, Bucket=bucket, Key=key)
 
 
-def list_s3_objects(bucket: str, key: str) -> Dict[str, Any]:
+def list_s3_objects(bucket: str, prefix: str) -> Dict[str, Any]:
+    """List S3 objects in a Bucket filtered to a prefix
+
+    Parameters
+    ----------
+    bucket : str
+        S3 Bucket name
+    prefix : str
+        Prefix filter
+
+    Returns
+    -------
+    Dict[str, Any]
+        List of objects
+    """
     client_s3 = boto3_client("s3")
-    response = client_s3.list_objects_v2(Bucket=bucket, Prefix=key)
+    response = client_s3.list_objects_v2(Bucket=bucket, Prefix=prefix)
     return cast(Dict[str, Any], response)
 
 
 def delete_bucket_by_prefix(prefix: str) -> None:
+    """Delete S3 Buckets whose name begins with a prefix
+
+    Parameters
+    ----------
+    prefix : str
+        Prefix to filter Buckets by
+    """
     client_s3 = boto3_client("s3")
     for bucket in client_s3.list_buckets()["Buckets"]:
         if bucket["Name"].startswith(prefix):
@@ -105,6 +170,20 @@ def delete_bucket_by_prefix(prefix: str) -> None:
 
 
 def object_exists(bucket: str, key: str) -> bool:
+    """Check for existence of an object in an S3 Bucket
+
+    Parameters
+    ----------
+    bucket : str
+        S3 Bucket name
+    key : str
+        Key to ckeck
+
+    Returns
+    -------
+    bool
+        Indicator of object existence
+    """
     try:
         boto3_resource("s3").Object(bucket, key).load()
     except ClientError as e:

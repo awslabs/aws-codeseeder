@@ -98,6 +98,28 @@ def start(
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
 ) -> str:
+    """Start a CodeBuild Project execution
+
+    Parameters
+    ----------
+    project_name : str
+        Name of the CodeBuild Project
+    stream_name : str
+        Name of the CloudWatch Logs Stream to read CodeBuild logs from
+    bundle_location : str
+        S3 Location of the zip bundle to use as Source to the CodeBuild execution
+    buildspec : Dict[str, Any]
+        BuildSpec to use for the CodeBuild execution
+    timeout : int
+        Timeout of the CodeBuild execution
+    overrides : Optional[Dict[str, Any]], optional
+        Additional overrides to set on the CodeBuild execution, by default None
+
+    Returns
+    -------
+    str
+        The CodeBuild Build/Exectuion Id
+    """
     client = boto3_client("codebuild")
     credentials: Optional[str] = "SERVICE_ROLE" if overrides and overrides.get("imageOverride", None) else None
     LOGGER.debug("Credentials: %s", credentials)
@@ -129,6 +151,23 @@ def start(
 
 
 def fetch_build_info(build_id: str) -> BuildInfo:
+    """Fetch info on a CodeBuild execution
+
+    Parameters
+    ----------
+    build_id : str
+        CodeBuild Execution/Build Id
+
+    Returns
+    -------
+    BuildInfo
+        Info on the CodeBuild execution
+
+    Raises
+    ------
+    RuntimeError
+        If the Build Id is not found
+    """
     client = boto3_client("codebuild")
     response: Dict[str, List[Dict[str, Any]]] = try_it(
         f=client.batch_get_builds, ex=botocore.exceptions.ClientError, ids=[build_id], max_num_tries=5
@@ -168,6 +207,28 @@ def fetch_build_info(build_id: str) -> BuildInfo:
 
 
 def wait(build_id: str) -> Iterable[BuildInfo]:
+    """Wait for completion of a CodeBuild execution
+
+    Parameters
+    ----------
+    build_id : str
+        The CodeBuild Execution/Build Id
+
+    Returns
+    -------
+    Iterable[BuildInfo]
+        Info on the CodeBuild execution
+
+    Yields
+    -------
+    Iterator[Iterable[BuildInfo]]
+        Info on the CodeBuild execution
+
+    Raises
+    ------
+    RuntimeError
+        If the CodeBuild doesn't succeed
+    """
     build = fetch_build_info(build_id=build_id)
     while build.status is BuildStatus.in_progress:
         time.sleep(_BUILD_WAIT_POLLING_DELAY)
@@ -201,6 +262,26 @@ def generate_spec(
     cmds_build: Optional[List[str]] = None,
     cmds_post: Optional[List[str]] = None,
 ) -> SPEC_TYPE:
+    """Generate a BuildSpec for a CodeBuild execution
+
+    Parameters
+    ----------
+    stack_outputs : Dict[str, str]
+        The CloudFormation Stack Outputs from the Seedkit Stack where the CodeBuild Project was created
+    cmds_install : Optional[List[str]], optional
+        Additional commands to run during the Install phase of the CodeBuild execution, by default None
+    cmds_pre : Optional[List[str]], optional
+        Additional commands to run during the PreBuild phase of the CodeBuild execution, by default None
+    cmds_build : Optional[List[str]], optional
+        Additional commands to run during the Build phase of the CodeBuild execution, by default None
+    cmds_post : Optional[List[str]], optional
+        Additional commands to run during the PostBuild phase of the CodeBuild execution, by default None
+
+    Returns
+    -------
+    SPEC_TYPE
+        A CodeBuild BuildSpec
+    """
     pre: List[str] = [] if cmds_pre is None else cmds_pre
     build: List[str] = [] if cmds_build is None else cmds_build
     post: List[str] = [] if cmds_post is None else cmds_post

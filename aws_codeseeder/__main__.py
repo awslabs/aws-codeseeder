@@ -19,8 +19,7 @@ from typing import Optional, Tuple
 
 import click
 
-from aws_codeseeder import LOGGER
-from aws_codeseeder.commands import module_commands, seedkit_commands
+from aws_codeseeder import LOGGER, commands
 
 DEBUG_LOGGING_FORMAT = "[%(asctime)s][%(filename)-13s:%(lineno)3d] %(message)s"
 DEBUG_LOGGING_FORMAT_REMOTE = "[%(filename)-13s:%(lineno)3d] %(message)s"
@@ -77,7 +76,7 @@ def deploy_seedkit(name: str, policy_arn: Tuple[str, ...], debug: bool) -> None:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
     else:
         set_log_level(level=logging.INFO, format="%(message)s")
-    seedkit_commands.deploy_seedkit(seedkit_name=name, managed_policy_arns=[p for p in policy_arn])
+    commands.deploy_seedkit(seedkit_name=name, managed_policy_arns=[p for p in policy_arn])
 
 
 @destroy.command(name="seedkit")
@@ -97,7 +96,7 @@ def destroy_seedkit(name: str, debug: bool) -> None:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
     else:
         set_log_level(level=logging.INFO, format="%(message)s")
-    seedkit_commands.destroy_seedkit(seedkit_name=name)
+    commands.destroy_seedkit(seedkit_name=name)
 
 
 ################################################################################
@@ -123,7 +122,7 @@ def deploy_modules(name: str, module: Tuple[str, ...], debug: bool) -> None:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
     else:
         set_log_level(level=logging.INFO, format="%(message)s")
-    module_commands.deploy_modules(seedkit_name=name, python_modules=[m for m in module])
+    commands.deploy_modules(seedkit_name=name, python_modules=[m for m in module])
 
 
 ################################################################################

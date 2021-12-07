@@ -32,6 +32,20 @@ class CloudWatchEvents(NamedTuple):
 
 
 def get_stream_name_by_prefix(group_name: str, prefix: str) -> Optional[str]:
+    """Get the CloudWatch Logs stream name
+
+    Parameters
+    ----------
+    group_name : str
+        Name of the CloudWatch Logs group
+    prefix : str
+        Naming prefix of the CloudWatch Logs Stream
+
+    Returns
+    -------
+    Optional[str]
+        Name of the CloudWatch Logs Stream (if found)
+    """
     client = boto3_client("logs")
     response: Dict[str, Union[str, List[Dict[str, Union[float, str]]]]] = client.describe_log_streams(
         logGroupName=group_name,
@@ -51,6 +65,22 @@ def get_log_events(
     stream_name: str,
     start_time: Optional[datetime],
 ) -> CloudWatchEvents:
+    """Get CloudWatch Logs Events
+
+    Parameters
+    ----------
+    group_name : str
+        Name of the CloudWatch Logs group
+    stream_name : str
+        Name of teh CloudWatch Logs stream in the group
+    start_time : Optional[datetime]
+        Start time of the CloudWatch Logs Events
+
+    Returns
+    -------
+    CloudWatchEvents
+        CloudWatch Logs Events since `start_time` (if found)
+    """
     client = boto3_client("logs")
     args = {
         "logGroupName": group_name,

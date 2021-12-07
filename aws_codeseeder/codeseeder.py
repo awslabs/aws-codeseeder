@@ -12,75 +12,51 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import dataclasses
-import enum
 import functools
 import os
 from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 
-from mypy_extensions import KwArg, NamedArg, VarArg
-
 import __main__
-from aws_codeseeder import LOGGER, __version__, bundle, remote
+from aws_codeseeder import LOGGER, __version__, _bundle, _classes, _remote
+from aws_codeseeder._classes import ConfigureDecorator, RemoteCtlConfig, RemoteFunctionDecorator
 from aws_codeseeder.services import cfn, codebuild
 
-
-class ModuleImporter(str, enum.Enum):
-    CODESEEDER_CLI = "codeseeder"
-    IMPORT = "import"
-
+__all__ = ["RemoteCtlConfig", "ConfigureDecorator", "RemoteFunctionDecorator", "configure", "remote_function"]
 
 MODULE_IMPORTER = (
-    ModuleImporter.CODESEEDER_CLI
+    _classes.ModuleImporter.CODESEEDER_CLI
     if os.path.basename(__main__.__file__).strip(".py") == "codeseeder"
-    else ModuleImporter.IMPORT
+    else _classes.ModuleImporter.IMPORT
 )
 
-
-@dataclasses.dataclass()
-class RemoteCtlConfig:
-    timeout: Optional[int] = 30
-    python_modules: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
-    local_modules: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
-    requirements_files: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
-    codebuild_image: Optional[str] = None
-    codebuild_role: Optional[str] = None
-    install_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
-    pre_build_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
-    build_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
-    post_build_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
-    dirs: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
-    files: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
-
-
-ConfigureFn = Callable[[NamedArg(RemoteCtlConfig, "configuration")], None]  # noqa: F821
-RemoteFunctionFn = Callable[[VarArg(Any), KwArg(Any)], Any]
-
-ConfigureDecorator = Callable[[ConfigureFn], ConfigureFn]
-RemoteFunctionDecorator = Callable[..., RemoteFunctionFn]
-
-
-@dataclasses.dataclass()
-class RegistryEntry:
-    configured: bool = False
-    config_function: Optional[ConfigureFn] = None
-    config_object: RemoteCtlConfig = RemoteCtlConfig()
-    stack_outputs: Optional[Dict[str, str]] = None
-    remote_functions: Dict[str, RemoteFunctionFn] = dataclasses.field(default_factory=dict)
-
-
-SEEDKIT_REGISTRY: Dict[str, RegistryEntry] = {}
+SEEDKIT_REGISTRY: Dict[str, _classes.RegistryEntry] = {}
 
 
 def configure(
     seedkit_name: str,
 ) -> ConfigureDecorator:
-    def decorator(func: ConfigureFn) -> ConfigureFn:
+    """Decorator marking a Configuration Function
+
+    Decorated Configuration Functions are executed lazily when a `remote_function` for a particular Seedkit is called.
+    The Configuration Function sets the default configuration for the Seedkit.
+
+    Parameters
+    ----------
+    seedkit_name : str
+        The name of the previously deployed Seedkit to associate this configuration with
+
+    Returns
+    -------
+    ConfigureDecorator
+        The decorated function
+    """
+
+    def decorator(func: _classes.ConfigureFn) -> _classes.ConfigureFn:
         stack_name = cfn.get_stack_name(seedkit_name=seedkit_name)
         stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
         if not stack_exists:
             raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
-        SEEDKIT_REGISTRY[seedkit_name] = RegistryEntry(config_function=func, stack_outputs=stack_outputs)
+        SEEDKIT_REGISTRY[seedkit_name] = _classes.RegistryEntry(config_function=func, stack_outputs=stack_outputs)
 
         return func
 
@@ -107,13 +83,65 @@ def remote_function(
     extra_files: Optional[Dict[str, str]] = None,
     bundle_id: Optional[str] = None,
 ) -> RemoteFunctionDecorator:
-    def decorator(func: Callable[..., Any]) -> RemoteFunctionFn:
+    """Decorator marking a Remote Function
+
+    Decorated Remote Functions are intercepted on execution and seeded to a CodeBuild Project for remote execution.
+
+    Parameters
+    ----------
+    seedkit_name : str
+        The name of the previously deployed Seedkit to seed execution to.
+    function_module : Optional[str], optional
+        Name of the module in the seeded code to execute. If None, then inferred from the decorated function's module,
+        by default None
+    function_name : Optional[str], optional
+        Name of the function in the seeded code to execute. If None, the inferred from the decorated function's name,
+        by default None
+    timeout : Optional[int], optional
+        Override the CodeBuild execution timeout, by default None
+    codebuild_log_callback : Optional[Callable[[str], None]], optional
+        Callback function executed as CodeBuild execution logs are pulled, by default None
+    extra_python_modules : Optional[List[str]], optional
+        List of additional python moduled to install during CodeBuild exection, by default None
+    extra_local_modules : Optional[Dict[str, str]], optional
+        Name and Location of additional local python modules to bundle and install during CodeBuild execution,
+        by default None
+    extra_requirements_files : Optional[Dict[str, str]], optional
+        Additional local requirements.txt files to bundle and install during CodeBuild execution, by default None
+    codebuild_image : Optional[str], optional
+        Alternative container image to use during CodeBuild execution, by default None
+    codebuild_role : Optional[str], optional
+        Alternative IAM Role to use during CodeBuild execution, by default None
+    extra_install_commands : Optional[List[str]], optional
+        Additional commands to execute during the Install phase of the CodeBuild execution, by default None
+    extra_pre_build_commands : Optional[List[str]], optional
+        Additional commands to execute during the PreBuild phase of the CodeBuild execution, by default None
+    extra_build_commands : Optional[List[str]], optional
+        Additional commands to execute during the Build phase of the CodeBuild execution, by default None
+    extra_post_build_commands : Optional[List[str]], optional
+        Additional commands to execute during the PostBuild phase of the CodeBuild execution, by default None
+    extra_dirs : Optional[Dict[str, str]], optional
+        Name and Location of additional local directories to bundle and include in the CodeBuild exeuction,
+        by default None
+    extra_files : Optional[Dict[str, str]], optional
+        Name and Location of additional local files to bundle and include in the CodeBuild execution, by default None
+    bundle_id : Optional[str], optional
+        Optional identifier to uniquely identify a bundle locally when multiple `remote_functions` are executed
+        concurrently, by default None
+
+    Returns
+    -------
+    RemoteFunctionDecorator
+        The decorated function
+    """
+
+    def decorator(func: Callable[..., Any]) -> _classes.RemoteFunctionFn:
         stack_name = cfn.get_stack_name(seedkit_name=seedkit_name)
         stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
         if not stack_exists:
             raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
         if seedkit_name not in SEEDKIT_REGISTRY:
-            SEEDKIT_REGISTRY[seedkit_name] = RegistryEntry(stack_outputs=stack_outputs)
+            SEEDKIT_REGISTRY[seedkit_name] = _classes.RegistryEntry(stack_outputs=stack_outputs)
 
         fn_module = function_module if function_module else func.__module__
         fn_name = function_name if function_name else func.__name__
@@ -154,7 +182,7 @@ def remote_function(
         dirs = {**cast(Mapping[str, str], config_object.dirs), **dirs}
         files = {**cast(Mapping[str, str], config_object.files), **files}
 
-        if MODULE_IMPORTER == ModuleImporter.IMPORT:
+        if MODULE_IMPORTER == _classes.ModuleImporter.IMPORT:
             if any([not os.path.isdir(p) for p in cast(Dict[str, str], local_modules).values()]):
                 raise ValueError(f"One or more local modules could not be resolved: {local_modules}")
             if any([not os.path.isfile(p) for p in cast(Dict[str, str], requirements_files).values()]):
@@ -166,10 +194,10 @@ def remote_function(
 
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            if MODULE_IMPORTER == ModuleImporter.CODESEEDER_CLI:
+            if MODULE_IMPORTER == _classes.ModuleImporter.CODESEEDER_CLI:
                 # Exectute the module locally
                 return func(*args, **kwargs)
-            elif MODULE_IMPORTER == ModuleImporter.IMPORT:
+            elif MODULE_IMPORTER == _classes.ModuleImporter.IMPORT:
                 # Bundle and execute remotely in codebuild
                 LOGGER.info("Beginning Remote Execution: %s", fn_id)
                 fn_args = {"fn_id": fn_id, "args": args, "kwargs": kwargs}
@@ -195,7 +223,7 @@ def remote_function(
                     (v, f"{k}") for k, v in files.items()
                 ]
 
-                bundle_zip = bundle.generate_bundle(
+                bundle_zip = _bundle.generate_bundle(
                     fn_args=fn_args, dirs=dirs_tuples, files=files_tuples, bundle_id=bundle_id
                 )
                 buildspec = codebuild.generate_spec(
@@ -225,7 +253,7 @@ def remote_function(
                 if codebuild_role:
                     overrides["serviceRoleOverride"] = codebuild_role
 
-                remote.run(
+                _remote.run(
                     stack_outputs=cast(Dict[str, str], stack_outputs),
                     bundle_path=bundle_zip,
                     buildspec=buildspec,
@@ -233,7 +261,6 @@ def remote_function(
                     codebuild_log_callback=codebuild_log_callback,
                     overrides=overrides if overrides != {} else None,
                 )
-                # value = func(*args, **kwargs)
             else:
                 raise ValueError(f"Invalid value for attribute module_importer: {MODULE_IMPORTER}")
 
