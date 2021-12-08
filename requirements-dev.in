@@ -13,5 +13,6 @@ types-PyYAML~=5.4.6
 awscli~=1.21.8
 sphinx~=4.3.1
 myst-parser~=0.15.2
-sphinx-bootstrap-theme~=0.8.0
+sphinx-rtd-theme~=1.0.0
+sphinx-autoapi~=1.8.4
 -e .

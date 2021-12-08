@@ -17,7 +17,7 @@ certifi==2021.10.8
     # via requests
 cfn-flip==1.2.3
     # via aws-codeseeder (setup.py)
-charset-normalizer==2.0.7
+charset-normalizer==2.0.9
     # via requests
 click==7.1.2
     # via
@@ -37,13 +37,13 @@ jmespath==0.10.0
     # via
     #   boto3
     #   botocore
-keyring==23.2.1
+keyring==23.4.0
     # via twine
 mypy-extensions==0.4.3
     # via aws-codeseeder (setup.py)
 packaging==21.3
     # via bleach
-pkginfo==1.8.1
+pkginfo==1.8.2
     # via twine
 pygments==2.10.0
     # via readme-renderer
@@ -81,7 +81,7 @@ tqdm==4.56.2
     #   twine
 twine==3.3.0
     # via aws-codeseeder (setup.py)
-typing-extensions==4.0.0
+typing-extensions==4.0.1
     # via importlib-metadata
 urllib3==1.26.7
     # via

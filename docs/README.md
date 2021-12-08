@@ -1,13 +1,9 @@
 # Building docs
 
-1. Generate `autodoc` stubs when new modules are added
+To rebuild the documentation:
 
-   ```bash
-   sphinx-apidoc --ext-autodoc -o source ../aws_codeseeder --force
-   ```
-
-1. Build html docs
-
-   ```bash
-   make html
-   ```
+```bash
+cd docs/
+make clean
+make html
+```

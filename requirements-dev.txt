@@ -10,6 +10,8 @@ alabaster==0.7.12
     # via sphinx
 appdirs==1.4.4
     # via black
+astroid==2.9.0
+    # via sphinx-autoapi
 attrs==21.2.0
     # via
     #   jsonschema
@@ -43,7 +45,7 @@ cfn-flip==1.2.3
     # via aws-codeseeder
 cfn-lint==0.53.1
     # via -r requirements-dev.in
-charset-normalizer==2.0.7
+charset-normalizer==2.0.9
     # via requests
 check-manifest==0.47
     # via -r requirements-dev.in
@@ -64,6 +66,7 @@ docutils==0.15.2
     #   pyroma
     #   readme-renderer
     #   sphinx
+    #   sphinx-rtd-theme
 flake8==3.8.4
     # via -r requirements-dev.in
 idna==3.3
@@ -88,6 +91,7 @@ jinja2==3.0.3
     # via
     #   myst-parser
     #   sphinx
+    #   sphinx-autoapi
 jmespath==0.10.0
     # via
     #   boto3
@@ -102,8 +106,10 @@ jsonschema==3.2.0
     #   cfn-lint
 junit-xml==1.9
     # via cfn-lint
-keyring==23.2.1
+keyring==23.4.0
     # via twine
+lazy-object-proxy==1.6.0
+    # via astroid
 markdown-it-py==1.1.0
     # via
     #   mdit-py-plugins
@@ -139,7 +145,7 @@ pep517==0.12.0
     #   pip-tools
 pip-tools==6.4.0
     # via -r requirements-dev.in
-pkginfo==1.8.1
+pkginfo==1.8.2
     # via twine
 pluggy==1.0.0
     # via pytest
@@ -180,6 +186,7 @@ pyyaml==5.4.1
     #   cfn-lint
     #   myst-parser
     #   pyyaml-include
+    #   sphinx-autoapi
 pyyaml-include==1.2.post2
     # via aws-codeseeder
 readme-renderer==30.0
@@ -216,7 +223,11 @@ sphinx==4.3.1
     # via
     #   -r requirements-dev.in
     #   myst-parser
-sphinx-bootstrap-theme==0.8.0
+    #   sphinx-autoapi
+    #   sphinx-rtd-theme
+sphinx-autoapi==1.8.4
+    # via -r requirements-dev.in
+sphinx-rtd-theme==1.0.0
     # via -r requirements-dev.in
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
@@ -248,18 +259,22 @@ twine==3.3.0
     # via aws-codeseeder
 typed-ast==1.4.3
     # via
+    #   astroid
     #   black
     #   mypy
 types-pyyaml==5.4.12
     # via -r requirements-dev.in
 types-setuptools==57.0.2
     # via -r requirements-dev.in
-typing-extensions==4.0.0
+typing-extensions==4.0.1
     # via
+    #   astroid
     #   black
     #   importlib-metadata
     #   markdown-it-py
     #   mypy
+unidecode==1.3.2
+    # via sphinx-autoapi
 urllib3==1.26.7
     # via
     #   botocore
@@ -270,6 +285,8 @@ wheel==0.37.0
     # via
     #   aws-codeseeder
     #   pip-tools
+wrapt==1.13.3
+    # via astroid
 zipp==3.6.0
     # via
     #   importlib-metadata
