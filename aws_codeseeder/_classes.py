@@ -26,9 +26,35 @@ class ModuleImporter(str, enum.Enum):
 
 @dataclasses.dataclass()
 class RemoteCtlConfig:
-    """[summary]
+    """Configuration dataclass
 
-    [extended_summary]
+    Parameters
+    ----------
+    timeout : Optional[int], optional
+        Set the CodeBuild execution timeout, by default 30
+    python_modules : Optional[List[str]], optional
+        List of python modules to install during CodeBuild exection, by default None
+    local_modules : Optional[Dict[str, str]], optional
+        Name and Location of local python modules to bundle and install during CodeBuild execution,
+        by default None
+    requirements_files : Optional[Dict[str, str]], optional
+        Local requirements.txt files to bundle and install during CodeBuild execution, by default None
+    codebuild_image : Optional[str], optional
+        Alternative container image to use during CodeBuild execution, by default None
+    codebuild_role : Optional[str], optional
+        Alternative IAM Role to use during CodeBuild execution, by default None
+    nstall_commands : Optional[List[str]], optional
+        Commands to execute during the Install phase of the CodeBuild execution, by default None
+    pre_build_commands : Optional[List[str]], optional
+        Commands to execute during the PreBuild phase of the CodeBuild execution, by default None
+    build_commands : Optional[List[str]], optional
+        Commands to execute during the Build phase of the CodeBuild execution, by default None
+    post_build_commands : Optional[List[str]], optional
+        Commands to execute during the PostBuild phase of the CodeBuild execution, by default None
+    dirs : Optional[Dict[str, str]], optional
+        Name and Location of local directories to bundle and include in the CodeBuild exeuction,by default None
+    files : Optional[Dict[str, str]], optional
+        Name and Location of local files to bundle and include in the CodeBuild execution, by default None
     """
 
     timeout: Optional[int] = 30

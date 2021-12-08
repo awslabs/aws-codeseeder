@@ -102,7 +102,7 @@ def remote_function(
     codebuild_log_callback : Optional[Callable[[str], None]], optional
         Callback function executed as CodeBuild execution logs are pulled, by default None
     extra_python_modules : Optional[List[str]], optional
-        List of additional python moduled to install during CodeBuild exection, by default None
+        List of additional python modules to install during CodeBuild exection, by default None
     extra_local_modules : Optional[Dict[str, str]], optional
         Name and Location of additional local python modules to bundle and install during CodeBuild execution,
         by default None
