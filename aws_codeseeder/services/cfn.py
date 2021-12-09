@@ -113,7 +113,7 @@ def get_stack_status(stack_name: str) -> str:
     Returns
     -------
     str
-        The status of the CloudFormation Stack, see official `boto3` documentation for potential status values:
+        The status of the CloudFormation Stack, see official ``boto3`` documentation for potential status values:
         https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudformation.html#CloudFormation.Client.describe_stacks
 
     Raises
@@ -162,7 +162,7 @@ def deploy_template(stack_name: str, filename: str, seedkit_tag: str, s3_bucket:
     """Deploy a local CloudFormation Template
 
     The function will automatically calculate a ChangeSet if the Stack already exists and update accordingly. If the
-    local template file is too large, it will be uploaded to the optional `s3_buckeet` and deployed from there.
+    local template file is too large, it will be uploaded to the optional ``s3_buckeet`` and deployed from there.
 
     Parameters
     ----------

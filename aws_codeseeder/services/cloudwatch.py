@@ -79,7 +79,7 @@ def get_log_events(
     Returns
     -------
     CloudWatchEvents
-        CloudWatch Logs Events since `start_time` (if found)
+        CloudWatch Logs Events since ``start_time`` (if found)
     """
     client = boto3_client("logs")
     args = {

@@ -37,7 +37,7 @@ def configure(
 ) -> ConfigureDecorator:
     """Decorator marking a Configuration Function
 
-    Decorated Configuration Functions are executed lazily when a `remote_function` for a particular Seedkit is called.
+    Decorated Configuration Functions are executed lazily when a ``remote_function`` for a particular Seedkit is called.
     The Configuration Function sets the default configuration for the Seedkit.
 
     Parameters
@@ -126,7 +126,7 @@ def remote_function(
     extra_files : Optional[Dict[str, str]], optional
         Name and Location of additional local files to bundle and include in the CodeBuild execution, by default None
     bundle_id : Optional[str], optional
-        Optional identifier to uniquely identify a bundle locally when multiple `remote_functions` are executed
+        Optional identifier to uniquely identify a bundle locally when multiple ``remote_functions`` are executed
         concurrently, by default None
 
     Returns
