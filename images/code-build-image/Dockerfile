@@ -1,13 +1,16 @@
-# Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
-# Licensed under the Amazon Software License (the "License"). You may not use this file except in compliance with the License.
-# A copy of the License is located at
+#   Licensed under the Apache License, Version 2.0 (the "License").
+#   You may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
 #
-#    http://aws.amazon.com/asl/
+#       http://www.apache.org/licenses/LICENSE-2.0
 #
-# or in the "license" file accompanying this file.
-# This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied.
-# See the License for the specific language governing permissions and limitations under the License.
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
 
 FROM public.ecr.aws/ubuntu/ubuntu:20.04 AS core
 
@@ -38,7 +41,7 @@ RUN set -ex \
         libc6-dev libcurl4-openssl-dev  libkrb5-dev liblzma-dev libmagickcore-dev \
         libmagickwand-dev  libmysqlclient-dev libonig-dev  libserf-1-1 libsqlite3-dev libssl-dev \
         libtcl8.6  llvm locales make mlocate  netbase openssl patch pkg-config python3-configobj \
-        python-openssl rsync stunnel tar tcl tcl8.6 tk tk-dev unzip wget xfsprogs xml-core xmlto \ 
+        python-openssl rsync stunnel tar tcl tcl8.6 tk tk-dev unzip wget xfsprogs xml-core xmlto \
         xsltproc libzip5 libzip-dev vim xvfb xz-utils zip zlib1g-dev pigz \
     && rm -rf /var/lib/apt/lists/*
 
@@ -65,7 +68,7 @@ RUN curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -
     chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
 
 # Install aws-iam-authenticator
-# https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html 
+# https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
 RUN curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/aws-iam-authenticator && \
     chmod +x ./aws-iam-authenticator && \
     mv ./aws-iam-authenticator /usr/local/bin
