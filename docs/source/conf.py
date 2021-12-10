@@ -40,13 +40,7 @@ templates_path = ["_templates"]
 # AutoAPI configuration
 autoapi_type = "python"
 autoapi_dirs = [os.path.abspath("../../aws_codeseeder")]
-autoapi_options = [
-    "members",
-    "show-inheritance",
-    "show-module-summary",
-    "imported-members",
-    "undoc-members"
-]
+autoapi_options = ["members", "show-inheritance", "show-module-summary", "imported-members", "undoc-members"]
 autoapi_member_order = "groupwise"
 
 # List of patterns, relative to source directory, that match files and
