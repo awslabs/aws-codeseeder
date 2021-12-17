@@ -48,6 +48,7 @@ setup(
         "wheel>=0.36.0",
         "twine>=3.3.0",
     ],
+    extras_require={"modules": [f"awscli>=1.19.0"]},
     entry_points={"console_scripts": ["codeseeder = aws_codeseeder.__main__:main"]},
     classifiers=[
         "Development Status :: 4 - Beta",
