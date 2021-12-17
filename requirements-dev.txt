@@ -4,7 +4,6 @@
 #
 #    pip-compile requirements-dev.in
 #
--e file:///Users/chamcca/Projects/aws/aws-codeseeder
     # via -r requirements-dev.in
 alabaster==0.7.12
     # via sphinx
