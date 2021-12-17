@@ -33,7 +33,6 @@ boto3==1.19.12
     #   aws-sam-translator
 botocore==1.22.12
     # via
-    #   aws-codeseeder
     #   awscli
     #   boto3
     #   s3transfer
@@ -41,8 +40,6 @@ build==0.7.0
     # via check-manifest
 certifi==2021.10.8
     # via requests
-cfn-flip==1.2.3
-    # via aws-codeseeder
 cfn-lint==0.53.1
     # via -r requirements-dev.in
 charset-normalizer==2.0.9
@@ -53,7 +50,6 @@ click==7.1.2
     # via
     #   aws-codeseeder
     #   black
-    #   cfn-flip
     #   pip-tools
 colorama==0.4.3
     # via
@@ -182,14 +178,10 @@ pyyaml==5.4.1
     # via
     #   aws-codeseeder
     #   awscli
-    #   cfn-flip
     #   cfn-lint
     #   myst-parser
-    #   pyyaml-include
     #   sphinx-autoapi
-pyyaml-include==1.2.post2
-    # via aws-codeseeder
-readme-renderer==30.0
+readme-renderer==31.0
     # via twine
 regex==2021.11.10
     # via black
@@ -212,7 +204,6 @@ six==1.16.0
     # via
     #   aws-sam-translator
     #   bleach
-    #   cfn-flip
     #   cfn-lint
     #   jsonschema
     #   junit-xml
@@ -251,10 +242,8 @@ tomli==1.2.2
     # via
     #   build
     #   pep517
-tqdm==4.56.2
-    # via
-    #   aws-codeseeder
-    #   twine
+tqdm==4.62.3
+    # via twine
 twine==3.3.0
     # via aws-codeseeder
 typed-ast==1.4.3

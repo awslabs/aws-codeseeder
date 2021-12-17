@@ -14,8 +14,10 @@
 
 import glob
 import json
+import logging
 import os
 import shutil
+import zipfile
 from pprint import pformat
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -32,6 +34,50 @@ def _is_valid_image_file(file_path: str) -> bool:
 def _list_files(path: str) -> List[str]:
     path = os.path.join(path, "**")
     return [f for f in glob.iglob(path, recursive=True) if os.path.isfile(f) and _is_valid_image_file(file_path=f)]
+
+
+def _make_zipfile(
+    base_name: str, root_dir: str, base_dir: str, dry_run: bool = False, logger: Optional[logging.Logger] = None
+) -> str:
+    """Create a zip file from all the files under 'root_dir'/'base_dir'. Including 'base_dir' as a folder in the zip.
+
+    The output zip file will be named 'base_name' + ".zip".  Returns the
+    name of the output zip file.
+    """
+
+    zip_filename = base_name + ".zip"
+    archive_dir = os.path.dirname(base_name)
+
+    if archive_dir and not os.path.exists(archive_dir):
+        if logger is not None:
+            logger.info("creating %s", archive_dir)
+        if not dry_run:
+            os.makedirs(archive_dir)
+
+    if logger is not None:
+        logger.info("creating '%s' and adding '%s' to it", zip_filename, os.path.join(root_dir, base_dir))
+
+    if not dry_run:
+        with zipfile.ZipFile(zip_filename, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+            path = os.path.normpath(os.path.join(root_dir, base_dir))
+            if path != os.curdir:
+                zf.write(path, path.replace(f"{root_dir}/", ""))
+                if logger is not None:
+                    logger.debug("adding '%s'", path)
+            for dirpath, dirnames, filenames in os.walk(os.path.join(root_dir, base_dir)):
+                for name in sorted(dirnames):
+                    path = os.path.normpath(os.path.join(dirpath, name))
+                    zf.write(path, path.replace(f"{root_dir}/", ""))
+                    if logger is not None:
+                        logger.debug("adding '%s'", path)
+                for name in filenames:
+                    path = os.path.normpath(os.path.join(dirpath, name))
+                    if os.path.isfile(path):
+                        zf.write(path, path.replace(f"{root_dir}/", ""))
+                        if logger is not None:
+                            logger.debug("adding '%s'", path)
+
+    return zip_filename
 
 
 def generate_dir(out_dir: str, dir: str, name: str) -> str:
@@ -89,5 +135,5 @@ def generate_bundle(
     files_glob = glob.glob(bundle_dir + "/**", recursive=True)
     LOGGER.debug("files:\n%s", pformat(files_glob))
 
-    shutil.make_archive(base_name=bundle_dir, format="zip", root_dir=remote_dir, base_dir="bundle")
-    return bundle_dir + ".zip"
+    zip_file = _make_zipfile(base_name=bundle_dir, root_dir=remote_dir, base_dir="bundle", logger=LOGGER)
+    return zip_file
