@@ -45,7 +45,7 @@ setup(
         "click>=7.1.0",
         "cfn-flip>=1.2.3",
         "mypy_extensions>=0.4.3",
-        "wheel>=0.37.0",
+        "wheel>=0.36.0",
         "twine>=3.3.0",
     ],
     entry_points={"console_scripts": ["codeseeder = aws_codeseeder.__main__:main"]},
