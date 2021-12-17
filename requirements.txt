@@ -6,26 +6,31 @@
 #
 bleach==4.1.0
     # via readme-renderer
-boto3==1.19.12
+boto3==1.20.24
     # via aws-codeseeder (setup.py)
-botocore==1.22.12
+botocore==1.23.24
     # via
     #   boto3
     #   s3transfer
 certifi==2021.10.8
     # via requests
+cfn-flip==1.3.0
+    # via aws-codeseeder (setup.py)
 charset-normalizer==2.0.9
     # via requests
-click==7.1.2
-    # via aws-codeseeder (setup.py)
+click==8.0.3
+    # via
+    #   aws-codeseeder (setup.py)
+    #   cfn-flip
 colorama==0.4.4
     # via twine
 docutils==0.18.1
     # via readme-renderer
 idna==3.3
     # via requests
-importlib-metadata==4.8.2
+importlib-metadata==4.9.0
     # via
+    #   click
     #   keyring
     #   twine
 jmespath==0.10.0
@@ -46,9 +51,11 @@ pyparsing==3.0.6
     # via packaging
 python-dateutil==2.8.2
     # via botocore
-pyyaml==5.4.1
-    # via aws-codeseeder (setup.py)
-readme-renderer==31.0
+pyyaml==6.0
+    # via
+    #   aws-codeseeder (setup.py)
+    #   cfn-flip
+readme-renderer==32.0
     # via twine
 requests==2.26.0
     # via
@@ -63,10 +70,11 @@ s3transfer==0.5.0
 six==1.16.0
     # via
     #   bleach
+    #   cfn-flip
     #   python-dateutil
 tqdm==4.62.3
     # via twine
-twine==3.3.0
+twine==3.7.1
     # via aws-codeseeder (setup.py)
 typing-extensions==4.0.1
     # via importlib-metadata
@@ -80,6 +88,3 @@ wheel==0.37.0
     # via aws-codeseeder (setup.py)
 zipp==3.6.0
     # via importlib-metadata
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
