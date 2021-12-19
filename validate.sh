@@ -21,4 +21,3 @@ isort --check .
 black --check .
 mypy aws_codeseeder
 flake8 .
-#cfn-lint -i E1029,E3031 -- aws_codeseeder/resources/template.yaml
