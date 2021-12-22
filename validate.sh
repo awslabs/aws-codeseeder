@@ -19,5 +19,5 @@ set -ex
 
 isort --check .
 black --check .
-mypy aws_codeseeder
+mypy .
 flake8 .
