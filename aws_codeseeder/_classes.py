@@ -20,12 +20,12 @@ from mypy_extensions import KwArg, NamedArg, VarArg
 
 
 class ModuleImporter(str, enum.Enum):
-    CODESEEDER_CLI = "codeseeder"
-    IMPORT = "import"
+    CODESEEDER_CLI = "codeseeder-cli"
+    OTHER = "other"
 
 
 @dataclasses.dataclass()
-class RemoteCtlConfig:
+class CodeSeederConfig:
     """Configuration dataclass
 
     Parameters
@@ -71,7 +71,7 @@ class RemoteCtlConfig:
     files: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
 
 
-ConfigureFn = Callable[[NamedArg(RemoteCtlConfig, "configuration")], None]  # noqa: F821
+ConfigureFn = Callable[[NamedArg(CodeSeederConfig, "configuration")], None]  # noqa: F821
 RemoteFunctionFn = Callable[[VarArg(Any), KwArg(Any)], Any]
 
 ConfigureDecorator = Callable[[ConfigureFn], ConfigureFn]
@@ -82,6 +82,6 @@ RemoteFunctionDecorator = Callable[..., RemoteFunctionFn]
 class RegistryEntry:
     configured: bool = False
     config_function: Optional[ConfigureFn] = None
-    config_object: RemoteCtlConfig = RemoteCtlConfig()
+    config_object: CodeSeederConfig = CodeSeederConfig()
     stack_outputs: Optional[Dict[str, str]] = None
     remote_functions: Dict[str, RemoteFunctionFn] = dataclasses.field(default_factory=dict)

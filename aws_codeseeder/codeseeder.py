@@ -18,15 +18,15 @@ from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 
 import __main__
 from aws_codeseeder import LOGGER, __version__, _bundle, _classes, _remote
-from aws_codeseeder._classes import ConfigureDecorator, RemoteCtlConfig, RemoteFunctionDecorator
+from aws_codeseeder._classes import CodeSeederConfig, ConfigureDecorator, RemoteFunctionDecorator
 from aws_codeseeder.services import cfn, codebuild
 
-__all__ = ["RemoteCtlConfig", "ConfigureDecorator", "RemoteFunctionDecorator", "configure", "remote_function"]
+__all__ = ["CodeSeederConfig", "ConfigureDecorator", "RemoteFunctionDecorator", "configure", "remote_function"]
 
 MODULE_IMPORTER = (
     _classes.ModuleImporter.CODESEEDER_CLI
     if os.path.basename(__main__.__file__).strip(".py") == "codeseeder"
-    else _classes.ModuleImporter.IMPORT
+    else _classes.ModuleImporter.OTHER
 )
 
 SEEDKIT_REGISTRY: Dict[str, _classes.RegistryEntry] = {}
@@ -182,7 +182,7 @@ def remote_function(
         dirs = {**cast(Mapping[str, str], config_object.dirs), **dirs}
         files = {**cast(Mapping[str, str], config_object.files), **files}
 
-        if MODULE_IMPORTER == _classes.ModuleImporter.IMPORT:
+        if MODULE_IMPORTER == _classes.ModuleImporter.OTHER:
             if any([not os.path.isdir(p) for p in cast(Dict[str, str], local_modules).values()]):
                 raise ValueError(f"One or more local modules could not be resolved: {local_modules}")
             if any([not os.path.isfile(p) for p in cast(Dict[str, str], requirements_files).values()]):
@@ -197,7 +197,7 @@ def remote_function(
             if MODULE_IMPORTER == _classes.ModuleImporter.CODESEEDER_CLI:
                 # Exectute the module locally
                 return func(*args, **kwargs)
-            elif MODULE_IMPORTER == _classes.ModuleImporter.IMPORT:
+            elif MODULE_IMPORTER == _classes.ModuleImporter.OTHER:
                 # Bundle and execute remotely in codebuild
                 LOGGER.info("Beginning Remote Execution: %s", fn_id)
                 fn_args = {"fn_id": fn_id, "args": args, "kwargs": kwargs}
