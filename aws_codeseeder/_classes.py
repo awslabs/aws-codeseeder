@@ -19,7 +19,7 @@ from typing import Any, Callable, Dict, List, Optional, cast
 from mypy_extensions import KwArg, NamedArg, VarArg
 
 
-class ModuleImporter(str, enum.Enum):
+class ModuleImporterEnum(str, enum.Enum):
     CODESEEDER_CLI = "codeseeder-cli"
     OTHER = "other"
 

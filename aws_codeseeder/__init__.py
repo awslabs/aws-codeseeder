@@ -18,7 +18,7 @@ import shutil
 
 import pkg_resources
 
-from aws_codeseeder.__metadata__ import __description__, __license__, __title__  # noqa
+from aws_codeseeder.__metadata__ import __description__, __license__, __title__  # noqa: F401
 
 __version__: str = pkg_resources.get_distribution(__title__).version
 
