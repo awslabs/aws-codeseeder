@@ -15,13 +15,11 @@
 from typing import Any
 
 from aws_codeseeder import codeseeder
-from aws_codeseeder._classes import ModuleImporter
-from aws_codeseeder.codeseeder import CodeSeederConfig
 
 
 def test_remote_function() -> None:
     @codeseeder.configure("test")
-    def config(configuration: CodeSeederConfig) -> None:
+    def config(configuration: codeseeder.CodeSeederConfig) -> None:
         configuration.python_modules = ["test~=0.0.0"]
 
     @codeseeder.remote_function("test")
@@ -29,4 +27,4 @@ def test_remote_function() -> None:
         pass
 
     # fn.module_importer = ModuleImporter.CODESEEDER_CLI
-    assert codeseeder.MODULE_IMPORTER == ModuleImporter.OTHER
+    assert codeseeder.MODULE_IMPORTER == codeseeder.ModuleImporterEnum.OTHER
