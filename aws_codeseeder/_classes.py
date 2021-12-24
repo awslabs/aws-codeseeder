@@ -43,7 +43,11 @@ class CodeSeederConfig:
         Alternative container image to use during CodeBuild execution, by default None
     codebuild_role : Optional[str], optional
         Alternative IAM Role to use during CodeBuild execution, by default None
-    nstall_commands : Optional[List[str]], optional
+    codebuild_environment_type : Optional[str], optional
+        Alternative Environment to use for the CodeBuild execution (e.g. LINUX_CONTAINER), by default None
+    codebuild_compute_type : Optional[str], optional
+        Alternative Compute to use for the CodeBuild execution (e.g. BUILD_GENERAL1_SMALL), by default None
+    install_commands : Optional[List[str]], optional
         Commands to execute during the Install phase of the CodeBuild execution, by default None
     pre_build_commands : Optional[List[str]], optional
         Commands to execute during the PreBuild phase of the CodeBuild execution, by default None
@@ -63,6 +67,8 @@ class CodeSeederConfig:
     requirements_files: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
     codebuild_image: Optional[str] = None
     codebuild_role: Optional[str] = None
+    codebuild_environment_type: Optional[str] = None
+    codebuild_compute_type: Optional[str] = None
     install_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     pre_build_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     build_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
