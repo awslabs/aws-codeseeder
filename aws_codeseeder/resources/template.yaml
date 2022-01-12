@@ -197,7 +197,7 @@ Resources:
               Ref: AWS::AccountId
           - Name: AWS_CODESEEDER_NAME
             Value: ${seedkit_name}
-          - Name: CODESEEDER_DOCKER_SECRET
+          - Name: AWS_CODESEEDER_DOCKER_SECRET
             Value: "NONE"
       Source:
         Type: NO_SOURCE

@@ -16,18 +16,36 @@ _logger = logging.getLogger(__name__)
 
 
 def set_log_level(level: int, format: Optional[str] = None) -> None:
+    """Helper function set LOG_LEVEL and optional log FORMAT
+
+    Parameters
+    ----------
+    level : int
+        logger.LOG_LEVEL
+    format : Optional[str], optional
+        Optional string format to apply to log lines, by default None
+    """
     kwargs = {"level": level}
     if format:
         kwargs["format"] = format  # type: ignore
     logging.basicConfig(**kwargs)  # type: ignore
     _logger.setLevel(level)
+
+    # Force loggers on dependencies to ERROR
     logging.getLogger("boto3").setLevel(logging.ERROR)
     logging.getLogger("botocore").setLevel(logging.ERROR)
     logging.getLogger("s3transfer").setLevel(logging.ERROR)
     logging.getLogger("urllib3").setLevel(logging.ERROR)
 
 
-def print_results(msg: str) -> None:
+def print_results_callback(msg: str) -> None:
+    """Function to demonstrate CodeBuild logging callback functionality
+
+    Parameters
+    ----------
+    msg : str
+        Incoming log message
+    """
     if msg.startswith("[RESULT] "):
         _logger.info(msg)
 
@@ -61,7 +79,7 @@ def remote_hello(name: str) -> None:
 
 @codeseeder.remote_function(
     "my-example",
-    codebuild_log_callback=print_results,
+    codebuild_log_callback=print_results_callback,
 )
 def remote_world(name: str) -> None:
     with open(os.path.join(BUNDLE_ROOT, "README.md"), "r") as readme_file:

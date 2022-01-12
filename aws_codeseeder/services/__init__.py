@@ -28,7 +28,7 @@ def get_botocore_config() -> botocore.config.Config:
         retries={"max_attempts": 5},
         connect_timeout=10,
         max_pool_connections=10,
-        user_agent_extra=f"aws_codeseeder/{__version__}",
+        user_agent_extra=f"aws-codeseeder/{__version__}",
     )
 
 

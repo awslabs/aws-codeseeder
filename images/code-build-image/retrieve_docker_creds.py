@@ -14,7 +14,7 @@ logger.setLevel(logging.INFO)
 
 
 def get_secret() -> Dict[str, Dict[str, str]]:
-    secret_name = os.environ.get("CODESEEDER_DOCKER_SECRET", "NO_SECRET")
+    secret_name = os.environ.get("AWS_CODESEEDER_DOCKER_SECRET", "NO_SECRET")
     region_name = os.environ.get("AWS_DEFAULT_REGION")
 
     session = boto3.session.Session()

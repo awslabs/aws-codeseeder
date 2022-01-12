@@ -15,6 +15,7 @@
 import importlib
 import json
 import logging
+import os
 from typing import Optional, Tuple
 
 import click
@@ -160,4 +161,5 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    os.environ.setdefault("AWS_CODESEEDEER_CLI_EXECUTING", "Yes")
     main()
