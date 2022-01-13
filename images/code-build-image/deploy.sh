@@ -18,7 +18,7 @@
 set -ex
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-REPOSITORY=softwarelabe-remote-seedkit/code-build-base
+REPOSITORY=aws-codeseeder/code-build-base
 VERSION=$(cat ${DIR}/VERSION)
 
 cd ${DIR}
@@ -27,5 +27,5 @@ docker build --tag ${REPOSITORY}:${VERSION} .
 docker tag ${REPOSITORY}:${VERSION} public.ecr.aws/v3o4w1g6/${REPOSITORY}:${VERSION}
 docker push public.ecr.aws/v3o4w1g6/${REPOSITORY}:${VERSION}
 
-# docker tag ${REPOSITORY}:${VERSION} public.ecr.aws/v3o4w1g6/${REPOSITORY}:latest
-# docker push public.ecr.aws/v3o4w1g6/${REPOSITORY}:latest
+docker tag ${REPOSITORY}:${VERSION} public.ecr.aws/v3o4w1g6/${REPOSITORY}:latest
+docker push public.ecr.aws/v3o4w1g6/${REPOSITORY}:latest
