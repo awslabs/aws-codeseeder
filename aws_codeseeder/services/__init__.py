@@ -20,7 +20,6 @@ import boto3
 import botocore
 
 from aws_codeseeder import LOGGER, __version__
-from aws_codeseeder.services import cfn, cloudwatch, codebuild, iam, s3  # noqa: F401
 
 
 def get_botocore_config() -> botocore.config.Config:
