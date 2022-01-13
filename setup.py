@@ -27,6 +27,9 @@ with open(file=path, mode="r", encoding="utf-8") as f:
 with open("VERSION", "r") as version_file:
     version = version_file.read().strip()
 
+with open("README.md") as fp:
+    long_description = fp.read()
+
 setup(
     name=about["__title__"],
     version=version,
