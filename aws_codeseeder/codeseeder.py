@@ -168,7 +168,7 @@ def remote_function(
         requirements_files = decorator.requirements_files  # type: ignore
         codebuild_image = decorator.codebuild_image  # type: ignore
         codebuild_role = decorator.codebuild_role  # type: ignore
-        codebuild_environment_type = decorator.codebuild_environment_typy  # type: ignore
+        codebuild_environment_type = decorator.codebuild_environment_type  # type: ignore
         codebuild_compute_type = decorator.codebuild_compute_type  # type: ignore
         install_commands = decorator.install_commands  # type: ignore
         pre_build_commands = decorator.pre_build_commands  # type: ignore
@@ -190,8 +190,12 @@ def remote_function(
         requirements_files = {**cast(Mapping[str, str], config_object.requirements_files), **requirements_files}
         codebuild_image = codebuild_image if codebuild_image else config_object.codebuild_image
         codebuild_role = codebuild_role if codebuild_role else config_object.codebuild_role
-        codebuild_environment_type = codebuild_environment_type if codebuild_environment_type else config_object.codebuild_environment_type
-        codebuild_compute_type = codebuild_compute_type if codebuild_compute_type else config_object.codebuild_compute_type
+        codebuild_environment_type = (
+            codebuild_environment_type if codebuild_environment_type else config_object.codebuild_environment_type
+        )
+        codebuild_compute_type = (
+            codebuild_compute_type if codebuild_compute_type else config_object.codebuild_compute_type
+        )
         install_commands = config_object.install_commands + install_commands
         pre_build_commands = config_object.pre_build_commands + pre_build_commands
         build_commands = config_object.build_commands + build_commands
