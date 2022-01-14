@@ -38,6 +38,8 @@ setup(
     url="https://github.com/awslabs/aws-codeseeder",
     project_urls={"Org Site": "https://aws.amazon.com/professional-services/"},
     description=about["__description__"],
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     license=about["__license__"],
     packages=find_packages(include=["aws_codeseeder", "aws_codeseeder.*"]),
     keywords=["aws", "cdk"],
