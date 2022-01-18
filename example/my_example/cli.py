@@ -7,7 +7,7 @@ import yaml
 from cfn_flip import yaml_dumper
 from cfn_tools import load_yaml
 
-from aws_codeseeder import BUNDLE_ROOT, codeseeder, services
+from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, services
 
 DEBUG_LOGGING_FORMAT = "[%(asctime)s][%(filename)-13s:%(lineno)3d] %(message)s"
 CLI_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -87,7 +87,7 @@ def remote_world(name: str) -> None:
             print(f"[RESULT] {line.strip()}")
 
 
-def deployt_test_stack() -> None:
+def deploy_test_stack() -> None:
     # Demonstrate deploying a CFN Template with ManagedPolicy and associating the Toolkit Role
     toolkit_stack_name = services.cfn.get_stack_name("orbit")
     toolkit_stack_exists, stack_outputs = services.cfn.does_stack_exist(stack_name=toolkit_stack_name)
@@ -118,9 +118,10 @@ def deployt_test_stack() -> None:
 
 
 def main() -> None:
-    set_log_level(level=logging.INFO)
+    set_log_level(level=logging.DEBUG)
 
-    # deployt_test_stack()
+    LOGGER.info("Deploying Test Stack")
+    deploy_test_stack()
 
     remote_hello("monkey")
     remote_world("time")

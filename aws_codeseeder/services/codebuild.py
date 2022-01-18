@@ -21,7 +21,7 @@ import botocore.exceptions
 import yaml
 
 from aws_codeseeder import LOGGER
-from aws_codeseeder.services import boto3_client, try_it
+from aws_codeseeder.services._utils import boto3_client, try_it
 
 _BUILD_WAIT_POLLING_DELAY: float = 5  # SECONDS
 

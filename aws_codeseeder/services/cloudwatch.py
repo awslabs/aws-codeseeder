@@ -15,7 +15,7 @@
 from datetime import datetime, timezone
 from typing import Dict, List, NamedTuple, Optional, Union, cast
 
-from aws_codeseeder.services import boto3_client
+from aws_codeseeder.services._utils import boto3_client
 
 
 class CloudWatchEvent(NamedTuple):

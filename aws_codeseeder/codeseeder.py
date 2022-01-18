@@ -16,7 +16,6 @@ import functools
 import os
 from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 
-import __main__
 from aws_codeseeder import LOGGER, __version__, _bundle, _classes, _remote
 from aws_codeseeder._classes import CodeSeederConfig, ConfigureDecorator, ModuleImporterEnum, RemoteFunctionDecorator
 from aws_codeseeder.services import cfn, codebuild
@@ -32,7 +31,7 @@ __all__ = [
 
 MODULE_IMPORTER = (
     _classes.ModuleImporterEnum.CODESEEDER_CLI
-    if os.path.basename(__main__.__file__).strip(".py") == "codeseeder"
+    if os.environ.get("AWS_CODESEEDEER_CLI_EXECUTING", "No") == "Yes"
     else _classes.ModuleImporterEnum.OTHER
 )
 
@@ -202,6 +201,8 @@ def remote_function(
         post_build_commands = config_object.post_build_commands + post_build_commands
         dirs = {**cast(Mapping[str, str], config_object.dirs), **dirs}
         files = {**cast(Mapping[str, str], config_object.files), **files}
+
+        LOGGER.debug("MODULE_IMPORTER: %s", MODULE_IMPORTER)
 
         if MODULE_IMPORTER == _classes.ModuleImporterEnum.OTHER:
             if any([not os.path.isdir(p) for p in cast(Dict[str, str], local_modules).values()]):

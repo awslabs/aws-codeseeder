@@ -154,6 +154,8 @@ def execute(args_file: str, debug: bool) -> None:
 
 
 def main() -> int:
+    os.environ.setdefault("AWS_CODESEEDEER_CLI_EXECUTING", "Yes")
+
     cli.add_command(deploy)
     cli.add_command(destroy)
     cli()
@@ -161,5 +163,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    os.environ.setdefault("AWS_CODESEEDEER_CLI_EXECUTING", "Yes")
     main()

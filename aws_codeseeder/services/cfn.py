@@ -20,7 +20,8 @@ from typing import Any, Dict, Optional, Tuple, cast
 import botocore.exceptions
 
 from aws_codeseeder import LOGGER
-from aws_codeseeder.services import boto3_client, s3
+from aws_codeseeder.services import s3
+from aws_codeseeder.services._utils import boto3_client
 
 CHANGESET_PREFIX = "aws-codeseeder-"
 

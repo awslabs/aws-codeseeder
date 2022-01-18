@@ -22,7 +22,7 @@ from typing import Any, Dict, List, Optional, cast
 from botocore.exceptions import ClientError
 
 from aws_codeseeder import LOGGER
-from aws_codeseeder.services import boto3_client, boto3_resource
+from aws_codeseeder.services._utils import boto3_client, boto3_resource
 
 
 def _chunkify(lst: List[Any], num_chunks: int = 1, max_length: Optional[int] = None) -> List[List[Any]]:
