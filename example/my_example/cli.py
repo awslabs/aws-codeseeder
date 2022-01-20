@@ -7,7 +7,7 @@ import yaml
 from cfn_flip import yaml_dumper
 from cfn_tools import load_yaml
 
-from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, services
+from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, create_output_dir, services
 
 DEBUG_LOGGING_FORMAT = "[%(asctime)s][%(filename)-13s:%(lineno)3d] %(message)s"
 CLI_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -52,6 +52,13 @@ def print_results_callback(msg: str) -> None:
 
 @codeseeder.configure("my-example")
 def configure(configuration: codeseeder.CodeSeederConfig) -> None:
+    """An example of global ``codeseeder.configure``
+
+    Parameters
+    ----------
+    configuration : codeseeder.CodeSeederConfig
+        The configuration object that will be used by ``codeseeder.remote_functions``
+    """
     configuration.python_modules = ["boto3~=1.19.0"]
     configuration.local_modules = {
         "my-example": os.path.realpath(os.path.join(CLI_ROOT, "../")),
@@ -62,8 +69,30 @@ def configure(configuration: codeseeder.CodeSeederConfig) -> None:
     configuration.files = {"README.md": os.path.realpath(os.path.join(CLI_ROOT, "../README.md"))}
 
 
-def remote_hello(name: str) -> None:
+def remote_hello_world_1(name: str) -> None:
+    """Demonstration of an advanced function decoration
+
+    Here the decorated ``codeseeder.remote_function`` is nested in another function. At times in may be necessary to
+    programmatically determine the parameters passed to the decorator at function execution time rather than when the
+    module is imported. Nesting the decorated function inside another function will work as long as both functions have
+    the same name and parameters.
+
+    Keep in mind when nesting like this, when the functions are executed in CodeBuild the outer function is executed
+    then the inner function code. The EXECUTING_REMOTELY flag can be used to determine if function is being executed
+    locally or by CodeBuild.
+
+    Parameters
+    ----------
+    name : str
+        Just some example name
+    """
     codebuild_role = "Admin"
+
+    # Execute this if we're being run by CodeBuild
+    if codeseeder.EXECUTING_REMOTELY:
+        LOGGER.info("Executing remotely in CodeBuild")
+    else:
+        LOGGER.info("Executing locally")
 
     @codeseeder.remote_function(
         "my-example",
@@ -71,28 +100,41 @@ def remote_hello(name: str) -> None:
         codebuild_role=codebuild_role,
         extra_files={"VERSION": os.path.realpath(os.path.join(CLI_ROOT, "../VERSION"))},
     )
-    def remote_hello(name: str) -> None:
+    def remote_hello_world_1(name: str) -> None:
         print(f"[RESULT] {name}")
 
-    remote_hello(name)
+    remote_hello_world_1(name)
 
 
 @codeseeder.remote_function(
     "my-example",
     codebuild_log_callback=print_results_callback,
 )
-def remote_world(name: str) -> None:
+def remote_hellow_world_2(name: str) -> None:
+    """A simple ``codeseeder.remote_function`` example with a local callback for CodeBuild Log messages
+
+    Parameters
+    ----------
+    name : str
+        Just some example name
+    """
+    print(f"[RESULT] {name}")
     with open(os.path.join(BUNDLE_ROOT, "README.md"), "r") as readme_file:
         for line in readme_file.readlines():
             print(f"[RESULT] {line.strip()}")
 
 
 def deploy_test_stack() -> None:
-    # Demonstrate deploying a CFN Template with ManagedPolicy and associating the Toolkit Role
-    toolkit_stack_name = services.cfn.get_stack_name("orbit")
+    """This function demonstrates using the codeseeder library and tools to deploy an additional CloudFormation Stack
+
+    This additional CloudFormation Stack defines an IAM Role with Trust Relationship to AWS CodeBuild. This
+    demonstrates how to use the Seedkit tools to create a dedicated IAM Role for use by CodeBuile. The example also
+    attachs the Seedkit's IAM Managed Policy to this new Role, granting the Role access to the Seedkit's resources
+    """
+    toolkit_stack_name = services.cfn.get_stack_name("my-example")
     toolkit_stack_exists, stack_outputs = services.cfn.does_stack_exist(stack_name=toolkit_stack_name)
 
-    if toolkit_stack_exists and codeseeder.MODULE_IMPORTER == codeseeder.ModuleImporterEnum.OTHER:
+    if toolkit_stack_exists and not codeseeder.EXECUTING_REMOTELY:
         test_stack_name = "my-example-stack"
         test_stack_exists, _ = services.cfn.does_stack_exist(stack_name=test_stack_name)
 
@@ -106,13 +148,13 @@ def deploy_test_stack() -> None:
 
             dst_template = Template(yaml.dump(src_template, Dumper=yaml_dumper.get_dumper()))
 
-            dst_dir = codeseeder.create_output_dir("my-example")
+            dst_dir = create_output_dir("my-example")
             dst_filename = os.path.join(dst_dir, "template.yaml")
             with open(dst_filename, "w") as dst_file:
                 dst_file.write(
                     dst_template.safe_substitute(account_id=services.get_account_id(), region=services.get_region())
                 )
-            services.cfn.deploy_template(stack_name=test_stack_name, filename=dst_filename, toolkit_tag="my-example")
+            services.cfn.deploy_template(stack_name=test_stack_name, filename=dst_filename, seedkit_tag="my-example")
         else:
             _logger.info("Test Stack already exists")
 
@@ -120,11 +162,10 @@ def deploy_test_stack() -> None:
 def main() -> None:
     set_log_level(level=logging.DEBUG)
 
-    LOGGER.info("Deploying Test Stack")
     deploy_test_stack()
 
-    remote_hello("monkey")
-    remote_world("time")
+    remote_hello_world_1("")
+    remote_hellow_world_2("time")
 
 
 if __name__ == "__main__":
