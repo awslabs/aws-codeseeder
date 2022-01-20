@@ -110,7 +110,7 @@ def remote_hello_world_1(name: str) -> None:
     "my-example",
     codebuild_log_callback=print_results_callback,
 )
-def remote_hellow_world_2(name: str) -> None:
+def remote_hello_world_2(name: str) -> None:
     """A simple ``codeseeder.remote_function`` example with a local callback for CodeBuild Log messages
 
     Parameters
@@ -164,8 +164,8 @@ def main() -> None:
 
     deploy_test_stack()
 
-    remote_hello_world_1("")
-    remote_hellow_world_2("time")
+    remote_hello_world_1("Bart")
+    remote_hello_world_2("Lisa")
 
 
 if __name__ == "__main__":
