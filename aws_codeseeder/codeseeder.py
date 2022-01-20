@@ -35,6 +35,8 @@ MODULE_IMPORTER = (
     else _classes.ModuleImporterEnum.OTHER
 )
 
+EXECUTING_REMOTELY = os.environ.get("AWS_CODESEEDEER_CLI_EXECUTING", "No") == "Yes"
+
 SEEDKIT_REGISTRY: Dict[str, _classes.RegistryEntry] = {}
 
 
@@ -203,8 +205,9 @@ def remote_function(
         files = {**cast(Mapping[str, str], config_object.files), **files}
 
         LOGGER.debug("MODULE_IMPORTER: %s", MODULE_IMPORTER)
+        LOGGER.debug("EXECUTING_REMOTELY: %s", EXECUTING_REMOTELY)
 
-        if MODULE_IMPORTER == _classes.ModuleImporterEnum.OTHER:
+        if not EXECUTING_REMOTELY:
             if any([not os.path.isdir(p) for p in cast(Dict[str, str], local_modules).values()]):
                 raise ValueError(f"One or more local modules could not be resolved: {local_modules}")
             if any([not os.path.isfile(p) for p in cast(Dict[str, str], requirements_files).values()]):
@@ -216,10 +219,10 @@ def remote_function(
 
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            if MODULE_IMPORTER == _classes.ModuleImporterEnum.CODESEEDER_CLI:
-                # Exectute the module locally
+            if EXECUTING_REMOTELY:
+                # Exectute the module
                 return func(*args, **kwargs)
-            elif MODULE_IMPORTER == _classes.ModuleImporterEnum.OTHER:
+            else:
                 # Bundle and execute remotely in codebuild
                 LOGGER.info("Beginning Remote Execution: %s", fn_id)
                 fn_args = {"fn_id": fn_id, "args": args, "kwargs": kwargs}
@@ -287,8 +290,6 @@ def remote_function(
                     codebuild_log_callback=codebuild_log_callback,
                     overrides=overrides if overrides != {} else None,
                 )
-            else:
-                raise ValueError(f"Invalid value for attribute module_importer: {MODULE_IMPORTER}")
 
         registry_entry.remote_functions[fn_id] = wrapper
         return wrapper

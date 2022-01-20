@@ -28,3 +28,4 @@ def test_remote_function() -> None:
 
     # fn.module_importer = ModuleImporter.CODESEEDER_CLI
     assert codeseeder.MODULE_IMPORTER == codeseeder.ModuleImporterEnum.OTHER
+    assert not codeseeder.EXECUTING_REMOTELY
