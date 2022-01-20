@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- new EXECUTING_REMOTELY boolean to simplify conditional code executions
+
 ### Changed
 
-- changed MODULE_IMPORTER determination (uses ENV var)
+- updated MODULE_IMPORTER determination (uses ENV var)
 - fixed `aws_codeseeder.services` imports (eliminated circular imports)
