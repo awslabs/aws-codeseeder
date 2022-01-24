@@ -1,0 +1,22 @@
+include VERSION
+include LICENSE
+include NOTICE
+include CONTRIBUTING
+include *.in
+include *.sh
+include *.toml
+include *.txt
+include *.yaml
+include *.md
+recursive-include aws_codeseeder *.json
+recursive-include aws_codeseeder *.txt
+recursive-include aws_codeseeder *.sh
+recursive-include aws_codeseeder *.typed
+recursive-include aws_codeseeder *.yaml
+recursive-include aws_codeseeder *.tpl
+recursive-include aws_codeseeder *.py
+recursive-include aws_codeseeder *.zip
+recursive-include docs *
+recursive-include example *
+recursive-include tests *.py
+recursive-exclude images *
