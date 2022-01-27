@@ -51,7 +51,7 @@ code_build_role = iam.Role(
 pipeline = codepipeline.Pipeline(
     stack,
     "CodePipeline",
-    pipeline_name="CodeSeeder_Launch_Release",
+    pipeline_name="CodeSeeder_Release",
     restart_execution_on_update=True,
     artifact_bucket=artifacts_bucket,
     stages=[

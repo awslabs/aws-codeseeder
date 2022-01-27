@@ -3,7 +3,7 @@ env:
   variables:
     TWINE_USERNAME: __token__
   secrets-manager:
-    TWINE_PASSWORD: aws-codeseeder-launch-deployment-secrets:PyPiApiKey
+    TWINE_PASSWORD: aws-codeseeder-deployment-secrets:PyPiApiKey
 phases:
   install:
     runtime-versions:
