@@ -1,0 +1,36 @@
+version: 0.2
+env:
+  variables:
+    TWINE_USERNAME: __token__
+  secrets-manager:
+    TWINE_PASSWORD: aws-codeseeder-launch-deployment-secrets:PyPiApiKey
+phases:
+  install:
+    runtime-versions:
+      python: 3.7
+      nodejs: 12
+    commands:
+      - python3 -m venv .venv
+      - . .venv/bin/activate
+      - pip install -r requirements-dev.txt
+      - pip install -r requirements.txt
+      - pip install -e .
+  pre_build:
+    commands:
+      - . .venv/bin/activate
+      - ./validate.sh
+      - pytest
+      - pyroma .
+      - check-manifest -c
+  build:
+    commands:
+      - . .venv/bin/activate
+      - python setup.py bdist_wheel
+  post_build:
+    commands:
+      - echo "pushing to pypi"
+      # - twine upload dist/*
+artifacts:
+  files:
+    - dist/**/*
+  discard-paths: yes
