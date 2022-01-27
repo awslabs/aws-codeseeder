@@ -18,7 +18,7 @@ phases:
   pre_build:
     commands:
       - . .venv/bin/activate
-      - ./validate.sh
+      - cd aws_codeseeder && ./validate.sh && cd -
       - pytest
       - pyroma .
       - check-manifest -c
