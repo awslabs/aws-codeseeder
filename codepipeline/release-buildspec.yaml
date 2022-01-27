@@ -23,7 +23,7 @@ phases:
       - pytest
       - codeseeder destroy seedkit test
       - pyroma .
-      - check-manifest -c
+      - check-manifest -u
   build:
     commands:
       - . .venv/bin/activate
