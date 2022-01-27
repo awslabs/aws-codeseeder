@@ -19,7 +19,9 @@ phases:
     commands:
       - . .venv/bin/activate
       - cd aws_codeseeder && ../validate.sh && cd -
+      - codeseeder deploy seedkit test
       - pytest
+      - codeseeder destroy seedkit test
       - pyroma .
       - check-manifest -c
   build:
