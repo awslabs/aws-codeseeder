@@ -3,7 +3,7 @@ env:
   variables:
     TWINE_USERNAME: __token__
   secrets-manager:
-    TWINE_PASSWORD: aws-codeseeder-deployment-secrets:PyPiApiKey
+    TWINE_PASSWORD: aws-codeseeder-deployment-secrets:TestPyPiApiKey
 phases:
   install:
     runtime-versions:
@@ -13,9 +13,15 @@ phases:
       - python3 -m venv .venv
       - . .venv/bin/activate
       - pip install -r requirements-dev.txt
+      - pip install -r requirements.txt
+      - pip install -e .
   pre_build:
     commands:
       - . .venv/bin/activate
+      # - cd aws_codeseeder && ../validate.sh && cd -
+      # - codeseeder deploy seedkit test
+      # - pytest
+      # - codeseeder destroy seedkit test
       - pyroma .
   build:
     commands:
@@ -23,8 +29,8 @@ phases:
       - python setup.py bdist_wheel
   post_build:
     commands:
-      - echo "pushing to pypi"
-      # - twine upload dist/*
+      - echo 'upload to test pypi'
+      # - twine upload --repository testpypi dist/*
 artifacts:
   files:
     - dist/**/*
