@@ -18,10 +18,10 @@ phases:
   pre_build:
     commands:
       - . .venv/bin/activate
-      # - cd aws_codeseeder && ../validate.sh && cd -
-      # - codeseeder deploy seedkit test
-      # - pytest
-      # - codeseeder destroy seedkit test
+      - cd aws_codeseeder && ../validate.sh && cd -
+      - codeseeder deploy seedkit test
+      - pytest
+      - codeseeder destroy seedkit test
       - pyroma .
   build:
     commands:
@@ -29,8 +29,7 @@ phases:
       - python setup.py bdist_wheel
   post_build:
     commands:
-      - echo 'upload to test pypi'
-      # - twine upload --repository testpypi dist/*
+      - twine upload --repository testpypi dist/*
 artifacts:
   files:
     - dist/**/*
