@@ -23,8 +23,7 @@ phases:
       - python setup.py bdist_wheel
   post_build:
     commands:
-      - echo "pushing to pypi"
-      # - twine upload dist/*
+      - twine upload dist/*
 artifacts:
   files:
     - dist/**/*
