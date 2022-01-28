@@ -72,30 +72,34 @@ pipeline = codepipeline.Pipeline(
                 )
             ],
         ),
-        # codepipeline.StageProps(
-        #     stage_name="Self-Update",
-        #     actions=[
-        #         codepipeline_actions.CodeBuildAction(
-        #             action_name="Self_Deploy",
-        #             project=codebuild.PipelineProject(
-        #                 stack,
-        #                 "CodePipelineBuild",
-        #                 build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/pipelines-buildspec.yaml"),
-        #                 role=code_build_role,
-        #                 environment=codebuild.BuildEnvironment(
-        #                     build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
-        #                     environment_variables={
-        #                         "PROJECT_DIR": codebuild.BuildEnvironmentVariable(value="codepipeline"),
-        #                         "STACK_FILE": codebuild.BuildEnvironmentVariable(value="release_pipeline.py"),
-        #                     },
-        #                 ),
-        #             ),
-        #             input=source_output,
-        #         )
-        #     ],
-        # ),
         codepipeline.StageProps(
-            stage_name="PyPi-Release",
+            stage_name="Test",
+            actions=[
+                codepipeline_actions.CodeBuildAction(
+                    action_name="Test",
+                    project=codebuild.PipelineProject(
+                        stack,
+                        "TestBuild",
+                        build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/test-buildspec.yaml"),
+                        role=code_build_role,
+                        environment=codebuild.BuildEnvironment(
+                            build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
+                        ),
+                    ),
+                    input=source_output
+                )
+            ],
+        ),
+        codepipeline.StageProps(
+            stage_name="Approval-For-Release",
+            actions=[
+                codepipeline_actions.ManualApprovalAction(
+                    action_name="Approve_Release"
+                )
+            ]
+        ),
+        codepipeline.StageProps(
+            stage_name="Pypi-Release",
             actions=[
                 codepipeline_actions.CodeBuildAction(
                     action_name="PyPi_Release",
