@@ -10,7 +10,7 @@
                 }
             },
             "github-owner": "awslabs",
-            "github-branch": "cicd"
+            "github-branch": "stable"
         }
     }
 }
