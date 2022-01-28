@@ -98,6 +98,8 @@ junit-xml==1.9
     # via cfn-lint
 lazy-object-proxy==1.7.1
     # via astroid
+keyring==23.5.0
+    # via twine
 markdown-it-py==2.0.0
     # via
     #   mdit-py-plugins
@@ -137,6 +139,8 @@ pep517==0.12.0
     #   pip-tools
 pip-tools==6.4.0
     # via -r requirements-dev.in
+pkginfo==1.8.2
+    # via twine
 platformdirs==2.4.0
     # via black
 pluggy==1.0.0
@@ -175,10 +179,16 @@ pyyaml==5.4.1
     #   cfn-lint
     #   myst-parser
     #   sphinx-autoapi
+readme-renderer==32.0
+    # via twine
 requests==2.26.0
     # via
     #   pyroma
     #   sphinx
+requests-toolbelt==0.9.1
+    # via twine
+rfc3986==2.0.0
+    # via twine
 rsa==4.7.2
     # via awscli
 s3transfer==0.5.0
@@ -228,6 +238,10 @@ tomli==1.2.3
     #   build
     #   mypy
     #   pep517
+tqdm==4.62.3
+    # via twine
+twine==3.7.1
+    # via -r requirements-dev.in
 typed-ast==1.5.1
     # via
     #   astroid
