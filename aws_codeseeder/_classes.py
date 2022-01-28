@@ -59,6 +59,8 @@ class CodeSeederConfig:
         Name and Location of local directories to bundle and include in the CodeBuild exeuction,by default None
     files : Optional[Dict[str, str]], optional
         Name and Location of local files to bundle and include in the CodeBuild execution, by default None
+    env_vars : Optional[Dict[str, str]], optional
+        Environment variables to set in the CodeBuild execution, by default None
     """
 
     timeout: Optional[int] = 30
@@ -75,6 +77,7 @@ class CodeSeederConfig:
     post_build_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     dirs: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
     files: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
+    env_vars: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
 
 
 ConfigureFn = Callable[[NamedArg(CodeSeederConfig, "configuration")], None]  # noqa: F821

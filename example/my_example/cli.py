@@ -69,7 +69,26 @@ def configure(configuration: codeseeder.CodeSeederConfig) -> None:
     configuration.files = {"README.md": os.path.realpath(os.path.join(CLI_ROOT, "../README.md"))}
 
 
+@codeseeder.remote_function(
+    "my-example",
+    codebuild_log_callback=print_results_callback,
+    extra_env_vars={"MY_EXAMPLE_NAME": "Maggie"}
+)
 def remote_hello_world_1(name: str) -> None:
+    """A simple ``codeseeder.remote_function`` example with a local callback for CodeBuild Log messages
+
+    Parameters
+    ----------
+    name : str
+        Just some example name
+    """
+    print(f"[RESULT] {name}")
+    with open(os.path.join(BUNDLE_ROOT, "README.md"), "r") as readme_file:
+        for line in readme_file.readlines():
+            print(f"[RESULT] {line.strip()}")
+
+
+def remote_hello_world_2(name: str) -> None:
     """Demonstration of an advanced function decoration
 
     Here the decorated ``codeseeder.remote_function`` is nested in another function. At times in may be necessary to
@@ -100,28 +119,10 @@ def remote_hello_world_1(name: str) -> None:
         codebuild_role=codebuild_role,
         extra_files={"VERSION": os.path.realpath(os.path.join(CLI_ROOT, "../VERSION"))},
     )
-    def remote_hello_world_1(name: str) -> None:
+    def remote_hello_world_2(name: str) -> None:
         print(f"[RESULT] {name}")
 
-    remote_hello_world_1(name)
-
-
-@codeseeder.remote_function(
-    "my-example",
-    codebuild_log_callback=print_results_callback,
-)
-def remote_hello_world_2(name: str) -> None:
-    """A simple ``codeseeder.remote_function`` example with a local callback for CodeBuild Log messages
-
-    Parameters
-    ----------
-    name : str
-        Just some example name
-    """
-    print(f"[RESULT] {name}")
-    with open(os.path.join(BUNDLE_ROOT, "README.md"), "r") as readme_file:
-        for line in readme_file.readlines():
-            print(f"[RESULT] {line.strip()}")
+    remote_hello_world_2(name)
 
 
 def deploy_test_stack() -> None:

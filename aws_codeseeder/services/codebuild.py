@@ -261,6 +261,7 @@ def generate_spec(
     cmds_pre: Optional[List[str]] = None,
     cmds_build: Optional[List[str]] = None,
     cmds_post: Optional[List[str]] = None,
+    env_vars: Optional[Dict[str, str]] = None
 ) -> SPEC_TYPE:
     """Generate a BuildSpec for a CodeBuild execution
 
@@ -285,6 +286,7 @@ def generate_spec(
     pre: List[str] = [] if cmds_pre is None else cmds_pre
     build: List[str] = [] if cmds_build is None else cmds_build
     post: List[str] = [] if cmds_post is None else cmds_post
+    variables: Dict[str, str] = {} if env_vars is None else env_vars
     install = [
         (
             "aws codeartifact login --tool pip "
@@ -299,6 +301,10 @@ def generate_spec(
 
     return_spec: SPEC_TYPE = {
         "version": 0.2,
+        "env": {
+            "shell": "bash",
+            "variables": variables
+        },
         "phases": {
             "install": {
                 "runtime-versions": {"python": 3.7, "nodejs": 12, "docker": 19},
