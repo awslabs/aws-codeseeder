@@ -20,3 +20,5 @@ recursive-include docs *
 recursive-include example *
 recursive-include tests *.py
 recursive-exclude images *
+recursive-exclude docs/build *
+recursive-exclude codepipeline *
