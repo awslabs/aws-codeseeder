@@ -19,5 +19,5 @@ set -ex
 
 isort --check .
 black --check .
-mypy .
+mypy . --ignore-missing-imports
 flake8 .

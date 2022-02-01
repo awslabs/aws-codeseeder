@@ -16,3 +16,4 @@ sphinx-rtd-theme
 types-PyYAML
 types-setuptools
 changelog-cli
+twine
