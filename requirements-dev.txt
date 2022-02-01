@@ -36,6 +36,8 @@ certifi==2021.10.8
     # via requests
 cfn-lint==0.56.3
     # via -r requirements-dev.in
+changelog-cli==0.7.1
+    # via -r requirements-dev.in
 charset-normalizer==2.0.9
     # via requests
 check-manifest==0.47
@@ -43,6 +45,7 @@ check-manifest==0.47
 click==8.0.3
     # via
     #   black
+    #   changelog-cli
     #   pip-tools
 colorama==0.4.3
     # via awscli
