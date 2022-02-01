@@ -1,22 +1,33 @@
-# Change Log
+# CHANGELOG
 
 All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Changelog](http://keepachangelog.com/).
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## Unreleased
+---
 
-## [Unreleased]
-
-### Added
+### New
 
 - new `env_vars` and `extra_env_vars` parameters to set Environment Variables in the CodeBuild Execution
 
-## [0.1.5]
+### Changes
 
-### Added
+### Fixes
+
+### Breaks
+
+
+## 0.1.5  (2021-01-24)
+---
+
+### New
 
 - new EXECUTING_REMOTELY boolean to simplify conditional code executions
 
-### Changed
+### Changes
 
 - updated MODULE_IMPORTER determination (uses ENV var)
+
+### Fixes
+
 - fixed `aws_codeseeder.services` imports (eliminated circular imports)
