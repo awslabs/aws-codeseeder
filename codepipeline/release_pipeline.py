@@ -7,7 +7,6 @@ import os
 from aws_cdk import aws_codebuild as codebuild
 from aws_cdk import aws_codepipeline as codepipeline
 from aws_cdk import aws_codepipeline_actions as codepipeline_actions
-from aws_cdk import aws_codestarnotifications as notifications
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_s3 as s3
 from aws_cdk import core
@@ -77,17 +76,13 @@ pipeline = codepipeline.Pipeline(
                             build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
                         ),
                     ),
-                    input=source_output
+                    input=source_output,
                 )
             ],
         ),
         codepipeline.StageProps(
             stage_name="Approval-For-Release",
-            actions=[
-                codepipeline_actions.ManualApprovalAction(
-                    action_name="Approve_Release"
-                )
-            ]
+            actions=[codepipeline_actions.ManualApprovalAction(action_name="Approve_Release")],
         ),
         codepipeline.StageProps(
             stage_name="Pypi-Release",
@@ -107,7 +102,7 @@ pipeline = codepipeline.Pipeline(
                     outputs=[release_output],
                 )
             ],
-        )
+        ),
     ],
 )
 

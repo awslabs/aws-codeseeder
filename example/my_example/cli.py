@@ -70,9 +70,7 @@ def configure(configuration: codeseeder.CodeSeederConfig) -> None:
 
 
 @codeseeder.remote_function(
-    "my-example",
-    codebuild_log_callback=print_results_callback,
-    extra_env_vars={"MY_EXAMPLE_NAME": "Maggie"}
+    "my-example", codebuild_log_callback=print_results_callback, extra_env_vars={"MY_EXAMPLE_NAME": "Maggie"}
 )
 def remote_hello_world_1(name: str) -> None:
     """A simple ``codeseeder.remote_function`` example with a local callback for CodeBuild Log messages

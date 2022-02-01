@@ -61,7 +61,7 @@ def _execute_codebuild(
     stack_outputs: Dict[str, str],
     bundle_location: str,
     execution_id: str,
-    buildspec: codebuild.SPEC_TYPE,
+    buildspec: Dict[str, Any],
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
@@ -87,7 +87,7 @@ def _execute_codebuild(
 def run(
     stack_outputs: Dict[str, str],
     bundle_path: str,
-    buildspec: codebuild.SPEC_TYPE,
+    buildspec: Dict[str, Any],
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,

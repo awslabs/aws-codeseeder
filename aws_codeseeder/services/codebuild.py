@@ -15,7 +15,7 @@
 import time
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Union
+from typing import Any, Dict, Iterable, List, NamedTuple, Optional
 
 import botocore.exceptions
 import yaml
@@ -252,17 +252,14 @@ def wait(build_id: str) -> Iterable[BuildInfo]:
     )
 
 
-SPEC_TYPE = Dict[str, Union[float, Dict[str, Dict[str, Union[List[str], Dict[str, float]]]]]]
-
-
 def generate_spec(
     stack_outputs: Dict[str, str],
     cmds_install: Optional[List[str]] = None,
     cmds_pre: Optional[List[str]] = None,
     cmds_build: Optional[List[str]] = None,
     cmds_post: Optional[List[str]] = None,
-    env_vars: Optional[Dict[str, str]] = None
-) -> SPEC_TYPE:
+    env_vars: Optional[Dict[str, str]] = None,
+) -> Dict[str, Any]:
     """Generate a BuildSpec for a CodeBuild execution
 
     Parameters
@@ -280,7 +277,7 @@ def generate_spec(
 
     Returns
     -------
-    SPEC_TYPE
+    Dict[str, Any]
         A CodeBuild BuildSpec
     """
     pre: List[str] = [] if cmds_pre is None else cmds_pre
@@ -299,12 +296,9 @@ def generate_spec(
     if cmds_install is not None:
         install += cmds_install
 
-    return_spec: SPEC_TYPE = {
+    return_spec: Dict[str, Any] = {
         "version": 0.2,
-        "env": {
-            "shell": "bash",
-            "variables": variables
-        },
+        "env": {"shell": "bash", "variables": variables},
         "phases": {
             "install": {
                 "runtime-versions": {"python": 3.7, "nodejs": 12, "docker": 19},
