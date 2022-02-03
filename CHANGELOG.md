@@ -4,18 +4,25 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Changelog](http://keepachangelog.com/).
 
 
+
 ## Unreleased
 ---
 
 ### New
-* enable exported_env_vars from CodeBuild executions back to clients
-* enable JSON serializable return values from remote_functions back to clients
 
 ### Changes
 
 ### Fixes
 
 ### Breaks
+
+
+## 0.2.0 - (2022-02-03)
+---
+
+### New
+* enable exported_env_vars from CodeBuild executions back to clients
+* enable JSON serializable return values from remote_functions back to clients
 
 
 ## 0.1.6 - (2022-02-01)
