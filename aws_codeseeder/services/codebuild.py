@@ -88,6 +88,7 @@ class BuildInfo(NamedTuple):
     duration_in_seconds: float
     phases: List[BuildPhase]
     logs: BuildCloudWatchLogs
+    exported_env_vars: Dict[str, str]
 
 
 def start(
@@ -184,6 +185,7 @@ def fetch_build_info(build_id: str) -> BuildInfo:
         start_time=build["startTime"],
         end_time=build.get("endTime", now),
         duration_in_seconds=(build.get("endTime", now) - build["startTime"]).total_seconds(),
+        exported_env_vars={d["name"]: d["value"] for d in build.get("exportedEnvironmentVariables", [])},
         phases=[
             BuildPhase(
                 phase_type=BuildPhaseType(value=p["phaseType"]),
@@ -259,6 +261,7 @@ def generate_spec(
     cmds_build: Optional[List[str]] = None,
     cmds_post: Optional[List[str]] = None,
     env_vars: Optional[Dict[str, str]] = None,
+    exported_env_vars: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
     """Generate a BuildSpec for a CodeBuild execution
 
@@ -274,6 +277,10 @@ def generate_spec(
         Additional commands to run during the Build phase of the CodeBuild execution, by default None
     cmds_post : Optional[List[str]], optional
         Additional commands to run during the PostBuild phase of the CodeBuild execution, by default None
+    env_vars: Optional[Dict[str, str]], optional
+        Environment variables to set in the CodeBuild execution, by default None
+    exported_env_vars: Optional[List[str]], optional
+        Environment variables to export from the CodeBuild execution, by default None
 
     Returns
     -------
@@ -284,6 +291,8 @@ def generate_spec(
     build: List[str] = [] if cmds_build is None else cmds_build
     post: List[str] = [] if cmds_post is None else cmds_post
     variables: Dict[str, str] = {} if env_vars is None else env_vars
+    exported_variables: List[str] = [] if exported_env_vars is None else exported_env_vars
+    exported_variables.append("AWS_CODESEEDER_OUTPUT")
     install = [
         (
             "aws codeartifact login --tool pip "
@@ -298,7 +307,7 @@ def generate_spec(
 
     return_spec: Dict[str, Any] = {
         "version": 0.2,
-        "env": {"shell": "bash", "variables": variables},
+        "env": {"shell": "bash", "variables": variables, "exported-variables": exported_variables},
         "phases": {
             "install": {
                 "runtime-versions": {"python": 3.7, "nodejs": 12, "docker": 19},

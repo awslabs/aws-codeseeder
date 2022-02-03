@@ -13,7 +13,9 @@
 #    limitations under the License.
 
 import functools
+import json
 import os
+import textwrap
 from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 
 from aws_codeseeder import LOGGER, __version__, _bundle, _classes, _remote
@@ -38,6 +40,7 @@ MODULE_IMPORTER = (
 EXECUTING_REMOTELY = os.environ.get("AWS_CODESEEDEER_CLI_EXECUTING", "No") == "Yes"
 
 SEEDKIT_REGISTRY: Dict[str, _classes.RegistryEntry] = {}
+RESULT_EXPORT_FILE = "/tmp/codeseeder_export.sh"
 
 
 def configure(
@@ -92,6 +95,7 @@ def remote_function(
     extra_dirs: Optional[Dict[str, str]] = None,
     extra_files: Optional[Dict[str, str]] = None,
     extra_env_vars: Optional[Dict[str, str]] = None,
+    extra_exported_env_vars: Optional[List[str]] = None,
     bundle_id: Optional[str] = None,
 ) -> RemoteFunctionDecorator:
     """Decorator marking a Remote Function
@@ -142,6 +146,8 @@ def remote_function(
         Name and Location of additional local files to bundle and include in the CodeBuild execution, by default None
     extra_env_vars : Optional[Dict[str, str]], optional
         Additional environment variables to set in the CodeBuild execution, by default None
+    extra_exported_env_vars : Optional[List[str]], optional
+        Additional environment variables to export from the CodeBuild execution, by default None
     bundle_id : Optional[str], optional
         Optional identifier to uniquely identify a bundle locally when multiple ``remote_functions`` are executed
         concurrently, by default None
@@ -181,6 +187,7 @@ def remote_function(
         dirs = decorator.dirs  # type: ignore
         files = decorator.files  # type: ignore
         env_vars = decorator.env_vars  # type: ignore
+        exported_env_vars = decorator.exported_env_vars  # type: ignore
 
         if not registry_entry.configured:
             if registry_entry.config_function:
@@ -208,6 +215,7 @@ def remote_function(
         dirs = {**cast(Mapping[str, str], config_object.dirs), **dirs}
         files = {**cast(Mapping[str, str], config_object.files), **files}
         env_vars = {**cast(Mapping[str, str], config_object.env_vars), **env_vars}
+        exported_env_vars = config_object.exported_env_vars + exported_env_vars
 
         LOGGER.debug("MODULE_IMPORTER: %s", MODULE_IMPORTER)
         LOGGER.debug("EXECUTING_REMOTELY: %s", EXECUTING_REMOTELY)
@@ -226,7 +234,22 @@ def remote_function(
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             if EXECUTING_REMOTELY:
                 # Exectute the module
-                return func(*args, **kwargs)
+                result = func(*args, **kwargs)
+                LOGGER.debug("result: %s", result)
+                if result is not None:
+                    with open(RESULT_EXPORT_FILE, "w") as file:
+                        LOGGER.debug("writing env export file: %s", RESULT_EXPORT_FILE)
+                        file.write(
+                            textwrap.dedent(
+                                f"""\
+                            read -r -d '' AWS_CODESEEDER_OUTPUT <<'EOF'
+                            {json.dumps(result)}
+                            EOF
+                        """
+                            )
+                        )
+                        file.write("export AWS_CODESEEDER_OUTPUT")
+                return result
             else:
                 # Bundle and execute remotely in codebuild
                 LOGGER.info("Beginning Remote Execution: %s", fn_id)
@@ -268,6 +291,10 @@ def remote_function(
                         ". ~/.venv/bin/activate",
                         "cd ${CODEBUILD_SRC_DIR}/bundle",
                         "codeseeder execute --args-file fn_args.json --debug",
+                        (
+                            f"if [[ -f {RESULT_EXPORT_FILE} ]]; then source {RESULT_EXPORT_FILE}; "
+                            "else echo 'No return value to export'; fi"
+                        ),
                     ]
                     + build_commands,
                     cmds_post=[
@@ -275,6 +302,7 @@ def remote_function(
                         "cd ${CODEBUILD_SRC_DIR}/bundle",
                     ]
                     + post_build_commands,
+                    exported_env_vars=exported_env_vars,
                 )
 
                 overrides = {}
@@ -291,7 +319,7 @@ def remote_function(
                         {"name": k, "value": v, "type": "PLAINTEXT"} for k, v in env_vars.items()
                     ]
 
-                _remote.run(
+                build_info = _remote.run(
                     stack_outputs=cast(Dict[str, str], stack_outputs),
                     bundle_path=bundle_zip,
                     buildspec=buildspec,
@@ -299,6 +327,17 @@ def remote_function(
                     codebuild_log_callback=codebuild_log_callback,
                     overrides=overrides if overrides != {} else None,
                 )
+                if build_info:
+                    LOGGER.debug("exported_env_vars: %s", build_info.exported_env_vars)
+                    codeseeder_output = build_info.exported_env_vars.pop("AWS_CODESEEDER_OUTPUT", None)
+                    codeseeder_output = json.loads(codeseeder_output) if codeseeder_output else None
+                    return (
+                        (codeseeder_output, build_info.exported_env_vars)
+                        if build_info.exported_env_vars != {}
+                        else codeseeder_output
+                    )
+                else:
+                    return None
 
         registry_entry.remote_functions[fn_id] = wrapper
         return wrapper
@@ -319,5 +358,6 @@ def remote_function(
     decorator.dirs = {} if extra_dirs is None else extra_dirs  # type: ignore
     decorator.files = {} if extra_files is None else extra_files  # type: ignore
     decorator.env_vars = {} if extra_env_vars is None else extra_env_vars  # type: ignore
+    decorator.exported_env_vars = [] if extra_exported_env_vars is None else extra_exported_env_vars  # type: ignore
 
     return decorator
