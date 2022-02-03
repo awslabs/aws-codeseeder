@@ -36,9 +36,10 @@ def _wait_execution(
     build_id: str,
     stream_name_prefix: str,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
-) -> None:
+) -> Optional[codebuild.BuildInfo]:
     start_time: Optional[datetime] = None
     stream_name: Optional[str] = None
+    status: Optional[codebuild.BuildInfo] = None
     for status in codebuild.wait(build_id=build_id):
         if status.logs.enabled and status.logs.group_name:
             if stream_name is None:
@@ -55,6 +56,7 @@ def _wait_execution(
                 _print_codebuild_logs(events=events.events, codebuild_log_callback=codebuild_log_callback)
                 if events.last_timestamp is not None:
                     start_time = events.last_timestamp + timedelta(milliseconds=1)
+    return status
 
 
 def _execute_codebuild(
@@ -65,7 +67,7 @@ def _execute_codebuild(
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
-) -> None:
+) -> Optional[codebuild.BuildInfo]:
     LOGGER.debug("bundle_location: %s", bundle_location)
     stream_name_prefix = f"codeseeder-{execution_id}"
     LOGGER.debug("stream_name_prefix: %s", stream_name_prefix)
@@ -77,7 +79,7 @@ def _execute_codebuild(
         timeout=timeout,
         overrides=overrides,
     )
-    _wait_execution(
+    return _wait_execution(
         build_id=build_id,
         stream_name_prefix=stream_name_prefix,
         codebuild_log_callback=codebuild_log_callback,
@@ -91,13 +93,13 @@ def run(
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
-) -> None:
+) -> Optional[codebuild.BuildInfo]:
     execution_id = "".join(random.choice(string.ascii_lowercase) for i in range(8))
     key: str = f"codeseeder/{execution_id}/bundle.zip"
     bucket = stack_outputs["Bucket"]
     s3.delete_objects(bucket=bucket, keys=[key])
     s3.upload_file(src=bundle_path, bucket=bucket, key=key)
-    _execute_codebuild(
+    build_info = _execute_codebuild(
         stack_outputs=stack_outputs,
         bundle_location=f"{bucket}/{key}",
         execution_id=execution_id,
@@ -107,3 +109,4 @@ def run(
         overrides=overrides,
     )
     s3.delete_objects(bucket=bucket, keys=[key])
+    return build_info

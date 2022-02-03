@@ -8,6 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+* enable exported_env_vars from CodeBuild executions back to clients
+* enable JSON serializable return values from remote_functions back to clients
 
 ### Changes
 
@@ -20,21 +22,17 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
-
-- new `env_vars` and `extra_env_vars` parameters to set Environment Variables in the CodeBuild Execution
+* new `env_vars` and `extra_env_vars` parameters to set Environment Variables in the CodeBuild Execution
 
 
 ## 0.1.5  (2021-01-24)
 ---
 
 ### New
-
-- new EXECUTING_REMOTELY boolean to simplify conditional code executions
+* new EXECUTING_REMOTELY boolean to simplify conditional code executions
 
 ### Changes
-
-- updated MODULE_IMPORTER determination (uses ENV var)
+* updated MODULE_IMPORTER determination (uses ENV var)
 
 ### Fixes
-
-- fixed `aws_codeseeder.services` imports (eliminated circular imports)
+* fixed `aws_codeseeder.services` imports (eliminated circular imports)
