@@ -262,6 +262,8 @@ def generate_spec(
     cmds_post: Optional[List[str]] = None,
     env_vars: Optional[Dict[str, str]] = None,
     exported_env_vars: Optional[List[str]] = None,
+    runtime_versions: Optional[Dict[str, str]] = None,
+    abort_phases_on_failure: bool = True,
 ) -> Dict[str, Any]:
     """Generate a BuildSpec for a CodeBuild execution
 
@@ -305,18 +307,31 @@ def generate_spec(
     if cmds_install is not None:
         install += cmds_install
 
+    on_failure = "ABORT" if abort_phases_on_failure else "CONTINUE"
     return_spec: Dict[str, Any] = {
         "version": 0.2,
         "env": {"shell": "bash", "variables": variables, "exported-variables": exported_variables},
         "phases": {
             "install": {
-                "runtime-versions": {"python": 3.7, "nodejs": 12, "docker": 19},
                 "commands": install,
+                "on-failure": on_failure,
             },
-            "pre_build": {"commands": pre},
-            "build": {"commands": build},
-            "post_build": {"commands": post},
+            "pre_build": {
+                "commands": pre,
+                "on-failure": on_failure,
+            },
+            "build": {
+                "commands": build,
+                "on-failure": on_failure,
+            },
+            "post_build": {
+                "commands": post,
+                "on-failure": on_failure,
+            },
         },
     }
+    if runtime_versions:
+        return_spec["phases"]["install"]["runtime-versions"] = runtime_versions
+
     LOGGER.debug(return_spec)
     return return_spec

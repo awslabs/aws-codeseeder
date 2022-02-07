@@ -96,6 +96,8 @@ def remote_function(
     extra_files: Optional[Dict[str, str]] = None,
     extra_env_vars: Optional[Dict[str, str]] = None,
     extra_exported_env_vars: Optional[List[str]] = None,
+    abort_phases_on_failure: Optional[bool] = None,
+    runtime_versions: Optional[Dict[str, str]] = None,
     bundle_id: Optional[str] = None,
 ) -> RemoteFunctionDecorator:
     """Decorator marking a Remote Function
@@ -151,6 +153,10 @@ def remote_function(
     bundle_id : Optional[str], optional
         Optional identifier to uniquely identify a bundle locally when multiple ``remote_functions`` are executed
         concurrently, by default None
+    abort_phases_on_failure: Optional[bool], optional
+        Override default abort of CodeBuild Phases when an execution failure occurs, by default None
+    runtime_versions: Optional[Dict[str, str]], optional
+        Override default runtime versions (e.g. python, nodejs) to install, by default None
 
     Returns
     -------
@@ -188,6 +194,8 @@ def remote_function(
         files = decorator.files  # type: ignore
         env_vars = decorator.env_vars  # type: ignore
         exported_env_vars = decorator.exported_env_vars  # type: ignore
+        abort_on_failure = decorator.abort_on_failure  # type: ignore
+        runtimes = decorator.runtimes  # type: ignore
 
         if not registry_entry.configured:
             if registry_entry.config_function:
@@ -216,6 +224,8 @@ def remote_function(
         files = {**cast(Mapping[str, str], config_object.files), **files}
         env_vars = {**cast(Mapping[str, str], config_object.env_vars), **env_vars}
         exported_env_vars = config_object.exported_env_vars + exported_env_vars
+        abort_on_failure = abort_on_failure if abort_on_failure is not None else config_object.abort_phases_on_failure
+        runtimes = runtimes if runtimes is not None else config_object.runtime_versions
 
         LOGGER.debug("MODULE_IMPORTER: %s", MODULE_IMPORTER)
         LOGGER.debug("EXECUTING_REMOTELY: %s", EXECUTING_REMOTELY)
@@ -242,10 +252,10 @@ def remote_function(
                         file.write(
                             textwrap.dedent(
                                 f"""\
-                            read -r -d '' AWS_CODESEEDER_OUTPUT <<'EOF'
-                            {json.dumps(result)}
-                            EOF
-                        """
+                                read -r -d '' AWS_CODESEEDER_OUTPUT <<'EOF'
+                                {json.dumps(result)}
+                                EOF
+                                """
                             )
                         )
                         file.write("export AWS_CODESEEDER_OUTPUT")
@@ -303,6 +313,8 @@ def remote_function(
                     ]
                     + post_build_commands,
                     exported_env_vars=exported_env_vars,
+                    abort_phases_on_failure=abort_on_failure,
+                    runtime_versions=runtimes,
                 )
 
                 overrides = {}
@@ -359,5 +371,7 @@ def remote_function(
     decorator.files = {} if extra_files is None else extra_files  # type: ignore
     decorator.env_vars = {} if extra_env_vars is None else extra_env_vars  # type: ignore
     decorator.exported_env_vars = [] if extra_exported_env_vars is None else extra_exported_env_vars  # type: ignore
+    decorator.abort_on_failure = abort_phases_on_failure  # type: ignore
+    decorator.runtimes = runtime_versions  # type: ignore
 
     return decorator
