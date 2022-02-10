@@ -49,7 +49,7 @@ def _wait_for_changeset(changeset_id: str, stack_name: str) -> bool:
 def _create_changeset(
     stack_name: str,
     template_str: str,
-    seedkit_tag: str,
+    seedkit_tag: Optional[str] = None,
     template_path: str = "",
     parameters: Optional[Dict[str, str]] = None,
 ) -> Tuple[str, str]:
@@ -58,14 +58,15 @@ def _create_changeset(
     changeset_name = CHANGESET_PREFIX + str(int(time.time()))
     stack_exist, _ = does_stack_exist(stack_name=stack_name)
     changeset_type = "UPDATE" if stack_exist else "CREATE"
-    kwargs = {
+    kwargs: Dict[str, Any] = {
         "ChangeSetName": changeset_name,
         "StackName": stack_name,
         "ChangeSetType": changeset_type,
         "Capabilities": ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"],
         "Description": description,
-        "Tags": ({"Key": "codeseeder-seedkit-name", "Value": seedkit_tag},),
     }
+    if seedkit_tag:
+        kwargs.update({"Tags": [{"Key": "codeseeder-seedkit", "Value": seedkit_tag}]})
     if template_str:
         kwargs.update({"TemplateBody": template_str})
     elif template_path:
@@ -170,7 +171,7 @@ def does_stack_exist(stack_name: str) -> Tuple[bool, Dict[str, str]]:
 def deploy_template(
     stack_name: str,
     filename: str,
-    seedkit_tag: str,
+    seedkit_tag: Optional[str] = None,
     s3_bucket: Optional[str] = None,
     parameters: Optional[Dict[str, str]] = None,
 ) -> None:
@@ -185,8 +186,8 @@ def deploy_template(
         Name of the CloudFormation Stack to deploy
     filename : str
         Name of the local CloudFormation template file
-    seedkit_tag : str
-        Name of the Seedkit to Tag resources in the Stack with
+    seedkit_tag : Optional[str], optional
+        Name of the Seedkit to Tag resources in the Stack with, by default None
     s3_bucket : Optional[str], optional
         S3 Bucket to upload the template file to if it is too large (> 51200), by default None
     parameters: Optional[Dict[str, str]], optional
