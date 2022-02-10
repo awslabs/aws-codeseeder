@@ -1,13 +1,8 @@
 import logging
 import os
-from string import Template
 from typing import Dict, Optional
 
-import yaml
-from cfn_flip import yaml_dumper
-from cfn_tools import load_yaml
-
-from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, create_output_dir, services
+from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, services
 
 DEBUG_LOGGING_FORMAT = "[%(asctime)s][%(filename)-13s:%(lineno)3d] %(message)s"
 CLI_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -143,21 +138,13 @@ def deploy_test_stack() -> None:
 
         if not test_stack_exists:
             _logger.info("Deploying Test Stack")
-            src_filename = os.path.join(CLI_ROOT, "resources", "template.yaml")
-            with open(src_filename, "r") as src_file:
-                src_template = load_yaml(src_file)
-
-            src_template["Resources"]["CodeArtifactPolicy"]["Properties"]["Roles"] = [stack_outputs["CodeBuildRole"]]
-
-            dst_template = Template(yaml.dump(src_template, Dumper=yaml_dumper.get_dumper()))
-
-            dst_dir = create_output_dir("my-example")
-            dst_filename = os.path.join(dst_dir, "template.yaml")
-            with open(dst_filename, "w") as dst_file:
-                dst_file.write(
-                    dst_template.safe_substitute(account_id=services.get_account_id(), region=services.get_region())
-                )
-            services.cfn.deploy_template(stack_name=test_stack_name, filename=dst_filename, seedkit_tag="my-example")
+            template_filename = os.path.join(CLI_ROOT, "resources", "template.yaml")
+            services.cfn.deploy_template(
+                stack_name=test_stack_name,
+                filename=template_filename,
+                seedkit_tag="my-example",
+                parameters={"RoleName": stack_outputs["CodeBuildRole"]},
+            )
         else:
             _logger.info("Test Stack already exists")
 

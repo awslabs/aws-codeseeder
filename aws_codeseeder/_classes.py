@@ -63,6 +63,11 @@ class CodeSeederConfig:
         Environment variables to set in the CodeBuild execution, by default None
     exported_env_vars : Optional[List[str], optional
         Environment variables to export from the CodeBuild execution, by default None
+    abort_phases_on_failure: bool
+        Toggle aborting CodeBuild Phases when an execution failure occurs, by default True
+    runtime_versions: Optional[Dict[str, str]], optional
+        Runtime versions (e.g. python, nodejs) to install, by default
+        ``{"python": "3.7", "nodejs": "12", "docker": "19"}``
     """
 
     timeout: Optional[int] = 30
@@ -81,6 +86,10 @@ class CodeSeederConfig:
     files: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
     env_vars: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
     exported_env_vars: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
+    abort_phases_on_failure: bool = True
+    runtime_versions: Optional[Dict[str, str]] = dataclasses.field(
+        default_factory=lambda: {"python": "3.7", "nodejs": "12", "docker": "19"}
+    )
 
 
 ConfigureFn = Callable[[NamedArg(CodeSeederConfig, "configuration")], None]  # noqa: F821
