@@ -170,7 +170,7 @@ def does_stack_exist(stack_name: str) -> Tuple[bool, Dict[str, str]]:
 def deploy_template(
     stack_name: str,
     filename: str,
-    seedkit_tag: str,
+    seedkit_tag: Optional[str] = None,
     s3_bucket: Optional[str] = None,
     parameters: Optional[Dict[str, str]] = None,
 ) -> None:
