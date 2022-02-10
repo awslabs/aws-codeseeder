@@ -167,7 +167,13 @@ def does_stack_exist(stack_name: str) -> Tuple[bool, Dict[str, str]]:
         raise
 
 
-def deploy_template(stack_name: str, filename: str, seedkit_tag: str, s3_bucket: Optional[str] = None, parameters: Optional[Dict[str, str]] = None) -> None:
+def deploy_template(
+    stack_name: str,
+    filename: str,
+    seedkit_tag: str,
+    s3_bucket: Optional[str] = None,
+    parameters: Optional[Dict[str, str]] = None,
+) -> None:
     """Deploy a local CloudFormation Template
 
     The function will automatically calculate a ChangeSet if the Stack already exists and update accordingly. If the
