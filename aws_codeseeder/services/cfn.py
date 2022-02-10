@@ -46,7 +46,13 @@ def _wait_for_changeset(changeset_id: str, stack_name: str) -> bool:
     return True
 
 
-def _create_changeset(stack_name: str, template_str: str, seedkit_tag: str, template_path: str = "") -> Tuple[str, str]:
+def _create_changeset(
+    stack_name: str,
+    template_str: str,
+    seedkit_tag: str,
+    template_path: str = "",
+    parameters: Optional[Dict[str, str]] = None,
+) -> Tuple[str, str]:
     now = datetime.utcnow().isoformat()
     description = f"Created by AWS CodeSeeder CLI at {now} UTC"
     changeset_name = CHANGESET_PREFIX + str(int(time.time()))
@@ -65,6 +71,8 @@ def _create_changeset(stack_name: str, template_str: str, seedkit_tag: str, temp
     elif template_path:
         LOGGER.info(f"template_path={template_path}")
         kwargs.update({"TemplateURL": template_path})
+    if parameters:
+        kwargs.update({"Parameters": [{"ParameterKey": k, "ParameterValue": v} for k, v in parameters.items()]})
     resp = boto3_client("cloudformation").create_change_set(**kwargs)
     return str(resp["Id"]), changeset_type
 
@@ -159,7 +167,7 @@ def does_stack_exist(stack_name: str) -> Tuple[bool, Dict[str, str]]:
         raise
 
 
-def deploy_template(stack_name: str, filename: str, seedkit_tag: str, s3_bucket: Optional[str] = None) -> None:
+def deploy_template(stack_name: str, filename: str, seedkit_tag: str, s3_bucket: Optional[str] = None, parameters: Optional[Dict[str, str]] = None) -> None:
     """Deploy a local CloudFormation Template
 
     The function will automatically calculate a ChangeSet if the Stack already exists and update accordingly. If the
@@ -175,6 +183,8 @@ def deploy_template(stack_name: str, filename: str, seedkit_tag: str, s3_bucket:
         Name of the Seedkit to Tag resources in the Stack with
     s3_bucket : Optional[str], optional
         S3 Bucket to upload the template file to if it is too large (> 51200), by default None
+    parameters: Optional[Dict[str, str]], optional
+        Key/Value set of Input Parameters to pass to the CloudFormation stack, by default None
 
     Raises
     ------
@@ -204,7 +214,7 @@ def deploy_template(stack_name: str, filename: str, seedkit_tag: str, s3_bucket:
         with open(filename, "r") as handle:
             template_str = handle.read()
         changeset_id, changeset_type = _create_changeset(
-            stack_name=stack_name, template_str=template_str, seedkit_tag=seedkit_tag
+            stack_name=stack_name, template_str=template_str, seedkit_tag=seedkit_tag, parameters=parameters
         )
     has_changes = _wait_for_changeset(changeset_id, stack_name)
     if has_changes:
