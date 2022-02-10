@@ -9,15 +9,21 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
-* services.cfn.deploy_template supports input parameters
-* Enable toggling aborting CodeBuild phases on command execution failure
-* Support CodeBuild spec runtime-versions
 
 ### Changes
 
 ### Fixes
 
 ### Breaks
+
+
+## 0.2.1 - (2022-02-10)
+---
+
+### New
+* services.cfn.deploy_template supports input parameters
+* Enable toggling aborting CodeBuild phases on command execution failure
+* Support CodeBuild spec runtime-versions
 
 
 ## 0.2.0 - (2022-02-03)
