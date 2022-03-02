@@ -16,7 +16,7 @@ FROM public.ecr.aws/ubuntu/ubuntu:20.04 AS core
 
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG BOTO_VERSION=1.18.0
-ARG CDK_VERSION=1.100.0
+ARG CDK_VERSION=1.114.0
 
 # Install git, SSH, and other utilities
 RUN set -ex \
