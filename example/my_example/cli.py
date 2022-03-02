@@ -59,7 +59,7 @@ def configure(configuration: codeseeder.CodeSeederConfig) -> None:
         "my-example": os.path.realpath(os.path.join(CLI_ROOT, "../")),
     }
     configuration.requirements_files = {"my-example": os.path.realpath(os.path.join(CLI_ROOT, "../requirements.txt"))}
-    configuration.install_commands = ["npm install -g aws-cdk@1.100.0"]
+    configuration.install_commands = ["npm install -g aws-cdk@1.114.0"]
     configuration.dirs = {"images": os.path.realpath(os.path.join(CLI_ROOT, "../images"))}
     configuration.files = {"README.md": os.path.realpath(os.path.join(CLI_ROOT, "../README.md"))}
 
