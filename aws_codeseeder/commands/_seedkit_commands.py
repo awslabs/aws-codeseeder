@@ -18,7 +18,7 @@ from aws_codeseeder import LOGGER, _cfn_seedkit
 from aws_codeseeder.services import cfn, s3
 
 
-def deploy_seedkit(seedkit_name: str, managed_policy_arns: Optional[List[str]]) -> None:
+def deploy_seedkit(seedkit_name: str, managed_policy_arns: Optional[List[str]] = None) -> None:
     """Deploys the seedkit resources into the environment.
 
     Resources deployed include: S3 Bucket, CodeArtifact Domain, CodeArtifact Repository, CodeBuild Project,

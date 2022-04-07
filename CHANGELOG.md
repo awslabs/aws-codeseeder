@@ -9,10 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+* optionally create a missing seedkit with configure decorator
 
 ### Changes
 
 ### Fixes
+* exclude cdk.out/ from bundles
 
 ### Breaks
 
