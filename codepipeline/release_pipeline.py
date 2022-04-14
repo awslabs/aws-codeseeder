@@ -63,6 +63,24 @@ pipeline = codepipeline.Pipeline(
             ],
         ),
         codepipeline.StageProps(
+            stage_name="Build",
+            actions=[
+                codepipeline_actions.CodeBuildAction(
+                    action_name="Build_Code_Build_Image",
+                    project=codebuild.PipelineProject(
+                        stack,
+                        "BuildCodeBuildImage",
+                        build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/codebuild-buildspecs/build-code-build-image-buildspec.yaml"),
+                        role=code_build_role,
+                        environment=codebuild.BuildEnvironment(
+                            build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
+                        ),
+                    ),
+                    input=source_output,
+                )
+            ],
+        ),
+        codepipeline.StageProps(
             stage_name="Test",
             actions=[
                 codepipeline_actions.CodeBuildAction(
@@ -70,7 +88,7 @@ pipeline = codepipeline.Pipeline(
                     project=codebuild.PipelineProject(
                         stack,
                         "TestBuild",
-                        build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/test-buildspec.yaml"),
+                        build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/codebuild-buildspecs/test-buildspec.yaml"),
                         role=code_build_role,
                         environment=codebuild.BuildEnvironment(
                             build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
@@ -92,7 +110,26 @@ pipeline = codepipeline.Pipeline(
                     project=codebuild.PipelineProject(
                         stack,
                         "PyPiReleaseBuild",
-                        build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/release-buildspec.yaml"),
+                        build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/codebuild-buildspecs/release-buildspec.yaml"),
+                        role=code_build_role,
+                        environment=codebuild.BuildEnvironment(
+                            build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
+                        ),
+                    ),
+                    input=source_output,
+                    outputs=[release_output],
+                )
+            ],
+        ),
+        codepipeline.StageProps(
+            stage_name="Image-to-Public-ECR",
+            actions=[
+                codepipeline_actions.CodeBuildAction(
+                    action_name="Code_Build_Base_Release",
+                    project=codebuild.PipelineProject(
+                        stack,
+                        "PublicECRRelease",
+                        build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/codebuild-buildspecs/release-public-ecr-buildspec.yaml"),
                         role=code_build_role,
                         environment=codebuild.BuildEnvironment(
                             build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
