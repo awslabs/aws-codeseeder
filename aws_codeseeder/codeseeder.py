@@ -280,6 +280,12 @@ def remote_function(
                     "cd ${CODEBUILD_SRC_DIR}/bundle",
                     f"pip install aws-codeseeder~={__version__}",
                 ]
+                # If this local env variable is set, don't attempt install of codeseeder from package repository
+                # This is used so that codeseeder can be installed from a local python module included in the bundle
+                # and is used for codeseeder development when codeartifact isn't used.
+                if os.getenv("AWS_CODESEEDER_DEVELOPMENT"):
+                    cmds_install.pop()
+
                 if requirements_files:
                     cmds_install += [f"pip install -r requirements-{f}" for f in requirements_files.keys()]
                 if local_modules:

@@ -67,17 +67,23 @@ def destroy() -> None:
 )
 @click.option("--policy-arn", required=False, type=str, multiple=True, default=[])
 @click.option(
+    "--deploy-codeartifact/--skip-codeartifact",
+    default=False,
+    help="Deploy the optional CodeArtifact Domain and Repository",
+    show_default=True,
+)
+@click.option(
     "--debug/--no-debug",
     default=False,
     help="Enable detailed logging.",
     show_default=True,
 )
-def deploy_seedkit(name: str, policy_arn: Tuple[str, ...], debug: bool) -> None:
+def deploy_seedkit(name: str, policy_arn: Tuple[str, ...], deploy_codeartifact: bool, debug: bool) -> None:
     if debug:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
     else:
         set_log_level(level=logging.INFO, format="%(message)s")
-    commands.deploy_seedkit(seedkit_name=name, managed_policy_arns=[p for p in policy_arn])
+    commands.deploy_seedkit(seedkit_name=name, managed_policy_arns=[p for p in policy_arn], deploy_codeartifact=deploy_codeartifact)
 
 
 @destroy.command(name="seedkit")

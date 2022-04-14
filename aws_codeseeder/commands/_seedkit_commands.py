@@ -18,7 +18,9 @@ from aws_codeseeder import LOGGER, _cfn_seedkit
 from aws_codeseeder.services import cfn, s3
 
 
-def deploy_seedkit(seedkit_name: str, managed_policy_arns: Optional[List[str]] = None) -> None:
+def deploy_seedkit(
+    seedkit_name: str, managed_policy_arns: Optional[List[str]], deploy_codeartifact: bool = False
+) -> None:
     """Deploys the seedkit resources into the environment.
 
     Resources deployed include: S3 Bucket, CodeArtifact Domain, CodeArtifact Repository, CodeBuild Project,
@@ -34,6 +36,9 @@ def deploy_seedkit(seedkit_name: str, managed_policy_arns: Optional[List[str]] =
     managed_policy_arns : Optional[List[str]]
         List of Managed Policy to ARNs to attach to the default IAM Role created and used
         by the CodeBuild Project
+    deploy_codeartifact : bool
+        Trigger optional deployment of CodeArtifact Domain and Repository for use by the Seedkit and
+        its libraries
     """
     stack_name: str = cfn.get_stack_name(seedkit_name=seedkit_name)
     LOGGER.info("Deploying Seedkit %s with Stack Name %s", seedkit_name, stack_name)
@@ -44,7 +49,10 @@ def deploy_seedkit(seedkit_name: str, managed_policy_arns: Optional[List[str]] =
         deploy_id = stack_outputs.get("DeployId")
         LOGGER.info("Seedkit found with DeployId: %s", deploy_id)
     template_filename: str = _cfn_seedkit.synth(
-        seedkit_name=seedkit_name, deploy_id=deploy_id, managed_policy_arns=managed_policy_arns
+        seedkit_name=seedkit_name,
+        deploy_id=deploy_id,
+        managed_policy_arns=managed_policy_arns,
+        deploy_codeartifact=deploy_codeartifact,
     )
     cfn.deploy_template(stack_name=stack_name, filename=template_filename, seedkit_tag=f"codeseeder-{seedkit_name}")
     LOGGER.info("Seedkit Deployed")
