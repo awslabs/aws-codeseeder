@@ -10,12 +10,15 @@ phases:
       python: 3.7
       nodejs: 12
     commands:
-      - python3 -m venv .venv
+      - pip install --upgrade pip
+  pre_build:
+    commands:
+      - echo "Signing into private repo"
+      - /usr/local/bin/aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
   build:
     commands:
-      - . .venv/bin/activate
+      # - . .venv/bin/activate
       - cd ${CODEBUILD_SRC_DIR}/images/code-build-image
-      - echo "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION}"
       - VERSION=`cat VERSION`
       - docker build -t ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION} .
       - docker images
