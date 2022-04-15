@@ -2,7 +2,6 @@ version: 0.2
 env:
   variables:
     REPOSITORY: code-build-base
-    VERSION: $((cat ${CODEBUILD_SRC_DIR}/images/code-build-image/VERSION))
   secrets-manager:
     ACCOUNT_ID: aws-codeseeder-deployment-secrets:ACCOUNT_ID
 phases:
@@ -17,6 +16,7 @@ phases:
       - . .venv/bin/activate
       - cd ${CODEBUILD_SRC_DIR}/images/code-build-image
       - echo "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION}"
+      - VERSION=$((cat VERSION))
       - docker build -t ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION} .
       - docker images
   post_build:
