@@ -2,8 +2,6 @@ version: 0.2
 env:
   variables:
     REPOSITORY: code-build-base
-  secrets-manager:
-    ACCOUNT_ID: aws-codeseeder-deployment-secrets:ACCOUNT_ID
 phases:
   install:
     runtime-versions:
@@ -19,15 +17,13 @@ phases:
   pre_build:
     commands:
       - echo "Signing into private repo"
-      # - /usr/local/bin/aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
       - docker login --username AWS -p $( /usr/local/bin/aws ecr get-login-password --region ${REGION} ) ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
   build:
     commands:
-      # - . .venv/bin/activate
       - cd ${CODEBUILD_SRC_DIR}/images/code-build-image
       - VERSION=`cat VERSION`
       - docker build -t ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION} .
       - docker images
   post_build:
     commands:
-      - docker push "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION}"
+      - docker push ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION}
