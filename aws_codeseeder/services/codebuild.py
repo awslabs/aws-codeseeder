@@ -296,13 +296,15 @@ def generate_spec(
     exported_variables: List[str] = [] if exported_env_vars is None else exported_env_vars
     exported_variables.append("AWS_CODESEEDER_OUTPUT")
     install = [
-        (
+        "/var/scripts/retrieve_docker_creds.py && echo 'Docker logins successful' || echo 'Docker logins failed'",
+    ]
+
+    if "CodeArtifactDomain" in stack_outputs and "CodeArtifactRepository" in stack_outputs:
+        install.append(
             "aws codeartifact login --tool pip "
             f"--domain {stack_outputs['CodeArtifactDomain']} "
             f"--repository {stack_outputs['CodeArtifactRepository']}"
-        ),
-        "/var/scripts/retrieve_docker_creds.py && echo 'Docker logins successful' || echo 'Docker logins failed'",
-    ]
+        )
 
     if cmds_install is not None:
         install += cmds_install
