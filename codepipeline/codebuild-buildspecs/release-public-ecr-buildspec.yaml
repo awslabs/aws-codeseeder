@@ -16,7 +16,6 @@ phases:
       - unzip awscliv2.zip
       - ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
       - /usr/local/bin/aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v3o4w1g6
-      # - docker login --username AWS -p $( /usr/local/bin/aws ecr get-login-password --region us-east-1 ) public.ecr.aws/v3o4w1g6
   build:
     commands:
       - VERSION=`cat ${CODEBUILD_SRC_DIR}/images/code-build-image/VERSION`
@@ -25,13 +24,8 @@ phases:
         docker tag ${PRIVATE_REPOSITORY} ${PUBLIC_REPOSITORY}:${VERSION}
       - |
         docker tag ${PRIVATE_REPOSITORY} ${PUBLIC_REPOSITORY}:latest
-      - |
-        docker tag ${PRIVATE_REPOSITORY} ${PUBLIC_REPOSITORY}:test
 
   post_build:
     commands:
-      - docker images
-      - docker push ${PUBLIC_REPOSITORY}:test
-      # - docker push public.ecr.aws/v3o4w1g6/aws-codeseeder/code-build-base:${VERSION}
-      # - docker push public.ecr.aws/v3o4w1g6/aws-codeseeder/code-build-base:latest
-
+      - docker push public.ecr.aws/v3o4w1g6/aws-codeseeder/code-build-base:${VERSION}
+      - docker push public.ecr.aws/v3o4w1g6/aws-codeseeder/code-build-base:latest
