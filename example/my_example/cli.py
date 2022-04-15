@@ -45,7 +45,7 @@ def print_results_callback(msg: str) -> None:
         _logger.info(msg)
 
 
-@codeseeder.configure("my-example")
+@codeseeder.configure("my-example", deploy_if_not_exists=True)
 def configure(configuration: codeseeder.CodeSeederConfig) -> None:
     """An example of global ``codeseeder.configure``
 
