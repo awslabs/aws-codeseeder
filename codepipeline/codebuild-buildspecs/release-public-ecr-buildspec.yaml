@@ -1,10 +1,8 @@
 version: 0.2
 env:
   variables:
-    # PRIVATE_REPOSITORY: code-build-base
     PRIVATE_REPOSITORY: ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/code-build-base
     PUBLIC_REPOSITORY: public.ecr.aws/v3o4w1g6/aws-codeseeder/code-build-base
-    # PRIVATE_IMAGE: ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/code-build-base
 phases:
   install:
     runtime-versions:
@@ -17,7 +15,6 @@ phases:
       - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
       - unzip awscliv2.zip
       - ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
-      # - /usr/local/bin/aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v3o4w1g6
       - docker login --username AWS -p $( /usr/local/bin/aws ecr get-login-password --region us-east-1 ) public.ecr.aws/v3o4w1g6
   build:
     commands:
