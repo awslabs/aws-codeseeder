@@ -1,7 +1,6 @@
 version: 0.2
 env:
   variables:
-    REGION: us-west-2
     REPOSITORY: code-build-base
     VERSION: $((cat ${CODEBUILD_SRC_DIR}/images/code-build-image/VERSION))
   secrets-manager:
@@ -17,8 +16,9 @@ phases:
     commands:
       - . .venv/bin/activate
       - cd ${CODEBUILD_SRC_DIR}/images/code-build-image
+      - echo "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION}"
       - docker build -t ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION} .
       - docker images
   post_build:
     commands:
-      - docker push ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION}
+      - docker push "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION}"

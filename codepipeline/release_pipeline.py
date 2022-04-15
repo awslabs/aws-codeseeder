@@ -74,53 +74,58 @@ pipeline = codepipeline.Pipeline(
                         role=code_build_role,
                         environment=codebuild.BuildEnvironment(
                             build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
+                            environment_variables={
+                                "REGION": codebuild.BuildEnvironmentVariable(
+                                    value=core.Aws.REGION
+                                ),
+                            },
                         ),
                     ),
                     input=source_output,
                 )
             ],
         ),
-        codepipeline.StageProps(
-            stage_name="Test",
-            actions=[
-                codepipeline_actions.CodeBuildAction(
-                    action_name="Test",
-                    project=codebuild.PipelineProject(
-                        stack,
-                        "TestBuild",
-                        build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/codebuild-buildspecs/test-buildspec.yaml"),
-                        role=code_build_role,
-                        environment=codebuild.BuildEnvironment(
-                            build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
-                        ),
-                    ),
-                    input=source_output,
-                )
-            ],
-        ),
-        codepipeline.StageProps(
-            stage_name="Approval-For-Release",
-            actions=[codepipeline_actions.ManualApprovalAction(action_name="Approve_Release")],
-        ),
-        codepipeline.StageProps(
-            stage_name="Pypi-Release",
-            actions=[
-                codepipeline_actions.CodeBuildAction(
-                    action_name="PyPi_Release",
-                    project=codebuild.PipelineProject(
-                        stack,
-                        "PyPiReleaseBuild",
-                        build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/codebuild-buildspecs/release-buildspec.yaml"),
-                        role=code_build_role,
-                        environment=codebuild.BuildEnvironment(
-                            build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
-                        ),
-                    ),
-                    input=source_output,
-                    outputs=[release_output],
-                )
-            ],
-        ),
+        # codepipeline.StageProps(
+        #     stage_name="Test",
+        #     actions=[
+        #         codepipeline_actions.CodeBuildAction(
+        #             action_name="Test",
+        #             project=codebuild.PipelineProject(
+        #                 stack,
+        #                 "TestBuild",
+        #                 build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/codebuild-buildspecs/test-buildspec.yaml"),
+        #                 role=code_build_role,
+        #                 environment=codebuild.BuildEnvironment(
+        #                     build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
+        #                 ),
+        #             ),
+        #             input=source_output,
+        #         )
+        #     ],
+        # ),
+        # codepipeline.StageProps(
+        #     stage_name="Approval-For-Release",
+        #     actions=[codepipeline_actions.ManualApprovalAction(action_name="Approve_Release")],
+        # ),
+        # codepipeline.StageProps(
+        #     stage_name="Pypi-Release",
+        #     actions=[
+        #         codepipeline_actions.CodeBuildAction(
+        #             action_name="PyPi_Release",
+        #             project=codebuild.PipelineProject(
+        #                 stack,
+        #                 "PyPiReleaseBuild",
+        #                 build_spec=codebuild.BuildSpec.from_source_filename("codepipeline/codebuild-buildspecs/release-buildspec.yaml"),
+        #                 role=code_build_role,
+        #                 environment=codebuild.BuildEnvironment(
+        #                     build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
+        #                 ),
+        #             ),
+        #             input=source_output,
+        #             outputs=[release_output],
+        #         )
+        #     ],
+        # ),
         codepipeline.StageProps(
             stage_name="Image-to-Public-ECR",
             actions=[
@@ -133,6 +138,11 @@ pipeline = codepipeline.Pipeline(
                         role=code_build_role,
                         environment=codebuild.BuildEnvironment(
                             build_image=codebuild.LinuxBuildImage.STANDARD_4_0,
+                            environment_variables={
+                                "REGION": codebuild.BuildEnvironmentVariable(
+                                    value=core.Aws.REGION
+                                ),
+                            },
                         ),
                     ),
                     input=source_output,
