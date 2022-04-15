@@ -9,17 +9,26 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+
+### Changes
+
+### Fixes
+
+### Breaks
+
+
+## 0.3.0 - (2022-04-15)
+---
+
+### New
 * optionally create a missing seedkit with configure decorator
 * Support Python >= 3.7
 * Update boto3 version in CodeBuild image
 * Remove CDK CLI from CodeBuild image to reduce conflicts
 
-### Changes
 
 ### Fixes
 * exclude cdk.out/ from bundles
-
-### Breaks
 
 
 ## 0.2.1 - (2022-02-10)
