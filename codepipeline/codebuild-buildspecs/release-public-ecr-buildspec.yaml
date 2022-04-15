@@ -19,7 +19,7 @@ phases:
       - docker pull ${PRIVATE_IMAGE}
   post_build:
     commands:
-      - VERSION=$((cat ${CODEBUILD_SRC_DIR}/images/code-build-image/VERSION))
+      - VERSION=`cat ${CODEBUILD_SRC_DIR}/images/code-build-image/VERSION`
       - docker tag ${PRIVATE_IMAGE} public.ecr.aws/v3o4w1g6/aws-codeseeder/code-build-base:${VERSION}
       - docker tag ${PRIVATE_IMAGE} public.ecr.aws/v3o4w1g6/aws-codeseeder/code-build-base:latest
       - /usr/local/bin/aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v3o4w1g6

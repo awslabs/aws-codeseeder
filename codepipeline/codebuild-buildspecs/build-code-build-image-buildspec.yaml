@@ -16,7 +16,7 @@ phases:
       - . .venv/bin/activate
       - cd ${CODEBUILD_SRC_DIR}/images/code-build-image
       - echo "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION}"
-      - VERSION=$((cat VERSION))
+      - VERSION=`cat VERSION`
       - docker build -t ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPOSITORY}:${VERSION} .
       - docker images
   post_build:
