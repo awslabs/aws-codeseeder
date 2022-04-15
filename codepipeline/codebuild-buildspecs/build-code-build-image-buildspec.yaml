@@ -11,10 +11,16 @@ phases:
       nodejs: 12
     commands:
       - pip install --upgrade pip
+      - echo "Installing awscliv2"
+      - mkdir awscliv2 && cd awscliv2
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip awscliv2.zip
+      - ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
   pre_build:
     commands:
       - echo "Signing into private repo"
-      - /usr/local/bin/aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
+      # - /usr/local/bin/aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
+      - docker login --username AWS -p $( /usr/local/bin/aws ecr get-login-password --region ${REGION} ) ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
   build:
     commands:
       # - . .venv/bin/activate
