@@ -19,7 +19,7 @@ from aws_codeseeder.services import cfn, s3
 
 
 def deploy_seedkit(
-    seedkit_name: str, managed_policy_arns: Optional[List[str]], deploy_codeartifact: bool = False
+    seedkit_name: str, managed_policy_arns: Optional[List[str]] = None, deploy_codeartifact: bool = False
 ) -> None:
     """Deploys the seedkit resources into the environment.
 

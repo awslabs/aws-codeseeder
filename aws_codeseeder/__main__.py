@@ -83,7 +83,9 @@ def deploy_seedkit(name: str, policy_arn: Tuple[str, ...], deploy_codeartifact: 
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
     else:
         set_log_level(level=logging.INFO, format="%(message)s")
-    commands.deploy_seedkit(seedkit_name=name, managed_policy_arns=[p for p in policy_arn], deploy_codeartifact=deploy_codeartifact)
+    commands.deploy_seedkit(
+        seedkit_name=name, managed_policy_arns=[p for p in policy_arn], deploy_codeartifact=deploy_codeartifact
+    )
 
 
 @destroy.command(name="seedkit")
