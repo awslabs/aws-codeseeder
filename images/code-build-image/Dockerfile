@@ -15,8 +15,7 @@
 FROM public.ecr.aws/ubuntu/ubuntu:20.04 AS core
 
 ARG DEBIAN_FRONTEND="noninteractive"
-ARG BOTO_VERSION=1.18.0
-ARG CDK_VERSION=1.100.0
+ARG BOTO_VERSION=1.21.37
 
 # Install git, SSH, and other utilities
 RUN set -ex \
@@ -73,12 +72,6 @@ RUN curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/
     chmod +x ./aws-iam-authenticator && \
     mv ./aws-iam-authenticator /usr/local/bin
 
-# Install KFCTL
-RUN wget -O kfctl_v1.2.0-0_linux.tar.gz https://github.com/kubeflow/kfctl/releases/download/v1.2.0/kfctl_v1.2.0-0-gbc038f9_linux.tar.gz && \
-    tar xzf kfctl_v1.2.0-0_linux.tar.gz && \
-    chmod +x kfctl && \
-    mv kfctl /usr/local/bin
-
 # Install Helm tools
 RUN curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash && \
     helm version --short && \
@@ -123,28 +116,8 @@ RUN set -ex \
 #=======================End of layer: runtimes  =================
 
 
-RUN pip install boto3~=$BOTO_VERSION \
-                aws_cdk.core~=$CDK_VERSION \
-                aws-cdk.aws-codecommit~=$CDK_VERSION \
-                aws-cdk.aws-ec2~=$CDK_VERSION \
-                aws-cdk.aws-s3~=$CDK_VERSION \
-                aws-cdk.aws-iam~=$CDK_VERSION \
-                aws-cdk.aws-efs~=$CDK_VERSION \
-                aws-cdk.aws-ecr~=$CDK_VERSION \
-                aws-cdk.aws-ecs~=$CDK_VERSION \
-                aws-cdk.aws-events~=$CDK_VERSION \
-                aws-cdk.aws-events-targets~=$CDK_VERSION \
-                aws-cdk.aws-ssm~=$CDK_VERSION \
-                aws-cdk.aws-kms~=$CDK_VERSION \
-                aws-cdk.aws-cognito~=$CDK_VERSION \
-                aws-cdk.aws-lambda~=$CDK_VERSION \
-                aws-cdk.aws-lambda-python~=$CDK_VERSION \
-                aws-cdk.aws-redshift~=$CDK_VERSION \
-                aws-cdk.aws-sns~=$CDK_VERSION \
-                aws-cdk.aws-sns-subscriptions~=$CDK_VERSION \
-                aws-cdk.aws-stepfunctions~=$CDK_VERSION \
-                aws-cdk.aws-stepfunctions-tasks~=$CDK_VERSION \
-                aws-cdk.aws-codeartifact~=$CDK_VERSION
+RUN pip install boto3~=$BOTO_VERSION
+
 
 #****************        DOCKER    *********************************************
 ARG DOCKER_BUCKET="download.docker.com"

@@ -45,7 +45,7 @@ def print_results_callback(msg: str) -> None:
         _logger.info(msg)
 
 
-@codeseeder.configure("my-example")
+@codeseeder.configure("my-example", deploy_if_not_exists=True)
 def configure(configuration: codeseeder.CodeSeederConfig) -> None:
     """An example of global ``codeseeder.configure``
 
@@ -56,6 +56,7 @@ def configure(configuration: codeseeder.CodeSeederConfig) -> None:
     """
     configuration.python_modules = ["boto3~=1.19.0"]
     configuration.local_modules = {
+        "aws-codeseeder": os.path.realpath(os.path.join(CLI_ROOT, "../../")),
         "my-example": os.path.realpath(os.path.join(CLI_ROOT, "../")),
     }
     configuration.requirements_files = {"my-example": os.path.realpath(os.path.join(CLI_ROOT, "../requirements.txt"))}

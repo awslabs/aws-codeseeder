@@ -29,7 +29,13 @@ FILENAME = "template.yaml"
 RESOURCES_FILENAME = os.path.join(CLI_ROOT, "resources", FILENAME)
 
 
-def synth(seedkit_name: str, deploy_id: Optional[str] = None, managed_policy_arns: Optional[List[str]] = None) -> str:
+def synth(
+    seedkit_name: str,
+    *,
+    deploy_id: Optional[str] = None,
+    managed_policy_arns: Optional[List[str]] = None,
+    deploy_codeartifact: bool = False,
+) -> str:
     out_dir = create_output_dir("seedkit")
     output_filename = os.path.join(out_dir, FILENAME)
 
@@ -39,6 +45,12 @@ def synth(seedkit_name: str, deploy_id: Optional[str] = None, managed_policy_arn
 
     if managed_policy_arns:
         input_template["Resources"]["CodeBuildRole"]["Properties"]["ManagedPolicyArns"] += managed_policy_arns
+
+    if not deploy_codeartifact:
+        del input_template["Resources"]["CodeArtifactDomain"]
+        del input_template["Resources"]["CodeArtifactRepository"]
+        del input_template["Outputs"]["CodeArtifactDomain"]
+        del input_template["Outputs"]["CodeArtifactRepository"]
 
     output_template = Template(yaml.dump(input_template, Dumper=yaml_dumper.get_dumper()))
 

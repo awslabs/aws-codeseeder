@@ -18,15 +18,11 @@
 set -ex
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-ECR_ADDRESS="${ACCOUNT_ID}".dkr.ecr."${AWS_DEFAULT_REGION}".amazonaws.com
-REPOSITORY=aws-codeseeder/code-build-base
-VERSION=$(cat ${DIR}/VERSION)
-
 cd ${DIR}
+source ./vars.sh
 
 docker build --tag ${REPOSITORY}:${VERSION} .
-docker tag ${REPOSITORY}:${VERSION} ${ECR_ADDRESS}/${REPOSITORY}:${VERSION}
-docker push ${ECR_ADDRESS}/${REPOSITORY}:${VERSION}
+docker tag ${REPOSITORY}:${VERSION} ${PRIVATE_ECR_ADDRESS}/${REPOSITORY}:${VERSION}
+docker push ${PRIVATE_ECR_ADDRESS}/${REPOSITORY}:${VERSION}
 
 

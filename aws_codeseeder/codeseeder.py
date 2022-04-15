@@ -20,6 +20,7 @@ from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 
 from aws_codeseeder import LOGGER, __version__, _bundle, _classes, _remote
 from aws_codeseeder._classes import CodeSeederConfig, ConfigureDecorator, ModuleImporterEnum, RemoteFunctionDecorator
+from aws_codeseeder.commands import deploy_seedkit
 from aws_codeseeder.services import cfn, codebuild
 
 __all__ = [
@@ -43,9 +44,7 @@ SEEDKIT_REGISTRY: Dict[str, _classes.RegistryEntry] = {}
 RESULT_EXPORT_FILE = "/tmp/codeseeder_export.sh"
 
 
-def configure(
-    seedkit_name: str,
-) -> ConfigureDecorator:
+def configure(seedkit_name: str, deploy_if_not_exists: bool = False) -> ConfigureDecorator:
     """Decorator marking a Configuration Function
 
     Decorated Configuration Functions are executed lazily when a ``remote_function`` for a particular Seedkit is called.
@@ -55,6 +54,8 @@ def configure(
     ----------
     seedkit_name : str
         The name of the previously deployed Seedkit to associate this configuration with
+    deploy_if_not_exists: bool
+        Deploy a Seedkit of ``seedkit_name`` if it does not exist, by default False
 
     Returns
     -------
@@ -64,9 +65,14 @@ def configure(
 
     def decorator(func: _classes.ConfigureFn) -> _classes.ConfigureFn:
         stack_name = cfn.get_stack_name(seedkit_name=seedkit_name)
-        stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
-        if not stack_exists:
-            raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
+        while True:
+            stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
+            if not stack_exists and deploy_if_not_exists:
+                deploy_seedkit(seedkit_name=seedkit_name)
+            elif not stack_exists:
+                raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
+            else:
+                break
         SEEDKIT_REGISTRY[seedkit_name] = _classes.RegistryEntry(config_function=func, stack_outputs=stack_outputs)
 
         return func
@@ -274,6 +280,12 @@ def remote_function(
                     "cd ${CODEBUILD_SRC_DIR}/bundle",
                     f"pip install aws-codeseeder~={__version__}",
                 ]
+                # If this local env variable is set, don't attempt install of codeseeder from package repository
+                # This is used so that codeseeder can be installed from a local python module included in the bundle
+                # and is used for codeseeder development when codeartifact isn't used.
+                if os.getenv("AWS_CODESEEDER_DEVELOPMENT"):
+                    cmds_install.pop()
+
                 if requirements_files:
                     cmds_install += [f"pip install -r requirements-{f}" for f in requirements_files.keys()]
                 if local_modules:

@@ -15,7 +15,7 @@
 import os
 import shutil
 import subprocess
-from typing import List, cast
+from typing import List
 
 from aws_codeseeder import CLI_ROOT, LOGGER, _bundle, create_output_dir
 from aws_codeseeder.services import cfn
@@ -62,8 +62,13 @@ def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
     if not stack_exists:
         LOGGER.warn("Seedkit/Stack does not exist")
         return
+
     domain = stack_outputs.get("CodeArtifactDomain")
     repository = stack_outputs.get("CodeArtifactRepository")
+
+    if domain is None or repository is None:
+        LOGGER.warn("CodeArtifact Repository/Domain was not deployed with the Seedkit")
+        return
 
     if any([":" not in pm for pm in python_modules]):
         raise ValueError(
@@ -79,6 +84,4 @@ def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
 
     for module, dir in modules.items():
         LOGGER.info("Deploy Module %s to Seedkit Domain/Repository %s/%s", module, domain, repository)
-        subprocess.check_call(
-            [os.path.join(out_dir, FILENAME), cast(str, domain), cast(str, repository), module, module]
-        )
+        subprocess.check_call([os.path.join(out_dir, FILENAME), domain, repository, module, module])
