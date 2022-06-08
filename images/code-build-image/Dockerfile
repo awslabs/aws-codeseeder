@@ -53,7 +53,7 @@ RUN useradd codebuild-user
 
 FROM core AS tools
 
-RUN curl -sL https://deb.nodesource.com/setup_17.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get -y install nodejs
 
 ### AWS Tools
