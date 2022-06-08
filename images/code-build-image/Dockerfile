@@ -53,7 +53,7 @@ RUN useradd codebuild-user
 
 FROM core AS tools
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_17.x | bash - && \
     apt-get -y install nodejs
 
 ### AWS Tools
@@ -78,7 +78,7 @@ RUN curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-hel
     helm plugin install https://github.com/hypnoglow/helm-s3.git && \
     helm repo add stable https://charts.helm.sh/stable
 
-RUN npm install -g aws-cdk@$CDK_VERSION yarn
+RUN npm install -g yarn
 
 # Install AWS CLI v2
 # https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html
