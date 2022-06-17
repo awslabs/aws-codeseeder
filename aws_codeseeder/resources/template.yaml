@@ -205,9 +205,8 @@ Resources:
           version: 0.2
           phases:
             install:
-              runtime-versions:
-                python: 3.7
-                nodejs: 12
+              commands:
+                - echo "Install"
             build:
               commands:
                 - echo "Build"
