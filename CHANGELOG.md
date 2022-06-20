@@ -17,6 +17,13 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+## 0.3.1 - (2022-06-20)
+---
+
+### Fixes
+* Overrides for remote function(eg codebuild role, codebuild env type) were not being set over the defaults
+
+
 ## 0.3.0 - (2022-04-15)
 ---
 
