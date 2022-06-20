@@ -16,19 +16,19 @@
 #
 
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
-ROOT_DIR="$SCRIPT_DIR/.."
+ROOT_DIR="$(dirname ${SCRIPT_DIR})"
 CODEBUILD_IMAGE_DIR="${ROOT_DIR}/images/code-build-image"
 CODEBUILD_IMAGE_VERSION=`cat $CODEBUILD_IMAGE_DIR/VERSION`
 
-mkdir -p "${ROOT_DIR}/tmp"
-
-cd "${ROOT_DIR}/tmp/aws-codebuild-docker-images/ubuntu/standard/5.0"
+mkdir -p "${ROOT_DIR}/tmp" && cd "${ROOT_DIR}/tmp"
 
 git clone https://github.com/aws/aws-codebuild-docker-images.git
 
+cd "${ROOT_DIR}/tmp/aws-codebuild-docker-images/ubuntu/standard/5.0"
+
 docker build -t aws/codebuild/standard .
 
-cd "${ROOT_DIR}/images/code-build-image"
+cd "${CODEBUILD_IMAGE_DIR}"
 
 docker build -t codeseeder-codebuild-image .
 
