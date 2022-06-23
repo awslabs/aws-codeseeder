@@ -217,7 +217,9 @@ def remote_function(
         codebuild_image = config_object.codebuild_image if config_object.codebuild_image else codebuild_image
         codebuild_role = config_object.codebuild_role if config_object.codebuild_role else codebuild_role
         codebuild_environment_type = (
-            config_object.codebuild_environment_type if config_object.codebuild_environment_type else codebuild_environment_type
+            config_object.codebuild_environment_type
+            if config_object.codebuild_environment_type
+            else codebuild_environment_type
         )
         codebuild_compute_type = (
             config_object.codebuild_compute_type if config_object.codebuild_compute_type else codebuild_compute_type
