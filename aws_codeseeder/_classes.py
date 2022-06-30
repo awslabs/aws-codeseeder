@@ -106,3 +106,4 @@ class RegistryEntry:
     config_object: CodeSeederConfig = CodeSeederConfig()
     stack_outputs: Optional[Dict[str, str]] = None
     remote_functions: Dict[str, RemoteFunctionFn] = dataclasses.field(default_factory=dict)
+    deploy_if_not_exists: bool = False

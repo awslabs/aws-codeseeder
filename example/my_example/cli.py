@@ -7,8 +7,6 @@ from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, services
 DEBUG_LOGGING_FORMAT = "[%(asctime)s][%(filename)-13s:%(lineno)3d] %(message)s"
 CLI_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-_logger = logging.getLogger(__name__)
-
 
 def set_log_level(level: int, format: Optional[str] = None) -> None:
     """Helper function set LOG_LEVEL and optional log FORMAT
@@ -24,7 +22,7 @@ def set_log_level(level: int, format: Optional[str] = None) -> None:
     if format:
         kwargs["format"] = format  # type: ignore
     logging.basicConfig(**kwargs)  # type: ignore
-    _logger.setLevel(level)
+    LOGGER.setLevel(level=level)
 
     # Force loggers on dependencies to ERROR
     logging.getLogger("boto3").setLevel(logging.ERROR)
@@ -42,7 +40,7 @@ def print_results_callback(msg: str) -> None:
         Incoming log message
     """
     if msg.startswith("[RESULT] "):
-        _logger.info(msg)
+        LOGGER.info(msg)
 
 
 @codeseeder.configure("my-example", deploy_if_not_exists=True)
@@ -138,7 +136,7 @@ def deploy_test_stack() -> None:
         test_stack_exists, _ = services.cfn.does_stack_exist(stack_name=test_stack_name)
 
         if not test_stack_exists:
-            _logger.info("Deploying Test Stack")
+            LOGGER.info("Deploying Test Stack")
             template_filename = os.path.join(CLI_ROOT, "resources", "template.yaml")
             services.cfn.deploy_template(
                 stack_name=test_stack_name,
@@ -147,7 +145,7 @@ def deploy_test_stack() -> None:
                 parameters={"RoleName": stack_outputs["CodeBuildRole"]},
             )
         else:
-            _logger.info("Test Stack already exists")
+            LOGGER.info("Test Stack already exists")
 
 
 def main() -> None:
@@ -158,8 +156,8 @@ def main() -> None:
     name_dict = remote_hello_world_1("Bart")
     name_str = remote_hello_world_2("Lisa")
 
-    _logger.info("name_dict: %s", name_dict)
-    _logger.info("name_str: %s", name_str)
+    LOGGER.info("name_dict: %s", name_dict)
+    LOGGER.info("name_str: %s", name_str)
 
 
 if __name__ == "__main__":
