@@ -13,7 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Changes
 
 ### Fixes
-* JIT deployment the SeedKit Stack when `deploy_if_not_exists` is configured
+* JIT deployment of the SeedKit Stack when `deploy_if_not_exists` is configured
 
 ### Breaks
 
