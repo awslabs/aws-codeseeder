@@ -14,6 +14,7 @@
 
 import dataclasses
 import enum
+import threading
 from typing import Any, Callable, Dict, List, Optional, cast
 
 from mypy_extensions import KwArg, NamedArg, VarArg
@@ -107,3 +108,4 @@ class RegistryEntry:
     stack_outputs: Optional[Dict[str, str]] = None
     remote_functions: Dict[str, RemoteFunctionFn] = dataclasses.field(default_factory=dict)
     deploy_if_not_exists: bool = False
+    lock: threading.Lock = dataclasses.field(default_factory=threading.Lock)

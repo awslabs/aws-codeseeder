@@ -1,3 +1,4 @@
+import concurrent.futures
 import logging
 import os
 from typing import Dict, Optional
@@ -113,6 +114,7 @@ def remote_hello_world_2(name: str) -> str:
         extra_files={"VERSION": os.path.realpath(os.path.join(CLI_ROOT, "../VERSION"))},
         extra_post_build_commands=[f"export ANOTHER_EXPORTED_VAR='{name}'"],
         extra_exported_env_vars=["ANOTHER_EXPORTED_VAR"],
+        bundle_id=name,
     )
     def remote_hello_world_2(name: str) -> str:
         print(f"[RESULT] {name}")
@@ -153,11 +155,16 @@ def main() -> None:
 
     deploy_test_stack()
 
-    name_dict = remote_hello_world_1("Bart")
-    name_str = remote_hello_world_2("Lisa")
+    params = ["Bart", "List", "Maggie"]
+    with concurrent.futures.ThreadPoolExecutor(3) as workers:
+        for result in workers.map(remote_hello_world_2, params):
+            LOGGER.info("name_dict: %s", result)
 
+    name_dict = remote_hello_world_1("Bart")
     LOGGER.info("name_dict: %s", name_dict)
-    LOGGER.info("name_str: %s", name_str)
+
+    # name_str = remote_hello_world_2("Lisa")
+    # LOGGER.info("name_str: %s", name_str)
 
 
 if __name__ == "__main__":

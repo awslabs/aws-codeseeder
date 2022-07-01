@@ -258,15 +258,16 @@ def remote_function(
                 return result
             else:
                 stack_name = cfn.get_stack_name(seedkit_name=seedkit_name)
-                while True:
-                    stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
-                    if not stack_exists and registry_entry.deploy_if_not_exists:
-                        deploy_seedkit(seedkit_name=seedkit_name)
-                    elif not stack_exists:
-                        raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
-                    else:
-                        registry_entry.stack_outputs = stack_outputs
-                        break
+                with registry_entry.lock:
+                    while True:
+                        stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
+                        if not stack_exists and registry_entry.deploy_if_not_exists:
+                            deploy_seedkit(seedkit_name=seedkit_name)
+                        elif not stack_exists:
+                            raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
+                        else:
+                            registry_entry.stack_outputs = stack_outputs
+                            break
 
                 # Bundle and execute remotely in codebuild
                 LOGGER.info("Beginning Remote Execution: %s", fn_id)
