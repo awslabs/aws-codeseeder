@@ -9,10 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+* thread safe JIT Seedkit deployment
 
 ### Changes
 
 ### Fixes
+* JIT deployment of the SeedKit Stack when `deploy_if_not_exists` is configured
 * Eliminate StackTrace message when Secret is not found
 
 ### Breaks
