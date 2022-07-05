@@ -12,10 +12,32 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from aws_codeseeder import LOGGER, _cfn_seedkit
 from aws_codeseeder.services import cfn, s3
+
+
+def seedkit_deployed(seedkit_name: str) -> Tuple[bool, str, Dict[str, str]]:
+    """Checks for existence of the Seedkit CloudFormation Stack
+
+    If the Stack exists, then the Stack Outputs are also returned to eliminate need for another roundtrip call to
+    CloudFormation.
+
+    Parameters
+    ----------
+    seedkit_name : str
+        Namd of the seedkit to check.
+
+    Returns
+    -------
+    Tuple[bool, str, Dict[str, str]]
+        Returns a Tuple with a bool indicating existence of the Stack, the Stack Name, and a dict with the
+        Stack Outputs
+    """
+    stack_name: str = cfn.get_stack_name(seedkit_name=seedkit_name)
+    stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
+    return stack_exists, stack_name, stack_outputs
 
 
 def deploy_seedkit(
@@ -40,11 +62,10 @@ def deploy_seedkit(
         Trigger optional deployment of CodeArtifact Domain and Repository for use by the Seedkit and
         its libraries
     """
-    stack_name: str = cfn.get_stack_name(seedkit_name=seedkit_name)
+    deploy_id: Optional[str] = None
+    stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name)
     LOGGER.info("Deploying Seedkit %s with Stack Name %s", seedkit_name, stack_name)
     LOGGER.debug("Managed Policy Arns: %s", managed_policy_arns)
-    deploy_id: Optional[str] = None
-    stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
     if stack_exists:
         deploy_id = stack_outputs.get("DeployId")
         LOGGER.info("Seedkit found with DeployId: %s", deploy_id)
@@ -66,9 +87,8 @@ def destroy_seedkit(seedkit_name: str) -> None:
     seedkit_name : str
         Name of the seedkit to destroy
     """
-    stack_name: str = cfn.get_stack_name(seedkit_name=seedkit_name)
+    stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name)
     LOGGER.info("Destroying Seedkit %s with Stack Name %s", seedkit_name, stack_name)
-    stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
     if stack_exists:
         seedkit_bucket = stack_outputs.get("Bucket")
         if seedkit_bucket:

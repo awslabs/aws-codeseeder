@@ -18,6 +18,7 @@ import subprocess
 from typing import List
 
 from aws_codeseeder import CLI_ROOT, LOGGER, _bundle, create_output_dir
+from aws_codeseeder.codeseeder import seedkit_deployed
 from aws_codeseeder.services import cfn
 
 FILENAME = "update_repo.sh"
@@ -54,11 +55,10 @@ def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
     ValueError
         If module names are of the wrong form
     """
-    stack_name: str = cfn.get_stack_name(seedkit_name=seedkit_name)
+    stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name)
     LOGGER.info("Deploying Modules for Seedkit %s with Stack Name %s", seedkit_name, stack_name)
     LOGGER.debug("Python Modules: %s", python_modules)
 
-    stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
     if not stack_exists:
         LOGGER.warn("Seedkit/Stack does not exist")
         return

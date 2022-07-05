@@ -13,6 +13,6 @@
 #    limitations under the License.
 
 from aws_codeseeder.commands._module_commands import deploy_modules
-from aws_codeseeder.commands._seedkit_commands import deploy_seedkit, destroy_seedkit
+from aws_codeseeder.commands._seedkit_commands import deploy_seedkit, destroy_seedkit, seedkit_deployed
 
-__all__ = ["deploy_modules", "deploy_seedkit", "destroy_seedkit"]
+__all__ = ["deploy_modules", "deploy_seedkit", "destroy_seedkit", "seedkit_deployed"]
