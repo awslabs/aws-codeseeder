@@ -22,7 +22,7 @@ def get_secret() -> Dict[str, Dict[str, str]]:
 
     try:
         get_secret_value_response = client.get_secret_value(SecretId=secret_name)
-    except ClientError as e:
+    except ClientError:
         logger.info("Secret with SecretId '%s' could not be retrieved from SecretsManager")
         return {}
     else:

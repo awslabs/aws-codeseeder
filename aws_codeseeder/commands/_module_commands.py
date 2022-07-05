@@ -19,7 +19,6 @@ from typing import List
 
 from aws_codeseeder import CLI_ROOT, LOGGER, _bundle, create_output_dir
 from aws_codeseeder.codeseeder import seedkit_deployed
-from aws_codeseeder.services import cfn
 
 FILENAME = "update_repo.sh"
 RESOURCES_FILENAME = os.path.join(CLI_ROOT, "resources", FILENAME)

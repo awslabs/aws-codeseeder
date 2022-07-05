@@ -21,7 +21,7 @@ from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 from aws_codeseeder import LOGGER, __version__, _bundle, _classes, _remote
 from aws_codeseeder._classes import CodeSeederConfig, ConfigureDecorator, ModuleImporterEnum, RemoteFunctionDecorator
 from aws_codeseeder.commands import deploy_seedkit, seedkit_deployed
-from aws_codeseeder.services import cfn, codebuild
+from aws_codeseeder.services import codebuild
 
 __all__ = [
     "CodeSeederConfig",
