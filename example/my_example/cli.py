@@ -3,7 +3,7 @@ import logging
 import os
 from typing import Dict, Optional
 
-from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, services
+from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, commands, services
 
 DEBUG_LOGGING_FORMAT = "[%(asctime)s][%(filename)-13s:%(lineno)3d] %(message)s"
 CLI_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -130,10 +130,9 @@ def deploy_test_stack() -> None:
     demonstrates how to use the Seedkit tools to create a dedicated IAM Role for use by CodeBuile. The example also
     attachs the Seedkit's IAM Managed Policy to this new Role, granting the Role access to the Seedkit's resources
     """
-    toolkit_stack_name = services.cfn.get_stack_name("my-example")
-    toolkit_stack_exists, stack_outputs = services.cfn.does_stack_exist(stack_name=toolkit_stack_name)
+    seedkit_deployed, stack_name, stack_outputs = commands.seedkit_deployed(seedkit_name="my-example")
 
-    if toolkit_stack_exists and not codeseeder.EXECUTING_REMOTELY:
+    if seedkit_deployed and not codeseeder.EXECUTING_REMOTELY:
         test_stack_name = "my-example-stack"
         test_stack_exists, _ = services.cfn.does_stack_exist(stack_name=test_stack_name)
 
