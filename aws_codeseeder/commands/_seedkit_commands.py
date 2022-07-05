@@ -27,12 +27,12 @@ def seedkit_deployed(seedkit_name: str) -> Tuple[bool, str, Dict[str, str]]:
     Parameters
     ----------
     seedkit_name : str
-        Namd of the seedkit to check.
+        Named of the seedkit to check.
 
     Returns
     -------
     Tuple[bool, str, Dict[str, str]]
-        Returns a Tuple with a bool indicating existence of the Stack, the Stack Name, and a dict with the
+        Returns a Tuple with a bool indicating existence of the Stack, the Stack name, and a dict with the
         Stack Outputs
     """
     stack_name: str = cfn.get_stack_name(seedkit_name=seedkit_name)
