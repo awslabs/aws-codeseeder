@@ -20,8 +20,8 @@ from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 
 from aws_codeseeder import LOGGER, __version__, _bundle, _classes, _remote
 from aws_codeseeder._classes import CodeSeederConfig, ConfigureDecorator, ModuleImporterEnum, RemoteFunctionDecorator
-from aws_codeseeder.commands import deploy_seedkit
-from aws_codeseeder.services import cfn, codebuild
+from aws_codeseeder.commands import deploy_seedkit, seedkit_deployed
+from aws_codeseeder.services import codebuild
 
 __all__ = [
     "CodeSeederConfig",
@@ -30,6 +30,8 @@ __all__ = [
     "RemoteFunctionDecorator",
     "configure",
     "remote_function",
+    "deploy_seedkit",
+    "seedkit_deployed",
 ]
 
 MODULE_IMPORTER = (
@@ -257,10 +259,9 @@ def remote_function(
                         file.write("export AWS_CODESEEDER_OUTPUT")
                 return result
             else:
-                stack_name = cfn.get_stack_name(seedkit_name=seedkit_name)
                 with registry_entry.lock:
                     while True:
-                        stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
+                        stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name)
                         if not stack_exists and registry_entry.deploy_if_not_exists:
                             deploy_seedkit(seedkit_name=seedkit_name)
                         elif not stack_exists:

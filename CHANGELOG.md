@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+* simple check for whether a seedkit is deployed, the stack_name, and stack_outputs
+* simplified seedkit deployment for consumers
 * thread safe JIT Seedkit deployment
 
 ### Changes
