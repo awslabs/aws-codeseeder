@@ -1,13 +1,12 @@
+import concurrent.futures
 import logging
 import os
 from typing import Dict, Optional
 
-from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, services
+from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, commands, services
 
 DEBUG_LOGGING_FORMAT = "[%(asctime)s][%(filename)-13s:%(lineno)3d] %(message)s"
 CLI_ROOT = os.path.dirname(os.path.abspath(__file__))
-
-_logger = logging.getLogger(__name__)
 
 
 def set_log_level(level: int, format: Optional[str] = None) -> None:
@@ -24,7 +23,7 @@ def set_log_level(level: int, format: Optional[str] = None) -> None:
     if format:
         kwargs["format"] = format  # type: ignore
     logging.basicConfig(**kwargs)  # type: ignore
-    _logger.setLevel(level)
+    LOGGER.setLevel(level=level)
 
     # Force loggers on dependencies to ERROR
     logging.getLogger("boto3").setLevel(logging.ERROR)
@@ -42,7 +41,7 @@ def print_results_callback(msg: str) -> None:
         Incoming log message
     """
     if msg.startswith("[RESULT] "):
-        _logger.info(msg)
+        LOGGER.info(msg)
 
 
 @codeseeder.configure("my-example", deploy_if_not_exists=True)
@@ -115,6 +114,7 @@ def remote_hello_world_2(name: str) -> str:
         extra_files={"VERSION": os.path.realpath(os.path.join(CLI_ROOT, "../VERSION"))},
         extra_post_build_commands=[f"export ANOTHER_EXPORTED_VAR='{name}'"],
         extra_exported_env_vars=["ANOTHER_EXPORTED_VAR"],
+        bundle_id=name,
     )
     def remote_hello_world_2(name: str) -> str:
         print(f"[RESULT] {name}")
@@ -130,15 +130,14 @@ def deploy_test_stack() -> None:
     demonstrates how to use the Seedkit tools to create a dedicated IAM Role for use by CodeBuile. The example also
     attachs the Seedkit's IAM Managed Policy to this new Role, granting the Role access to the Seedkit's resources
     """
-    toolkit_stack_name = services.cfn.get_stack_name("my-example")
-    toolkit_stack_exists, stack_outputs = services.cfn.does_stack_exist(stack_name=toolkit_stack_name)
+    seedkit_deployed, stack_name, stack_outputs = commands.seedkit_deployed(seedkit_name="my-example")
 
-    if toolkit_stack_exists and not codeseeder.EXECUTING_REMOTELY:
+    if seedkit_deployed and not codeseeder.EXECUTING_REMOTELY:
         test_stack_name = "my-example-stack"
         test_stack_exists, _ = services.cfn.does_stack_exist(stack_name=test_stack_name)
 
         if not test_stack_exists:
-            _logger.info("Deploying Test Stack")
+            LOGGER.info("Deploying Test Stack")
             template_filename = os.path.join(CLI_ROOT, "resources", "template.yaml")
             services.cfn.deploy_template(
                 stack_name=test_stack_name,
@@ -147,7 +146,7 @@ def deploy_test_stack() -> None:
                 parameters={"RoleName": stack_outputs["CodeBuildRole"]},
             )
         else:
-            _logger.info("Test Stack already exists")
+            LOGGER.info("Test Stack already exists")
 
 
 def main() -> None:
@@ -155,11 +154,16 @@ def main() -> None:
 
     deploy_test_stack()
 
-    name_dict = remote_hello_world_1("Bart")
-    name_str = remote_hello_world_2("Lisa")
+    params = ["Bart", "List", "Maggie"]
+    with concurrent.futures.ThreadPoolExecutor(3) as workers:
+        for result in workers.map(remote_hello_world_2, params):
+            LOGGER.info("name_dict: %s", result)
 
-    _logger.info("name_dict: %s", name_dict)
-    _logger.info("name_str: %s", name_str)
+    name_dict = remote_hello_world_1("Bart")
+    LOGGER.info("name_dict: %s", name_dict)
+
+    # name_str = remote_hello_world_2("Lisa")
+    # LOGGER.info("name_str: %s", name_str)
 
 
 if __name__ == "__main__":

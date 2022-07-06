@@ -21,6 +21,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd ${DIR}
 source ./vars.sh
 
+aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${PUBLIC_ECR_ADDRESS}
+
 docker build --tag ${REPOSITORY}:${VERSION} .
 docker tag ${REPOSITORY}:${VERSION} ${PUBLIC_ECR_ADDRESS}/${REPOSITORY}:${VERSION}
 docker push ${PUBLIC_ECR_ADDRESS}/${REPOSITORY}:${VERSION}

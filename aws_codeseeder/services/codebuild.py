@@ -240,7 +240,7 @@ def wait(build_id: str) -> Iterable[BuildInfo]:
         build = fetch_build_info(build_id=build_id)
 
         if build.current_phase is not last_phase or build.status is not last_status:
-            LOGGER.info("phase: %s (%s)", build.current_phase.value, build.status.value)
+            LOGGER.info("phase: %s %s (%s)", build.current_phase.value, build.build_id, build.status.value)
 
         yield build
 

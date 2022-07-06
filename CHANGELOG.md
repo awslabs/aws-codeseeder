@@ -9,17 +9,49 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+
+### Changes
+
+### Fixes
+
+### Breaks
+
+
+## 0.3.2 - (2022-07-06)
+---
+
+### New
+* simple check for whether a seedkit is deployed, the stack_name, and stack_outputs
+* simplified seedkit deployment for consumers
+* thread safe JIT Seedkit deployment
+
+### Changes
+- added build id to logging of codebuild phases
+
+### Fixes
+* JIT deployment of the SeedKit Stack when `deploy_if_not_exists` is configured
+* Eliminate StackTrace message when Secret is not found
+
+
+## 0.3.1 - (2022-06-20)
+---
+
+### Fixes
+* Overrides for remote function(eg codebuild role, codebuild env type) were not being set over the defaults
+
+
+## 0.3.0 - (2022-04-15)
+---
+
+### New
 * optionally create a missing seedkit with configure decorator
 * Support Python >= 3.7
 * Update boto3 version in CodeBuild image
 * Remove CDK CLI from CodeBuild image to reduce conflicts
 
-### Changes
 
 ### Fixes
 * exclude cdk.out/ from bundles
-
-### Breaks
 
 
 ## 0.2.1 - (2022-02-10)
