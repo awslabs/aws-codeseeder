@@ -20,8 +20,8 @@ from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 
 from aws_codeseeder import LOGGER, __version__, _bundle, _classes, _remote
 from aws_codeseeder._classes import CodeSeederConfig, ConfigureDecorator, ModuleImporterEnum, RemoteFunctionDecorator
-from aws_codeseeder.commands import deploy_seedkit
-from aws_codeseeder.services import cfn, codebuild
+from aws_codeseeder.commands import deploy_seedkit, seedkit_deployed
+from aws_codeseeder.services import codebuild
 
 __all__ = [
     "CodeSeederConfig",
@@ -30,6 +30,8 @@ __all__ = [
     "RemoteFunctionDecorator",
     "configure",
     "remote_function",
+    "deploy_seedkit",
+    "seedkit_deployed",
 ]
 
 MODULE_IMPORTER = (
@@ -64,16 +66,9 @@ def configure(seedkit_name: str, deploy_if_not_exists: bool = False) -> Configur
     """
 
     def decorator(func: _classes.ConfigureFn) -> _classes.ConfigureFn:
-        stack_name = cfn.get_stack_name(seedkit_name=seedkit_name)
-        while True:
-            stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
-            if not stack_exists and deploy_if_not_exists:
-                deploy_seedkit(seedkit_name=seedkit_name)
-            elif not stack_exists:
-                raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
-            else:
-                break
-        SEEDKIT_REGISTRY[seedkit_name] = _classes.RegistryEntry(config_function=func, stack_outputs=stack_outputs)
+        SEEDKIT_REGISTRY[seedkit_name] = _classes.RegistryEntry(
+            config_function=func, deploy_if_not_exists=deploy_if_not_exists
+        )
 
         return func
 
@@ -171,19 +166,14 @@ def remote_function(
     """
 
     def decorator(func: Callable[..., Any]) -> _classes.RemoteFunctionFn:
-        stack_name = cfn.get_stack_name(seedkit_name=seedkit_name)
-        stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
-        if not stack_exists:
-            raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
         if seedkit_name not in SEEDKIT_REGISTRY:
-            SEEDKIT_REGISTRY[seedkit_name] = _classes.RegistryEntry(stack_outputs=stack_outputs)
+            SEEDKIT_REGISTRY[seedkit_name] = _classes.RegistryEntry()
+        registry_entry = SEEDKIT_REGISTRY[seedkit_name]
+        config_object = registry_entry.config_object
 
         fn_module = function_module if function_module else func.__module__
         fn_name = function_name if function_name else func.__name__
         fn_id = f"{fn_module}:{fn_name}"
-
-        registry_entry = SEEDKIT_REGISTRY[seedkit_name]
-        config_object = registry_entry.config_object
 
         python_modules = decorator.python_modules  # type: ignore
         local_modules = decorator.local_modules  # type: ignore
@@ -269,11 +259,21 @@ def remote_function(
                         file.write("export AWS_CODESEEDER_OUTPUT")
                 return result
             else:
+                with registry_entry.lock:
+                    while True:
+                        stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name)
+                        if not stack_exists and registry_entry.deploy_if_not_exists:
+                            deploy_seedkit(seedkit_name=seedkit_name)
+                        elif not stack_exists:
+                            raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
+                        else:
+                            registry_entry.stack_outputs = stack_outputs
+                            break
+
                 # Bundle and execute remotely in codebuild
                 LOGGER.info("Beginning Remote Execution: %s", fn_id)
                 fn_args = {"fn_id": fn_id, "args": args, "kwargs": kwargs}
                 LOGGER.debug("fn_args: %s", fn_args)
-                registry_entry = SEEDKIT_REGISTRY[seedkit_name]
                 stack_outputs = registry_entry.stack_outputs
 
                 cmds_install = [
@@ -304,7 +304,7 @@ def remote_function(
                     fn_args=fn_args, dirs=dirs_tuples, files=files_tuples, bundle_id=bundle_id
                 )
                 buildspec = codebuild.generate_spec(
-                    stack_outputs=cast(Dict[str, str], stack_outputs),
+                    stack_outputs=stack_outputs,
                     cmds_install=cmds_install + install_commands,
                     cmds_pre=[
                         ". ~/.venv/bin/activate",
@@ -346,7 +346,7 @@ def remote_function(
                     ]
 
                 build_info = _remote.run(
-                    stack_outputs=cast(Dict[str, str], stack_outputs),
+                    stack_outputs=stack_outputs,
                     bundle_path=bundle_zip,
                     buildspec=buildspec,
                     timeout=timeout if timeout else config_object.timeout if config_object.timeout else 30,
