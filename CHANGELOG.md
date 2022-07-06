@@ -9,6 +9,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+
+### Changes
+
+### Fixes
+
+### Breaks
+
+
+## 0.3.2 - (2022-07-06)
+---
+
+### New
 * simple check for whether a seedkit is deployed, the stack_name, and stack_outputs
 * simplified seedkit deployment for consumers
 * thread safe JIT Seedkit deployment
@@ -19,8 +31,6 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Fixes
 * JIT deployment of the SeedKit Stack when `deploy_if_not_exists` is configured
 * Eliminate StackTrace message when Secret is not found
-
-### Breaks
 
 
 ## 0.3.1 - (2022-06-20)
