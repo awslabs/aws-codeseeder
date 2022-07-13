@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+- added custom execption class for CodeSeeder errors
+- added metadata to failed codebuild deployments (on error)
 
 ### Changes
 

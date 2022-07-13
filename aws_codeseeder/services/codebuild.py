@@ -21,7 +21,8 @@ import botocore.exceptions
 import yaml
 
 from aws_codeseeder import LOGGER
-from aws_codeseeder.services._utils import boto3_client, try_it
+from aws_codeseeder.error.CodeSeederError import CodeSeederRuntimeError
+from aws_codeseeder.services._utils import boto3_client, get_account_id, get_region, try_it
 
 _BUILD_WAIT_POLLING_DELAY: float = 5  # SECONDS
 
@@ -245,7 +246,14 @@ def wait(build_id: str) -> Iterable[BuildInfo]:
         yield build
 
     if build.status is not BuildStatus.succeeded:
-        raise RuntimeError(f"CodeBuild build ({build_id}) is {build.status.value}")
+        deploy_info = {
+            "AWS_REGION": get_region(),
+            "AWS_ACCOUNT_ID": get_account_id(),
+            "CODEBUILD_BUILD_ID": build.build_id,
+        }
+        LOGGER.debug(f"Deploy Info on error from Codebuild {deploy_info}")
+        raise CodeSeederRuntimeError("Build status was not SUCCEEDED ", error_info=deploy_info)
+
     LOGGER.debug(
         "start: %s | end: %s | elapsed: %s",
         build.start_time,
