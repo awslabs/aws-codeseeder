@@ -5,10 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 
 
-## Unreleased
+## 0.3.3 - (2022-07-19)
 ---
 
 ### New
+- added custom execption class for CodeSeeder errors
+- added metadata to failed codebuild deployments (on error)
 
 ### Changes
 
