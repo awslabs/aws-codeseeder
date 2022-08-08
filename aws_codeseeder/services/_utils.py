@@ -19,7 +19,9 @@ from typing import Any, Callable
 import boto3
 import botocore
 
-from aws_codeseeder import LOGGER, __version__
+from aws_codeseeder import LOGGER, __version__, _classes
+
+_session_singleton: _classes.SessionSingleton = _classes.SessionSingleton()
 
 
 def _get_botocore_config() -> botocore.config.Config:
@@ -32,11 +34,17 @@ def _get_botocore_config() -> botocore.config.Config:
 
 
 def boto3_client(service_name: str) -> boto3.client:
-    return boto3.Session().client(service_name=service_name, use_ssl=True, config=_get_botocore_config())
+    session = _session_singleton.value if _session_singleton.value is not None else boto3.Session()
+    return session.client(service_name=service_name, use_ssl=True, config=_get_botocore_config())
 
 
 def boto3_resource(service_name: str) -> boto3.client:
-    return boto3.Session().resource(service_name=service_name, use_ssl=True, config=_get_botocore_config())
+    session = _session_singleton.value if _session_singleton.value is not None else boto3.Session()
+    return session.resource(service_name=service_name, use_ssl=True, config=_get_botocore_config())
+
+
+def set_boto3_session(session: boto3.Session) -> None:
+    _session_singleton.value = session
 
 
 def get_region() -> str:
