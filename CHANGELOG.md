@@ -5,18 +5,26 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 
 
+## 0.4.0 - (unreleased)
+---
+
+### New
+* enable setting and updating boto3 Session for all operations
+
+### Changes
+* refactor error module -> errors hiding private modules
+
+### Fixes
+
+### Breaks
+
+
 ## 0.3.3 - (2022-07-19)
 ---
 
 ### New
 - added custom execption class for CodeSeeder errors
 - added metadata to failed codebuild deployments (on error)
-
-### Changes
-
-### Fixes
-
-### Breaks
 
 
 ## 0.3.2 - (2022-07-06)

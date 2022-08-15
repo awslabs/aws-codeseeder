@@ -17,12 +17,46 @@ import enum
 import threading
 from typing import Any, Callable, Dict, List, Optional, cast
 
+import boto3
 from mypy_extensions import KwArg, NamedArg, VarArg
 
 
 class ModuleImporterEnum(str, enum.Enum):
     CODESEEDER_CLI = "codeseeder-cli"
     OTHER = "other"
+
+
+class SingletonMeta(type):
+    """
+    This is a thread-safe implementation of Singleton.
+    """
+
+    _instances: Dict[Any, Any] = {}
+
+    _lock: threading.Lock = threading.Lock()
+
+    def __call__(cls, *args: List[Any], **kwargs: Dict[Any, Any]) -> Any:
+        """
+        Possible changes to the value of the `__init__` argument do not affect
+        the returned instance.
+        """
+        with cls._lock:
+            if cls not in cls._instances:
+                instance = super().__call__(*args, **kwargs)
+                cls._instances[cls] = instance
+        return cls._instances[cls]
+
+
+class SessionSingleton(metaclass=SingletonMeta):
+    _value: Optional[boto3.Session] = None
+
+    @property
+    def value(self) -> Optional[boto3.Session]:
+        return self._value
+
+    @value.setter
+    def value(self, v: Optional[boto3.Session]) -> None:
+        self._value = v
 
 
 @dataclasses.dataclass()
