@@ -5,7 +5,19 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 
 
-## 0.4.0 - (unreleased)
+## Unreleased
+---
+
+### New
+
+### Changes
+
+### Fixes
+
+### Breaks
+
+
+## 0.4.0 - (2022-08-16)
 ---
 
 ### New
@@ -13,10 +25,6 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### Changes
 * refactor error module -> errors hiding private modules
-
-### Fixes
-
-### Breaks
 
 
 ## 0.3.3 - (2022-07-19)
