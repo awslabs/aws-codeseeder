@@ -17,6 +17,7 @@
 FROM aws/codebuild/standard
 
 ARG BOTO_VERSION=1.21.37
+ARG HELM_VERSION=0.13.0
 
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get -y install nodejs
@@ -40,7 +41,7 @@ RUN curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/
 # Install Helm tools
 RUN curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash && \
     helm version --short && \
-    helm plugin install https://github.com/hypnoglow/helm-s3.git && \
+    helm plugin install https://github.com/hypnoglow/helm-s3.git --version $HELM_VERSION && \
     helm repo add stable https://charts.helm.sh/stable
 
 RUN npm install -g yarn

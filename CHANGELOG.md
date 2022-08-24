@@ -16,6 +16,16 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### Breaks
 
+## 0.4.1 - (unreleased)
+---
+
+### New
+
+### Changes
+
+### Fixes
+- fixed helm tool not installing. specifiying version prevents getting from the actively developed main
+### Breaks
 
 ## 0.4.0 - (2022-08-16)
 ---
