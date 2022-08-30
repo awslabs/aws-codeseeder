@@ -19,6 +19,7 @@ import os
 from typing import Optional, Tuple
 
 import click
+from boto3 import Session
 
 from aws_codeseeder import LOGGER, commands
 
@@ -73,18 +74,41 @@ def destroy() -> None:
     show_default=True,
 )
 @click.option(
+    "--profile",
+    default=None,
+    help="AWS Credentials profile to use for boto3 commands",
+    show_default=True,
+)
+@click.option(
+    "--region",
+    default=None,
+    help="AWS region to use for boto3 commands",
+    show_default=True,
+)
+@click.option(
     "--debug/--no-debug",
     default=False,
     help="Enable detailed logging.",
     show_default=True,
 )
-def deploy_seedkit(name: str, policy_arn: Tuple[str, ...], deploy_codeartifact: bool, debug: bool) -> None:
+def deploy_seedkit(
+    name: str,
+    policy_arn: Tuple[str, ...],
+    deploy_codeartifact: bool,
+    profile: Optional[str],
+    region: Optional[str],
+    debug: bool,
+) -> None:
     if debug:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
     else:
         set_log_level(level=logging.INFO, format="%(message)s")
+    session = Session(profile_name=profile, region_name=region)
     commands.deploy_seedkit(
-        seedkit_name=name, managed_policy_arns=[p for p in policy_arn], deploy_codeartifact=deploy_codeartifact
+        seedkit_name=name,
+        managed_policy_arns=[p for p in policy_arn],
+        deploy_codeartifact=deploy_codeartifact,
+        session=session,
     )
 
 
@@ -95,17 +119,30 @@ def deploy_seedkit(name: str, policy_arn: Tuple[str, ...], deploy_codeartifact: 
     required=True,
 )
 @click.option(
+    "--profile",
+    default=None,
+    help="AWS Credentials profile to use for boto3 commands",
+    show_default=True,
+)
+@click.option(
+    "--region",
+    default=None,
+    help="AWS region to use for boto3 commands",
+    show_default=True,
+)
+@click.option(
     "--debug/--no-debug",
     default=False,
     help="Enable detailed logging.",
     show_default=True,
 )
-def destroy_seedkit(name: str, debug: bool) -> None:
+def destroy_seedkit(name: str, profile: Optional[str], region: Optional[str], debug: bool) -> None:
     if debug:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
     else:
         set_log_level(level=logging.INFO, format="%(message)s")
-    commands.destroy_seedkit(seedkit_name=name)
+    session = Session(profile_name=profile, region_name=region)
+    commands.destroy_seedkit(seedkit_name=name, session=session)
 
 
 ################################################################################
@@ -121,17 +158,32 @@ def destroy_seedkit(name: str, debug: bool) -> None:
 )
 @click.option("--module", required=False, type=str, multiple=True, default=[])
 @click.option(
+    "--profile",
+    default=None,
+    help="AWS Credentials profile to use for boto3 commands",
+    show_default=True,
+)
+@click.option(
+    "--region",
+    default=None,
+    help="AWS region to use for boto3 commands",
+    show_default=True,
+)
+@click.option(
     "--debug/--no-debug",
     default=False,
     help="Enable detailed logging.",
     show_default=True,
 )
-def deploy_modules(name: str, module: Tuple[str, ...], debug: bool) -> None:
+def deploy_modules(
+    name: str, module: Tuple[str, ...], profile: Optional[str], region: Optional[str], debug: bool
+) -> None:
     if debug:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
     else:
         set_log_level(level=logging.INFO, format="%(message)s")
-    commands.deploy_modules(seedkit_name=name, python_modules=[m for m in module])
+    session = Session(profile_name=profile, region_name=region)
+    commands.deploy_modules(seedkit_name=name, python_modules=[m for m in module], session=session)
 
 
 ################################################################################

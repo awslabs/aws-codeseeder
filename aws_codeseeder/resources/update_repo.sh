@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# set -ex
+set -ex
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -8,7 +8,9 @@ DOMAIN=$1
 REPOSITORY=$2
 MODULE_DIR=$3
 PACKAGE=$4
-IGNORE_TWINE_ERROR=${5:-1}  # Default is to return -1 on twine error (not ignorred)
+[[ $5 = "None" ]] && PROFILE="" || PROFILE="--profile ${5}"
+[[ $6 = "None" ]] && REGION="" || REGION="--region ${6}"
+IGNORE_TWINE_ERROR=${7:-1}  # Default is to return -1 on twine error (not ignorred)
 
 cd ${DIR}/$MODULE_DIR \
     && echo "Changed directory to ${PWD}" \
@@ -18,7 +20,12 @@ VERSION=$(cat VERSION)
 rm dist/* && echo "Removed dist/" || echo "No dist/ to delete"
 rm build/* && echo "Removed build/" || echo "No build/ to delete"
 
-aws codeartifact login --tool twine --domain ${DOMAIN} --repository ${REPOSITORY} \
+aws codeartifact login \
+    --tool twine \
+    --domain ${DOMAIN} \
+    --repository ${REPOSITORY} \
+    ${REGION} \
+    ${PROFILE} \
     && echo "Logged in to codeartifact domain/repository: ${DOMAIN}/${REPOSITORY}" \
     || (echo "ERROR: Failed to login to codeartifact domain/repository: ${DOMAIN}/${REPOSITORY}"; exit 1)
 
@@ -28,6 +35,8 @@ aws codeartifact delete-package-versions \
     --package ${PACKAGE} \
     --versions ${VERSION} \
     --format pypi \
+    ${REGION} \
+    ${PROFILE} \
     && echo "Deleted codeartifact package version: ${DOMAIN}/${REPOSITORY}/${PACKAGE}/${VERSION}" \
     || echo "Checked for codeartifact package version: ${DOMAIN}/${REPOSITORY}/${PACKAGE}/${VERSION}"
 

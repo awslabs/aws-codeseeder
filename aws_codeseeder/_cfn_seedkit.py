@@ -19,6 +19,7 @@ from string import Template
 from typing import List, Optional
 
 import yaml
+from boto3 import Session
 from cfn_flip import yaml_dumper
 from cfn_tools import load_yaml
 
@@ -35,6 +36,7 @@ def synth(
     deploy_id: Optional[str] = None,
     managed_policy_arns: Optional[List[str]] = None,
     deploy_codeartifact: bool = False,
+    session: Optional[Session] = None,
 ) -> str:
     out_dir = create_output_dir("seedkit")
     output_filename = os.path.join(out_dir, FILENAME)
@@ -60,8 +62,8 @@ def synth(
         file.write(
             output_template.safe_substitute(
                 seedkit_name=seedkit_name,
-                account_id=get_account_id(),
-                region=get_region(),
+                account_id=get_account_id(session=session),
+                region=get_region(session=session),
                 deploy_id=deploy_id if deploy_id else "".join(random.choice(string.ascii_lowercase) for i in range(6)),
                 role_prefix="/",
             )

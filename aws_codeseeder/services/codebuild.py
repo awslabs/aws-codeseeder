@@ -19,6 +19,7 @@ from typing import Any, Dict, Iterable, List, NamedTuple, Optional
 
 import botocore.exceptions
 import yaml
+from boto3 import Session
 
 from aws_codeseeder import LOGGER
 from aws_codeseeder.errors import CodeSeederRuntimeError
@@ -99,6 +100,7 @@ def start(
     buildspec: Dict[str, Any],
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
+    session: Optional[Session] = None,
 ) -> str:
     """Start a CodeBuild Project execution
 
@@ -116,13 +118,15 @@ def start(
         Timeout of the CodeBuild execution
     overrides : Optional[Dict[str, Any]], optional
         Additional overrides to set on the CodeBuild execution, by default None
+    session: Optional[Session], optional
+        Optional Session to use for all boto3 operations, by default None
 
     Returns
     -------
     str
         The CodeBuild Build/Exectuion Id
     """
-    client = boto3_client("codebuild")
+    client = boto3_client("codebuild", session=session)
     credentials: Optional[str] = "SERVICE_ROLE" if overrides and overrides.get("imageOverride", None) else None
     LOGGER.debug("Credentials: %s", credentials)
     LOGGER.debug("Overrides: %s", overrides)
@@ -152,13 +156,15 @@ def start(
     return str(response["build"]["id"])
 
 
-def fetch_build_info(build_id: str) -> BuildInfo:
+def fetch_build_info(build_id: str, session: Optional[Session] = None) -> BuildInfo:
     """Fetch info on a CodeBuild execution
 
     Parameters
     ----------
     build_id : str
         CodeBuild Execution/Build Id
+    session: Optional[Session], optional
+        Optional Session to use for all boto3 operations, by default None
 
     Returns
     -------
@@ -170,7 +176,7 @@ def fetch_build_info(build_id: str) -> BuildInfo:
     RuntimeError
         If the Build Id is not found
     """
-    client = boto3_client("codebuild")
+    client = boto3_client("codebuild", session=session)
     response: Dict[str, List[Dict[str, Any]]] = try_it(
         f=client.batch_get_builds, ex=botocore.exceptions.ClientError, ids=[build_id], max_num_tries=5
     )
@@ -209,13 +215,15 @@ def fetch_build_info(build_id: str) -> BuildInfo:
     )
 
 
-def wait(build_id: str) -> Iterable[BuildInfo]:
+def wait(build_id: str, session: Optional[Session] = None) -> Iterable[BuildInfo]:
     """Wait for completion of a CodeBuild execution
 
     Parameters
     ----------
     build_id : str
         The CodeBuild Execution/Build Id
+    session: Optional[Session], optional
+        Optional Session to use for all boto3 operations, by default None
 
     Returns
     -------
@@ -232,13 +240,13 @@ def wait(build_id: str) -> Iterable[BuildInfo]:
     RuntimeError
         If the CodeBuild doesn't succeed
     """
-    build = fetch_build_info(build_id=build_id)
+    build = fetch_build_info(build_id=build_id, session=session)
     while build.status is BuildStatus.in_progress:
         time.sleep(_BUILD_WAIT_POLLING_DELAY)
 
         last_phase = build.current_phase
         last_status = build.status
-        build = fetch_build_info(build_id=build_id)
+        build = fetch_build_info(build_id=build_id, session=session)
 
         if build.current_phase is not last_phase or build.status is not last_status:
             LOGGER.info("phase: %s %s (%s)", build.current_phase.value, build.build_id, build.status.value)
@@ -247,8 +255,8 @@ def wait(build_id: str) -> Iterable[BuildInfo]:
 
     if build.status is not BuildStatus.succeeded:
         deploy_info = {
-            "AWS_REGION": get_region(),
-            "AWS_ACCOUNT_ID": get_account_id(),
+            "AWS_REGION": get_region(session=session),
+            "AWS_ACCOUNT_ID": get_account_id(session=session),
             "CODEBUILD_BUILD_ID": build.build_id,
         }
         LOGGER.debug(f"Deploy Info on error from Codebuild {deploy_info}")

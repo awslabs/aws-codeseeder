@@ -3,6 +3,8 @@ import logging
 import os
 from typing import Dict, Optional
 
+from boto3 import Session
+
 from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, commands, services
 
 DEBUG_LOGGING_FORMAT = "[%(asctime)s][%(filename)-13s:%(lineno)3d] %(message)s"
@@ -99,22 +101,39 @@ def remote_hello_world_2(name: str) -> str:
     name : str
         Just some example name
     """
-    codebuild_role = "Admin"
+    # codebuild_role = "some-other-role"
 
     # Execute this if we're being run by CodeBuild
+    session: Optional[Session] = None
     if codeseeder.EXECUTING_REMOTELY:
         LOGGER.info("Executing remotely in CodeBuild")
     else:
         LOGGER.info("Executing locally")
 
+        # Example of using a different Session for remote CodeBuild execution
+        # Here we can assume role, even cross-account, for execution
+        # The account must have a SeedKit already deployed
+        # role_arn = "arn:aws:iam::000000000000:role/other-role"
+        # role = services.boto3_client("sts").assume_role(
+        #     RoleArn=role_arn,
+        #     RoleSessionName="adminrole",
+        # )
+        # session = Session(
+        #     aws_access_key_id=role["Credentials"]["AccessKeyId"],
+        #     aws_secret_access_key=role["Credentials"]["SecretAccessKey"],
+        #     aws_session_token=role["Credentials"]["SessionToken"],
+        #     region_name="us-east-2",
+        # )
+
     @codeseeder.remote_function(
         "my-example",
         extra_python_modules=["python-slugify~=4.0.1"],
-        codebuild_role=codebuild_role,
+        # codebuild_role=codebuild_role,
         extra_files={"VERSION": os.path.realpath(os.path.join(CLI_ROOT, "../VERSION"))},
         extra_post_build_commands=[f"export ANOTHER_EXPORTED_VAR='{name}'"],
         extra_exported_env_vars=["ANOTHER_EXPORTED_VAR"],
         bundle_id=name,
+        boto3_session=session,
     )
     def remote_hello_world_2(name: str) -> str:
         print(f"[RESULT] {name}")

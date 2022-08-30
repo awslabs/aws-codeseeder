@@ -17,6 +17,8 @@ import string
 from datetime import datetime, timedelta
 from typing import Any, Callable, Dict, List, Optional
 
+from boto3 import Session
+
 from aws_codeseeder import LOGGER
 from aws_codeseeder.services import cloudwatch, codebuild, s3
 
@@ -36,22 +38,20 @@ def _wait_execution(
     build_id: str,
     stream_name_prefix: str,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
+    session: Optional[Session] = None,
 ) -> Optional[codebuild.BuildInfo]:
     start_time: Optional[datetime] = None
     stream_name: Optional[str] = None
     status: Optional[codebuild.BuildInfo] = None
-    for status in codebuild.wait(build_id=build_id):
+    for status in codebuild.wait(build_id=build_id, session=session):
         if status.logs.enabled and status.logs.group_name:
             if stream_name is None:
                 stream_name = cloudwatch.get_stream_name_by_prefix(
-                    group_name=status.logs.group_name,
-                    prefix=f"{stream_name_prefix}/",
+                    group_name=status.logs.group_name, prefix=f"{stream_name_prefix}/", session=session
                 )
             if stream_name is not None:
                 events = cloudwatch.get_log_events(
-                    group_name=status.logs.group_name,
-                    stream_name=stream_name,
-                    start_time=start_time,
+                    group_name=status.logs.group_name, stream_name=stream_name, start_time=start_time, session=session
                 )
                 _print_codebuild_logs(events=events.events, codebuild_log_callback=codebuild_log_callback)
                 if events.last_timestamp is not None:
@@ -67,6 +67,7 @@ def _execute_codebuild(
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
+    session: Optional[Session] = None,
 ) -> Optional[codebuild.BuildInfo]:
     LOGGER.debug("bundle_location: %s", bundle_location)
     stream_name_prefix = f"codeseeder-{execution_id}"
@@ -78,11 +79,13 @@ def _execute_codebuild(
         buildspec=buildspec,
         timeout=timeout,
         overrides=overrides,
+        session=session,
     )
     return _wait_execution(
         build_id=build_id,
         stream_name_prefix=stream_name_prefix,
         codebuild_log_callback=codebuild_log_callback,
+        session=session,
     )
 
 
@@ -93,12 +96,13 @@ def run(
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
+    session: Optional[Session] = None,
 ) -> Optional[codebuild.BuildInfo]:
     execution_id = "".join(random.choice(string.ascii_lowercase) for i in range(8))
     key: str = f"codeseeder/{execution_id}/bundle.zip"
     bucket = stack_outputs["Bucket"]
-    s3.delete_objects(bucket=bucket, keys=[key])
-    s3.upload_file(src=bundle_path, bucket=bucket, key=key)
+    s3.delete_objects(bucket=bucket, keys=[key], session=session)
+    s3.upload_file(src=bundle_path, bucket=bucket, key=key, session=session)
     build_info = _execute_codebuild(
         stack_outputs=stack_outputs,
         bundle_location=f"{bucket}/{key}",
@@ -107,6 +111,7 @@ def run(
         codebuild_log_callback=codebuild_log_callback,
         timeout=timeout,
         overrides=overrides,
+        session=session,
     )
-    s3.delete_objects(bucket=bucket, keys=[key])
+    s3.delete_objects(bucket=bucket, keys=[key], session=session)
     return build_info
