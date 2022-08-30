@@ -17,6 +17,25 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+## 0.5.0 - (2022-08-30)
+---
+
+### New
+* enable --profile and --region cli parameters for boto3 operations
+* enable distinct boto3.Session per remote_function call
+
+
+## 0.4.1 - (unreleased)
+---
+
+### New
+
+### Changes
+
+### Fixes
+- fixed helm tool not installing. specifiying version prevents getting from the actively developed main
+### Breaks
+
 ## 0.4.0 - (2022-08-16)
 ---
 

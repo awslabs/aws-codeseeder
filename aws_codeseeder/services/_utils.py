@@ -14,7 +14,7 @@
 
 import random
 import time
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 import boto3
 import botocore
@@ -33,13 +33,15 @@ def _get_botocore_config() -> botocore.config.Config:
     )
 
 
-def boto3_client(service_name: str) -> boto3.client:
-    session = _session_singleton.value if _session_singleton.value is not None else boto3.Session()
+def boto3_client(service_name: str, session: Optional[boto3.Session] = None) -> boto3.client:
+    if session is None:
+        session = _session_singleton.value if _session_singleton.value is not None else boto3.Session()
     return session.client(service_name=service_name, use_ssl=True, config=_get_botocore_config())
 
 
-def boto3_resource(service_name: str) -> boto3.client:
-    session = _session_singleton.value if _session_singleton.value is not None else boto3.Session()
+def boto3_resource(service_name: str, session: Optional[boto3.Session] = None) -> boto3.client:
+    if session is None:
+        session = _session_singleton.value if _session_singleton.value is not None else boto3.Session()
     return session.resource(service_name=service_name, use_ssl=True, config=_get_botocore_config())
 
 
@@ -47,15 +49,16 @@ def set_boto3_session(session: boto3.Session) -> None:
     _session_singleton.value = session
 
 
-def get_region() -> str:
-    session = boto3.Session()
+def get_region(session: Optional[boto3.Session] = None) -> str:
+    if session is None:
+        session = _session_singleton.value if _session_singleton.value is not None else boto3.Session()
     if session.region_name is None:
         raise ValueError("It is not possible to infer AWS REGION from your environment.")
     return str(session.region_name)
 
 
-def get_account_id() -> str:
-    return str(boto3_client(service_name="sts").get_caller_identity().get("Account"))
+def get_account_id(session: Optional[boto3.Session] = None) -> str:
+    return str(boto3_client(service_name="sts", session=session).get_caller_identity().get("Account"))
 
 
 def try_it(

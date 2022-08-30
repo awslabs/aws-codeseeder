@@ -18,6 +18,8 @@ import os
 import textwrap
 from typing import Any, Callable, Dict, List, Mapping, Optional, cast
 
+from boto3 import Session
+
 from aws_codeseeder import LOGGER, __version__, _bundle, _classes, _remote
 from aws_codeseeder._classes import CodeSeederConfig, ConfigureDecorator, ModuleImporterEnum, RemoteFunctionDecorator
 from aws_codeseeder.commands import deploy_seedkit, seedkit_deployed
@@ -100,6 +102,7 @@ def remote_function(
     abort_phases_on_failure: Optional[bool] = None,
     runtime_versions: Optional[Dict[str, str]] = None,
     bundle_id: Optional[str] = None,
+    boto3_session: Optional[Session] = None,
 ) -> RemoteFunctionDecorator:
     """Decorator marking a Remote Function
 
@@ -151,14 +154,15 @@ def remote_function(
         Additional environment variables to set in the CodeBuild execution, by default None
     extra_exported_env_vars : Optional[List[str]], optional
         Additional environment variables to export from the CodeBuild execution, by default None
-    bundle_id : Optional[str], optional
-        Optional identifier to uniquely identify a bundle locally when multiple ``remote_functions`` are executed
-        concurrently, by default None
     abort_phases_on_failure: Optional[bool], optional
         Override default abort of CodeBuild Phases when an execution failure occurs, by default None
     runtime_versions: Optional[Dict[str, str]], optional
         Override default runtime versions (e.g. python, nodejs) to install, by default None
-
+    bundle_id : Optional[str], optional
+        Optional identifier to uniquely identify a bundle locally when multiple ``remote_functions`` are executed
+        concurrently, by default None
+    boto3_session: Optional[Session], optional
+        Optional Session to use for all boto3 operations, by default None
     Returns
     -------
     RemoteFunctionDecorator
@@ -261,9 +265,11 @@ def remote_function(
             else:
                 with registry_entry.lock:
                     while True:
-                        stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name)
+                        stack_exists, stack_name, stack_outputs = seedkit_deployed(
+                            seedkit_name=seedkit_name, session=boto3_session
+                        )
                         if not stack_exists and registry_entry.deploy_if_not_exists:
-                            deploy_seedkit(seedkit_name=seedkit_name)
+                            deploy_seedkit(seedkit_name=seedkit_name, session=boto3_session)
                         elif not stack_exists:
                             raise ValueError(f"Seedkit/Stack named {seedkit_name} is not yet deployed")
                         else:
@@ -352,6 +358,7 @@ def remote_function(
                     timeout=timeout if timeout else config_object.timeout if config_object.timeout else 30,
                     codebuild_log_callback=codebuild_log_callback,
                     overrides=overrides if overrides != {} else None,
+                    session=boto3_session,
                 )
                 if build_info:
                     LOGGER.debug("exported_env_vars: %s", build_info.exported_env_vars)

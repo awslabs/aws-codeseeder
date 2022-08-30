@@ -15,6 +15,8 @@
 from datetime import datetime, timezone
 from typing import Dict, List, NamedTuple, Optional, Union, cast
 
+from boto3 import Session
+
 from aws_codeseeder.services._utils import boto3_client
 
 
@@ -31,7 +33,7 @@ class CloudWatchEvents(NamedTuple):
     last_timestamp: Optional[datetime]
 
 
-def get_stream_name_by_prefix(group_name: str, prefix: str) -> Optional[str]:
+def get_stream_name_by_prefix(group_name: str, prefix: str, session: Optional[Session] = None) -> Optional[str]:
     """Get the CloudWatch Logs stream name
 
     Parameters
@@ -40,13 +42,15 @@ def get_stream_name_by_prefix(group_name: str, prefix: str) -> Optional[str]:
         Name of the CloudWatch Logs group
     prefix : str
         Naming prefix of the CloudWatch Logs Stream
+    session: Optional[Session], optional
+        Optional Session to use for all boto3 operations, by default None
 
     Returns
     -------
     Optional[str]
         Name of the CloudWatch Logs Stream (if found)
     """
-    client = boto3_client("logs")
+    client = boto3_client("logs", session=session)
     response: Dict[str, Union[str, List[Dict[str, Union[float, str]]]]] = client.describe_log_streams(
         logGroupName=group_name,
         logStreamNamePrefix=prefix,
@@ -61,9 +65,7 @@ def get_stream_name_by_prefix(group_name: str, prefix: str) -> Optional[str]:
 
 
 def get_log_events(
-    group_name: str,
-    stream_name: str,
-    start_time: Optional[datetime],
+    group_name: str, stream_name: str, start_time: Optional[datetime], session: Optional[Session] = None
 ) -> CloudWatchEvents:
     """Get CloudWatch Logs Events
 
@@ -75,13 +77,15 @@ def get_log_events(
         Name of teh CloudWatch Logs stream in the group
     start_time : Optional[datetime]
         Start time of the CloudWatch Logs Events
+    session: Optional[Session], optional
+        Optional Session to use for all boto3 operations, by default None
 
     Returns
     -------
     CloudWatchEvents
         CloudWatch Logs Events since ``start_time`` (if found)
     """
-    client = boto3_client("logs")
+    client = boto3_client("logs", session=session)
     args = {
         "logGroupName": group_name,
         "logStreamName": stream_name,
