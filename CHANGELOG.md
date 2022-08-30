@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+* enable --profile and --region cli parameters for boto3 operations
+* enable distinct boto3.Session per remote_function call
 
 ### Changes
 

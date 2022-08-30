@@ -15,7 +15,9 @@
 import os
 import shutil
 import subprocess
-from typing import List
+from typing import List, Optional
+
+from boto3 import Session
 
 from aws_codeseeder import CLI_ROOT, LOGGER, _bundle, create_output_dir
 from aws_codeseeder.commands._seedkit_commands import seedkit_deployed
@@ -34,7 +36,7 @@ def _prep_modules_directory() -> str:
     return out_dir
 
 
-def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
+def deploy_modules(seedkit_name: str, python_modules: List[str], session: Optional[Session] = None) -> None:
     """Deploy local Python modules to the CodeArtifact Domain/Repository associated with a Seedkit
 
     This is a utility function that attempts to package and deploy local Python projects to CodeArtifact for use in
@@ -48,13 +50,15 @@ def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
         List of local Python modules/projects to deploy. Each module is of the form
         "[package-name]:[directory]" where [package-name] is the name of the Python package and [directory] is the
         local location of the module/project
+    session: Optional[Session], optional
+        Optional Session to use for all boto3 operations, by default None
 
     Raises
     ------
     ValueError
         If module names are of the wrong form
     """
-    stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name)
+    stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name, session=session)
     LOGGER.info("Deploying Modules for Seedkit %s with Stack Name %s", seedkit_name, stack_name)
     LOGGER.debug("Python Modules: %s", python_modules)
 
@@ -64,6 +68,8 @@ def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
 
     domain = stack_outputs.get("CodeArtifactDomain")
     repository = stack_outputs.get("CodeArtifactRepository")
+    profile = session.profile_name if session and session.profile_name != "default" else "None"
+    region = session.region_name if session else "None"
 
     if domain is None or repository is None:
         LOGGER.warn("CodeArtifact Repository/Domain was not deployed with the Seedkit")
@@ -83,4 +89,4 @@ def deploy_modules(seedkit_name: str, python_modules: List[str]) -> None:
 
     for module, dir in modules.items():
         LOGGER.info("Deploy Module %s to Seedkit Domain/Repository %s/%s", module, domain, repository)
-        subprocess.check_call([os.path.join(out_dir, FILENAME), domain, repository, module, module])
+        subprocess.check_call([os.path.join(out_dir, FILENAME), domain, repository, module, module, profile, region])

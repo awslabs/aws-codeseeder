@@ -14,11 +14,13 @@
 
 from typing import Dict, List, Optional, Tuple
 
+from boto3 import Session
+
 from aws_codeseeder import LOGGER, _cfn_seedkit
 from aws_codeseeder.services import cfn, s3
 
 
-def seedkit_deployed(seedkit_name: str) -> Tuple[bool, str, Dict[str, str]]:
+def seedkit_deployed(seedkit_name: str, session: Optional[Session] = None) -> Tuple[bool, str, Dict[str, str]]:
     """Checks for existence of the Seedkit CloudFormation Stack
 
     If the Stack exists, then the Stack Outputs are also returned to eliminate need for another roundtrip call to
@@ -28,6 +30,8 @@ def seedkit_deployed(seedkit_name: str) -> Tuple[bool, str, Dict[str, str]]:
     ----------
     seedkit_name : str
         Named of the seedkit to check.
+    session: Optional[Session], optional
+        Optional Session to use for all boto3 operations, by default None
 
     Returns
     -------
@@ -36,12 +40,15 @@ def seedkit_deployed(seedkit_name: str) -> Tuple[bool, str, Dict[str, str]]:
         Stack Outputs
     """
     stack_name: str = cfn.get_stack_name(seedkit_name=seedkit_name)
-    stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name)
+    stack_exists, stack_outputs = cfn.does_stack_exist(stack_name=stack_name, session=session)
     return stack_exists, stack_name, stack_outputs
 
 
 def deploy_seedkit(
-    seedkit_name: str, managed_policy_arns: Optional[List[str]] = None, deploy_codeartifact: bool = False
+    seedkit_name: str,
+    managed_policy_arns: Optional[List[str]] = None,
+    deploy_codeartifact: bool = False,
+    session: Optional[Session] = None,
 ) -> None:
     """Deploys the seedkit resources into the environment.
 
@@ -61,9 +68,11 @@ def deploy_seedkit(
     deploy_codeartifact : bool
         Trigger optional deployment of CodeArtifact Domain and Repository for use by the Seedkit and
         its libraries
+    session: Optional[Session], optional
+        Optional Session to use for all boto3 operations, by default None
     """
     deploy_id: Optional[str] = None
-    stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name)
+    stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name, session=session)
     LOGGER.info("Deploying Seedkit %s with Stack Name %s", seedkit_name, stack_name)
     LOGGER.debug("Managed Policy Arns: %s", managed_policy_arns)
     if stack_exists:
@@ -74,26 +83,31 @@ def deploy_seedkit(
         deploy_id=deploy_id,
         managed_policy_arns=managed_policy_arns,
         deploy_codeartifact=deploy_codeartifact,
+        session=session,
     )
-    cfn.deploy_template(stack_name=stack_name, filename=template_filename, seedkit_tag=f"codeseeder-{seedkit_name}")
+    cfn.deploy_template(
+        stack_name=stack_name, filename=template_filename, seedkit_tag=f"codeseeder-{seedkit_name}", session=session
+    )
     LOGGER.info("Seedkit Deployed")
 
 
-def destroy_seedkit(seedkit_name: str) -> None:
+def destroy_seedkit(seedkit_name: str, session: Optional[Session] = None) -> None:
     """Destroys the resources associated with the seedkit.
 
     Parameters
     ----------
     seedkit_name : str
         Name of the seedkit to destroy
+    session: Optional[Session], optional
+        Optional Session to use for all boto3 operations, by default None
     """
-    stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name)
+    stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name, session=session)
     LOGGER.info("Destroying Seedkit %s with Stack Name %s", seedkit_name, stack_name)
     if stack_exists:
         seedkit_bucket = stack_outputs.get("Bucket")
         if seedkit_bucket:
-            s3.delete_bucket(bucket=seedkit_bucket)
-        cfn.destroy_stack(stack_name=stack_name)
+            s3.delete_bucket(bucket=seedkit_bucket, session=session)
+        cfn.destroy_stack(stack_name=stack_name, session=session)
         LOGGER.info("Seedkit Destroyed")
     else:
         LOGGER.warn("Seedkit/Stack does not exist")
