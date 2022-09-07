@@ -16,12 +16,18 @@ import functools
 import json
 import os
 import textwrap
-from typing import Any, Callable, Dict, List, Mapping, Optional, cast
+from typing import Any, Callable, Dict, List, Mapping, Optional, Union, cast
 
 from boto3 import Session
 
 from aws_codeseeder import LOGGER, __version__, _bundle, _classes, _remote
-from aws_codeseeder._classes import CodeSeederConfig, ConfigureDecorator, ModuleImporterEnum, RemoteFunctionDecorator
+from aws_codeseeder._classes import (
+    CodeSeederConfig,
+    ConfigureDecorator,
+    EnvVar,
+    ModuleImporterEnum,
+    RemoteFunctionDecorator,
+)
 from aws_codeseeder.commands import deploy_seedkit, seedkit_deployed
 from aws_codeseeder.services import codebuild
 
@@ -97,7 +103,7 @@ def remote_function(
     extra_post_build_commands: Optional[List[str]] = None,
     extra_dirs: Optional[Dict[str, str]] = None,
     extra_files: Optional[Dict[str, str]] = None,
-    extra_env_vars: Optional[Dict[str, str]] = None,
+    extra_env_vars: Optional[Dict[str, Union[str, EnvVar]]] = None,
     extra_exported_env_vars: Optional[List[str]] = None,
     abort_phases_on_failure: Optional[bool] = None,
     runtime_versions: Optional[Dict[str, str]] = None,
@@ -150,7 +156,7 @@ def remote_function(
         by default None
     extra_files : Optional[Dict[str, str]], optional
         Name and Location of additional local files to bundle and include in the CodeBuild execution, by default None
-    extra_env_vars : Optional[Dict[str, str]], optional
+    extra_env_vars : Optional[Dict[str, Union[str, EnvVar]]], optional
         Additional environment variables to set in the CodeBuild execution, by default None
     extra_exported_env_vars : Optional[List[str]], optional
         Additional environment variables to export from the CodeBuild execution, by default None
@@ -224,7 +230,7 @@ def remote_function(
         post_build_commands = config_object.post_build_commands + post_build_commands
         dirs = {**cast(Mapping[str, str], config_object.dirs), **dirs}
         files = {**cast(Mapping[str, str], config_object.files), **files}
-        env_vars = {**cast(Mapping[str, str], config_object.env_vars), **env_vars}
+        env_vars = {**cast(Mapping[str, Union[str, EnvVar]], config_object.env_vars), **env_vars}
         exported_env_vars = config_object.exported_env_vars + exported_env_vars
         abort_on_failure = abort_on_failure if abort_on_failure is not None else config_object.abort_phases_on_failure
         runtimes = runtimes if runtimes is not None else config_object.runtime_versions
@@ -348,7 +354,12 @@ def remote_function(
                     overrides["computeTypeOverride"] = codebuild_compute_type
                 if env_vars:
                     overrides["environmentVariablesOverride"] = [
-                        {"name": k, "value": v, "type": "PLAINTEXT"} for k, v in env_vars.items()
+                        {
+                            "name": k,
+                            "value": v.value if isinstance(v, EnvVar) else v,
+                            "type": v.type.value if isinstance(v, EnvVar) else "PLAINTEXT",
+                        }
+                        for k, v in env_vars.items()
                     ]
 
                 build_info = _remote.run(
