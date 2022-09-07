@@ -18,7 +18,10 @@ import shutil
 
 import pkg_resources
 
-from aws_codeseeder.__metadata__ import __description__, __license__, __title__  # noqa: F401
+from aws_codeseeder.__metadata__ import __description__, __license__, __title__
+from aws_codeseeder._classes import EnvVar, EnvVarType
+
+__all__ = ["EnvVar", "EnvVarType"]
 
 __version__: str = pkg_resources.get_distribution(__title__).version
 
@@ -27,6 +30,18 @@ CLI_ROOT = os.path.dirname(os.path.abspath(__file__))
 BUNDLE_ROOT = os.path.abspath(
     os.path.join(os.environ.get("CODEBUILD_SRC_DIR", os.path.join(os.getcwd(), "codeseeder.out")), "bundle")
 )
+
+__all__ = [
+    "__description__",
+    "__license__",
+    "__title__",
+    "__version__",
+    "EnvVar",
+    "EnvVarType",
+    "LOGGER",
+    "CLI_ROOT",
+    "BUNDLE_ROOT",
+]
 
 
 def create_output_dir(name: str) -> str:
