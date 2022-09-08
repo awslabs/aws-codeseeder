@@ -38,7 +38,8 @@ def synth(
     deploy_codeartifact: bool = False,
     session: Optional[Session] = None,
 ) -> str:
-    out_dir = create_output_dir("seedkit")
+    deploy_id = deploy_id if deploy_id else "".join(random.choice(string.ascii_lowercase) for i in range(6))
+    out_dir = create_output_dir(f"seedkit-{deploy_id}")
     output_filename = os.path.join(out_dir, FILENAME)
 
     LOGGER.debug("Reading %s", RESOURCES_FILENAME)
@@ -64,7 +65,7 @@ def synth(
                 seedkit_name=seedkit_name,
                 account_id=get_account_id(session=session),
                 region=get_region(session=session),
-                deploy_id=deploy_id if deploy_id else "".join(random.choice(string.ascii_lowercase) for i in range(6)),
+                deploy_id=deploy_id,
                 role_prefix="/",
             )
         )

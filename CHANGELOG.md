@@ -17,6 +17,13 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+## 0.5.2 - (2022-09-08)
+---
+
+### Fixes
+* deploy_seedkit is not threadsafe due to reuse of seedkit/ output directory
+
+
 ## 0.5.1 - (2022-09-07)
 ---
 
