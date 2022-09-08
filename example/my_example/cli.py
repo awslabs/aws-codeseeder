@@ -5,7 +5,7 @@ from typing import Dict, Optional
 
 from boto3 import Session
 
-from aws_codeseeder import BUNDLE_ROOT, LOGGER, codeseeder, commands, services
+from aws_codeseeder import BUNDLE_ROOT, LOGGER, EnvVar, codeseeder, commands, services
 
 DEBUG_LOGGING_FORMAT = "[%(asctime)s][%(filename)-13s:%(lineno)3d] %(message)s"
 CLI_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -134,6 +134,12 @@ def remote_hello_world_2(name: str) -> str:
         extra_exported_env_vars=["ANOTHER_EXPORTED_VAR"],
         bundle_id=name,
         boto3_session=session,
+        extra_env_vars={
+            "OTHER_KEY_1": "key1",
+            "OTHER_KEY_2": EnvVar(value="PlainText"),
+            # "OTHER_KEY_3": EnvVar(value="ParameterStoreValue", type=EnvVarType.PARAMETER_STORE),
+            # "OTHER_KEY_4": EnvVar(value="SecretsManagerValue", type=EnvVarType.SECRETS_MANAGER),
+        },
     )
     def remote_hello_world_2(name: str) -> str:
         print(f"[RESULT] {name}")

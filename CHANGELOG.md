@@ -17,6 +17,13 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+## 0.5.1 - (2022-09-07)
+---
+
+### Fixes
+* Missing support for PARAMETER_STORE and SECRETS_MANAGER env_vars in CodeBuild
+
+
 ## 0.5.0 - (2022-08-30)
 ---
 

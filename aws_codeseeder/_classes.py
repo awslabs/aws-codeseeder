@@ -15,7 +15,7 @@
 import dataclasses
 import enum
 import threading
-from typing import Any, Callable, Dict, List, Optional, cast
+from typing import Any, Callable, Dict, List, Optional, Union, cast
 
 import boto3
 from mypy_extensions import KwArg, NamedArg, VarArg
@@ -24,6 +24,12 @@ from mypy_extensions import KwArg, NamedArg, VarArg
 class ModuleImporterEnum(str, enum.Enum):
     CODESEEDER_CLI = "codeseeder-cli"
     OTHER = "other"
+
+
+class EnvVarType(str, enum.Enum):
+    PLAINTEXT = "PLAINTEXT"
+    PARAMETER_STORE = "PARAMETER_STORE"
+    SECRETS_MANAGER = "SECRETS_MANAGER"
 
 
 class SingletonMeta(type):
@@ -57,6 +63,30 @@ class SessionSingleton(metaclass=SingletonMeta):
     @value.setter
     def value(self, v: Optional[boto3.Session]) -> None:
         self._value = v
+
+
+@dataclasses.dataclass()
+class EnvVar:
+    """EnvVar dataclass
+
+    This class is used to define environment variables made available inside of CodeBuild. Use of this
+    class enables delcaration of all environment variable types that CodeBuild supports.
+
+    Parameters
+    ----------
+    value : string
+        The value for the environment variable. The effect of this value varies depending on the type
+        of environment variable created. See the AWS official documention for usage information:
+        https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html#build-spec.env.variables
+        https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html#build-spec.env.parameter-store
+        https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html#build-spec.env.secrets-manager
+    type : EnvVarType
+        The type of environment variable: PLAINTEXT, PARAMETER_STORE, or SECRETS_MANAGER. See the AWS
+        official documentation for usage, by default PLAINTEXT
+    """
+
+    value: str
+    type: EnvVarType = EnvVarType.PLAINTEXT
 
 
 @dataclasses.dataclass()
@@ -94,7 +124,7 @@ class CodeSeederConfig:
         Name and Location of local directories to bundle and include in the CodeBuild exeuction,by default None
     files : Optional[Dict[str, str]], optional
         Name and Location of local files to bundle and include in the CodeBuild execution, by default None
-    env_vars : Optional[Dict[str, str]], optional
+    env_vars :  Optional[Dict[str, Union[str, EnvVar]]], optional
         Environment variables to set in the CodeBuild execution, by default None
     exported_env_vars : Optional[List[str], optional
         Environment variables to export from the CodeBuild execution, by default None
@@ -119,7 +149,9 @@ class CodeSeederConfig:
     post_build_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     dirs: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
     files: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
-    env_vars: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
+    env_vars: Optional[Dict[str, Union[str, EnvVar]]] = cast(
+        Dict[str, Union[str, EnvVar]], dataclasses.field(default_factory=dict)
+    )
     exported_env_vars: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     abort_phases_on_failure: bool = True
     runtime_versions: Optional[Dict[str, str]] = dataclasses.field(
