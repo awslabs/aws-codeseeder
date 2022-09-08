@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Changes
 
 ### Fixes
+* deploy_seedkit is not threadsafe due to reuse of seedkit/ output directory
 * Missing support for PARAMETER_STORE and SECRETS_MANAGER env_vars in CodeBuild
 
 ### Breaks
