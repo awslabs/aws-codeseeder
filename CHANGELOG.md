@@ -13,10 +13,22 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Changes
 
 ### Fixes
-* deploy_seedkit is not threadsafe due to reuse of seedkit/ output directory
-* Missing support for PARAMETER_STORE and SECRETS_MANAGER env_vars in CodeBuild
 
 ### Breaks
+
+
+## 0.5.2 - (2022-09-08)
+---
+
+### Fixes
+* deploy_seedkit is not threadsafe due to reuse of seedkit/ output directory
+
+
+## 0.5.1 - (2022-09-07)
+---
+
+### Fixes
+* Missing support for PARAMETER_STORE and SECRETS_MANAGER env_vars in CodeBuild
 
 
 ## 0.5.0 - (2022-08-30)
