@@ -21,23 +21,11 @@ import zipfile
 from pprint import pformat
 from typing import Any, Dict, List, Optional, Tuple
 
-from aws_codeseeder import LOGGER, create_output_dir
+from aws_codeseeder import BUNDLE_IGNORED_FILE_PATHS, LOGGER, create_output_dir
 
 
 def _is_valid_image_file(file_path: str) -> bool:
-    for word in (
-        "/build/",
-        "/.mypy_cache/",
-        ".egg-info",
-        "__pycache__",
-        "codeseeder.out",
-        "/dist/",
-        "/node_modules/",
-        "/cdk.out/",
-    ):
-        if word in file_path:
-            return False
-    return True
+    return all([word not in file_path for word in BUNDLE_IGNORED_FILE_PATHS])
 
 
 def _list_files(path: str) -> List[str]:
