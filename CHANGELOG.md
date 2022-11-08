@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+* global set of ignored paths when bundling
+* remote_funciton supports optional getter function for setting boto3 Session
 
 ### Changes
 
