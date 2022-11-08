@@ -1,7 +1,7 @@
 import concurrent.futures
 import logging
 import os
-from typing import Dict, Optional
+from typing import Callable, Dict, Optional, Union
 
 from boto3 import Session
 
@@ -104,7 +104,7 @@ def remote_hello_world_2(name: str) -> str:
     # codebuild_role = "some-other-role"
 
     # Execute this if we're being run by CodeBuild
-    session: Optional[Session] = None
+    Optional[Union[Callable[[], Session], Session]] = None
     if codeseeder.EXECUTING_REMOTELY:
         LOGGER.info("Executing remotely in CodeBuild")
     else:
@@ -133,7 +133,7 @@ def remote_hello_world_2(name: str) -> str:
         extra_post_build_commands=[f"export ANOTHER_EXPORTED_VAR='{name}'"],
         extra_exported_env_vars=["ANOTHER_EXPORTED_VAR"],
         bundle_id=name,
-        boto3_session=session,
+        # boto3_session=session,
         extra_env_vars={
             "OTHER_KEY_1": "key1",
             "OTHER_KEY_2": EnvVar(value="PlainText"),

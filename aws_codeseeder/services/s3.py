@@ -17,7 +17,7 @@ import math
 import random
 import time
 from itertools import repeat
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Callable, Dict, List, Optional, Union, cast
 
 from boto3 import Session
 from botocore.exceptions import ClientError
@@ -31,7 +31,9 @@ def _chunkify(lst: List[Any], num_chunks: int = 1, max_length: Optional[int] = N
     return [lst[i : i + num] for i in range(0, len(lst), num)]  # noqa: E203
 
 
-def _delete_objects(bucket: str, chunk: List[Dict[str, str]], session: Optional[Session] = None) -> None:
+def _delete_objects(
+    bucket: str, chunk: List[Dict[str, str]], session: Optional[Union[Callable[[], Session], Session]] = None
+) -> None:
     client_s3 = boto3_client("s3", session=session)
     try:
         client_s3.delete_objects(Bucket=bucket, Delete={"Objects": chunk})
@@ -41,15 +43,15 @@ def _delete_objects(bucket: str, chunk: List[Dict[str, str]], session: Optional[
             client_s3.delete_objects(Bucket=bucket, Delete={"Objects": chunk})
 
 
-def list_keys(bucket: str, session: Optional[Session] = None) -> List[Dict[str, str]]:
+def list_keys(bucket: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> List[Dict[str, str]]:
     """List the keys/objects in an S3 Buket
 
     Parameters
     ----------
     bucket : str
         S3 Bucket name
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Returns
     -------
@@ -75,7 +77,9 @@ def list_keys(bucket: str, session: Optional[Session] = None) -> List[Dict[str, 
     return keys
 
 
-def delete_objects(bucket: str, keys: Optional[List[str]] = None, session: Optional[Session] = None) -> None:
+def delete_objects(
+    bucket: str, keys: Optional[List[str]] = None, session: Optional[Union[Callable[[], Session], Session]] = None
+) -> None:
     """Delete objects from an S3 Bucket
 
     Parameters
@@ -84,8 +88,8 @@ def delete_objects(bucket: str, keys: Optional[List[str]] = None, session: Optio
         S3 Bucket name
     keys : Optional[List[str]], optional
         List of keys to delete, all if None, by default None
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
     """
     if keys is None:
         keys_pairs: List[Dict[str, str]] = list_keys(bucket=bucket)
@@ -97,15 +101,15 @@ def delete_objects(bucket: str, keys: Optional[List[str]] = None, session: Optio
             list(executor.map(_delete_objects, repeat(bucket), chunks, repeat(session)))
 
 
-def delete_bucket(bucket: str, session: Optional[Session] = None) -> None:
+def delete_bucket(bucket: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> None:
     """Delete an S3 Bucket
 
     Parameters
     ----------
     bucket : str
         S3 Bucket Name
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Raises
     ------
@@ -126,7 +130,9 @@ def delete_bucket(bucket: str, session: Optional[Session] = None) -> None:
             raise ex
 
 
-def upload_file(src: str, bucket: str, key: str, session: Optional[Session] = None) -> None:
+def upload_file(
+    src: str, bucket: str, key: str, session: Optional[Union[Callable[[], Session], Session]] = None
+) -> None:
     """Upload file to S3 Bucket
 
     Parameters
@@ -137,14 +143,16 @@ def upload_file(src: str, bucket: str, key: str, session: Optional[Session] = No
         S3 Bucket
     key : str
         Key name to upload to
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
     """
     client_s3 = boto3_client("s3", session=session)
     client_s3.upload_file(Filename=src, Bucket=bucket, Key=key)
 
 
-def list_s3_objects(bucket: str, prefix: str, session: Optional[Session] = None) -> Dict[str, Any]:
+def list_s3_objects(
+    bucket: str, prefix: str, session: Optional[Union[Callable[[], Session], Session]] = None
+) -> Dict[str, Any]:
     """List S3 objects in a Bucket filtered to a prefix
 
     Parameters
@@ -153,8 +161,8 @@ def list_s3_objects(bucket: str, prefix: str, session: Optional[Session] = None)
         S3 Bucket name
     prefix : str
         Prefix filter
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Returns
     -------
@@ -166,15 +174,15 @@ def list_s3_objects(bucket: str, prefix: str, session: Optional[Session] = None)
     return cast(Dict[str, Any], response)
 
 
-def delete_bucket_by_prefix(prefix: str, session: Optional[Session] = None) -> None:
+def delete_bucket_by_prefix(prefix: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> None:
     """Delete S3 Buckets whose name begins with a prefix
 
     Parameters
     ----------
     prefix : str
         Prefix to filter Buckets by
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
     """
     client_s3 = boto3_client("s3", session=session)
     for bucket in client_s3.list_buckets()["Buckets"]:
@@ -182,7 +190,7 @@ def delete_bucket_by_prefix(prefix: str, session: Optional[Session] = None) -> N
             delete_bucket(bucket=bucket["Name"])
 
 
-def object_exists(bucket: str, key: str, session: Optional[Session] = None) -> bool:
+def object_exists(bucket: str, key: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> bool:
     """Check for existence of an object in an S3 Bucket
 
     Parameters
@@ -191,8 +199,8 @@ def object_exists(bucket: str, key: str, session: Optional[Session] = None) -> b
         S3 Bucket name
     key : str
         Key to ckeck
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Returns
     -------
