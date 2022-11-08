@@ -16,7 +16,7 @@ import os
 import random
 import string
 from string import Template
-from typing import List, Optional
+from typing import Callable, List, Optional, Union
 
 import yaml
 from boto3 import Session
@@ -36,7 +36,7 @@ def synth(
     deploy_id: Optional[str] = None,
     managed_policy_arns: Optional[List[str]] = None,
     deploy_codeartifact: bool = False,
-    session: Optional[Session] = None,
+    session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> str:
     deploy_id = deploy_id if deploy_id else "".join(random.choice(string.ascii_lowercase) for i in range(6))
     out_dir = create_output_dir(f"seedkit-{deploy_id}")

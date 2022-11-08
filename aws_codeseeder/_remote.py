@@ -15,7 +15,7 @@
 import random
 import string
 from datetime import datetime, timedelta
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from boto3 import Session
 
@@ -38,7 +38,7 @@ def _wait_execution(
     build_id: str,
     stream_name_prefix: str,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
-    session: Optional[Session] = None,
+    session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> Optional[codebuild.BuildInfo]:
     start_time: Optional[datetime] = None
     stream_name: Optional[str] = None
@@ -67,7 +67,7 @@ def _execute_codebuild(
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
-    session: Optional[Session] = None,
+    session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> Optional[codebuild.BuildInfo]:
     LOGGER.debug("bundle_location: %s", bundle_location)
     stream_name_prefix = f"codeseeder-{execution_id}"
@@ -96,7 +96,7 @@ def run(
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
-    session: Optional[Session] = None,
+    session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> Optional[codebuild.BuildInfo]:
     execution_id = "".join(random.choice(string.ascii_lowercase) for i in range(8))
     key: str = f"codeseeder/{execution_id}/bundle.zip"

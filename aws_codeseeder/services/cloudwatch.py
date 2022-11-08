@@ -13,7 +13,7 @@
 #    limitations under the License.
 
 from datetime import datetime, timezone
-from typing import Dict, List, NamedTuple, Optional, Union, cast
+from typing import Callable, Dict, List, NamedTuple, Optional, Union, cast
 
 from boto3 import Session
 
@@ -33,7 +33,9 @@ class CloudWatchEvents(NamedTuple):
     last_timestamp: Optional[datetime]
 
 
-def get_stream_name_by_prefix(group_name: str, prefix: str, session: Optional[Session] = None) -> Optional[str]:
+def get_stream_name_by_prefix(
+    group_name: str, prefix: str, session: Optional[Union[Callable[[], Session], Session]] = None
+) -> Optional[str]:
     """Get the CloudWatch Logs stream name
 
     Parameters
@@ -42,8 +44,8 @@ def get_stream_name_by_prefix(group_name: str, prefix: str, session: Optional[Se
         Name of the CloudWatch Logs group
     prefix : str
         Naming prefix of the CloudWatch Logs Stream
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Returns
     -------
@@ -65,7 +67,10 @@ def get_stream_name_by_prefix(group_name: str, prefix: str, session: Optional[Se
 
 
 def get_log_events(
-    group_name: str, stream_name: str, start_time: Optional[datetime], session: Optional[Session] = None
+    group_name: str,
+    stream_name: str,
+    start_time: Optional[datetime],
+    session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> CloudWatchEvents:
     """Get CloudWatch Logs Events
 
@@ -77,8 +82,8 @@ def get_log_events(
         Name of teh CloudWatch Logs stream in the group
     start_time : Optional[datetime]
         Start time of the CloudWatch Logs Events
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Returns
     -------

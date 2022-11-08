@@ -15,7 +15,7 @@
 import time
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, Iterable, List, NamedTuple, Optional
+from typing import Any, Callable, Dict, Iterable, List, NamedTuple, Optional, Union
 
 import botocore.exceptions
 import yaml
@@ -100,7 +100,7 @@ def start(
     buildspec: Dict[str, Any],
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
-    session: Optional[Session] = None,
+    session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> str:
     """Start a CodeBuild Project execution
 
@@ -118,8 +118,8 @@ def start(
         Timeout of the CodeBuild execution
     overrides : Optional[Dict[str, Any]], optional
         Additional overrides to set on the CodeBuild execution, by default None
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Returns
     -------
@@ -156,15 +156,15 @@ def start(
     return str(response["build"]["id"])
 
 
-def fetch_build_info(build_id: str, session: Optional[Session] = None) -> BuildInfo:
+def fetch_build_info(build_id: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> BuildInfo:
     """Fetch info on a CodeBuild execution
 
     Parameters
     ----------
     build_id : str
         CodeBuild Execution/Build Id
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Returns
     -------
@@ -215,15 +215,15 @@ def fetch_build_info(build_id: str, session: Optional[Session] = None) -> BuildI
     )
 
 
-def wait(build_id: str, session: Optional[Session] = None) -> Iterable[BuildInfo]:
+def wait(build_id: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> Iterable[BuildInfo]:
     """Wait for completion of a CodeBuild execution
 
     Parameters
     ----------
     build_id : str
         The CodeBuild Execution/Build Id
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Returns
     -------
