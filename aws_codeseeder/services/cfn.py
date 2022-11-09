@@ -15,7 +15,7 @@
 import os
 import time
 from datetime import datetime
-from typing import Any, Dict, Optional, Tuple, cast
+from typing import Any, Callable, Dict, Optional, Tuple, Union, cast
 
 import botocore.exceptions
 from boto3 import Session
@@ -27,7 +27,9 @@ from aws_codeseeder.services._utils import boto3_client
 CHANGESET_PREFIX = "aws-codeseeder-"
 
 
-def _wait_for_changeset(changeset_id: str, stack_name: str, session: Optional[Session] = None) -> bool:
+def _wait_for_changeset(
+    changeset_id: str, stack_name: str, session: Optional[Union[Callable[[], Session], Session]] = None
+) -> bool:
     waiter = boto3_client("cloudformation", session=session).get_waiter("change_set_create_complete")
     waiter_config = {"Delay": 1}
     try:
@@ -53,7 +55,7 @@ def _create_changeset(
     seedkit_tag: Optional[str] = None,
     template_path: str = "",
     parameters: Optional[Dict[str, str]] = None,
-    session: Optional[Session] = None,
+    session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> Tuple[str, str]:
     now = datetime.utcnow().isoformat()
     description = f"Created by AWS CodeSeeder CLI at {now} UTC"
@@ -80,11 +82,15 @@ def _create_changeset(
     return str(resp["Id"]), changeset_type
 
 
-def _execute_changeset(changeset_id: str, stack_name: str, session: Optional[Session] = None) -> None:
+def _execute_changeset(
+    changeset_id: str, stack_name: str, session: Optional[Union[Callable[[], Session], Session]] = None
+) -> None:
     boto3_client("cloudformation", session=session).execute_change_set(ChangeSetName=changeset_id, StackName=stack_name)
 
 
-def _wait_for_execute(stack_name: str, changeset_type: str, session: Optional[Session] = None) -> None:
+def _wait_for_execute(
+    stack_name: str, changeset_type: str, session: Optional[Union[Callable[[], Session], Session]] = None
+) -> None:
     if changeset_type == "CREATE":
         waiter = boto3_client("cloudformation", session=session).get_waiter("stack_create_complete")
     elif changeset_type == "UPDATE":
@@ -114,15 +120,15 @@ def get_stack_name(seedkit_name: str) -> str:
     return f"aws-codeseeder-{seedkit_name}"
 
 
-def get_stack_status(stack_name: str, session: Optional[Session] = None) -> str:
+def get_stack_status(stack_name: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> str:
     """Retrieve the status of a CloudFormation Stack
 
     Parameters
     ----------
     stack_name : str
         Name of the CloudFormation Stack to query
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Returns
     -------
@@ -145,15 +151,17 @@ def get_stack_status(stack_name: str, session: Optional[Session] = None) -> str:
     return cast(str, resp["Stacks"][0]["StackStatus"])
 
 
-def does_stack_exist(stack_name: str, session: Optional[Session] = None) -> Tuple[bool, Dict[str, str]]:
+def does_stack_exist(
+    stack_name: str, session: Optional[Union[Callable[[], Session], Session]] = None
+) -> Tuple[bool, Dict[str, str]]:
     """Checks for existence of a CloudFormation Stack while also returning Stack Outputs if it does exist
 
     Parameters
     ----------
     stack_name : str
         Name of the CloudFormation Stack to query
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Returns
     -------
@@ -180,7 +188,7 @@ def deploy_template(
     seedkit_tag: Optional[str] = None,
     s3_bucket: Optional[str] = None,
     parameters: Optional[Dict[str, str]] = None,
-    session: Optional[Session] = None,
+    session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> None:
     """Deploy a local CloudFormation Template
 
@@ -199,8 +207,8 @@ def deploy_template(
         S3 Bucket to upload the template file to if it is too large (> 51200), by default None
     parameters: Optional[Dict[str, str]], optional
         Key/Value set of Input Parameters to pass to the CloudFormation stack, by default None
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Raises
     ------
@@ -246,15 +254,15 @@ def deploy_template(
         _wait_for_execute(stack_name=stack_name, changeset_type=changeset_type, session=session)
 
 
-def destroy_stack(stack_name: str, session: Optional[Session] = None) -> None:
+def destroy_stack(stack_name: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> None:
     """Destroy the CloudFormation Stack
 
     Parameters
     ----------
     stack_name : str
         Name of the CloudFormation Stack to destroy
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
     """
     LOGGER.debug("Destroying stack %s", stack_name)
     client = boto3_client("cloudformation", session=session)

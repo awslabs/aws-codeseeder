@@ -15,7 +15,7 @@
 import os
 import shutil
 import subprocess
-from typing import List, Optional
+from typing import Callable, List, Optional, Union, cast
 
 from boto3 import Session
 
@@ -36,7 +36,9 @@ def _prep_modules_directory() -> str:
     return out_dir
 
 
-def deploy_modules(seedkit_name: str, python_modules: List[str], session: Optional[Session] = None) -> None:
+def deploy_modules(
+    seedkit_name: str, python_modules: List[str], session: Optional[Union[Callable[[], Session], Session]] = None
+) -> None:
     """Deploy local Python modules to the CodeArtifact Domain/Repository associated with a Seedkit
 
     This is a utility function that attempts to package and deploy local Python projects to CodeArtifact for use in
@@ -50,8 +52,8 @@ def deploy_modules(seedkit_name: str, python_modules: List[str], session: Option
         List of local Python modules/projects to deploy. Each module is of the form
         "[package-name]:[directory]" where [package-name] is the name of the Python package and [directory] is the
         local location of the module/project
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Raises
     ------
@@ -68,6 +70,9 @@ def deploy_modules(seedkit_name: str, python_modules: List[str], session: Option
 
     domain = stack_outputs.get("CodeArtifactDomain")
     repository = stack_outputs.get("CodeArtifactRepository")
+    if callable(session):
+        session = session()
+    session = cast(Session, session)
     profile = session.profile_name if session and session.profile_name != "default" else "None"
     region = session.region_name if session else "None"
 

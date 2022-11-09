@@ -15,6 +15,7 @@
 import logging
 import os
 import shutil
+from typing import MutableSet
 
 import pkg_resources
 
@@ -26,10 +27,37 @@ __all__ = ["EnvVar", "EnvVarType"]
 __version__: str = pkg_resources.get_distribution(__title__).version
 
 LOGGER: logging.Logger = logging.getLogger(__name__)
+
 CLI_ROOT = os.path.dirname(os.path.abspath(__file__))
+"""Absolute path of the CLI's directory
+
+This directory is used internally to locate resource files included in the wheel
+"""
+
 BUNDLE_ROOT = os.path.abspath(
     os.path.join(os.environ.get("CODEBUILD_SRC_DIR", os.path.join(os.getcwd(), "codeseeder.out")), "bundle")
 )
+"""Absolute path of the bundled files within CodeBuild
+
+This global is provided to consumers to simplify locating, within CodeBuild, the bundled files/directories
+"""
+
+BUNDLE_IGNORED_FILE_PATHS: MutableSet[str] = {
+    "/build/",
+    "/.mypy_cache/",
+    ".egg-info",
+    "__pycache__",
+    "/codeseeder.out/",
+    "/dist/",
+    "/node_modules/",
+    "/cdk.out/",
+}
+"""File path segments that cause exclusion during bundling
+
+These file path segments are checked against files during bundling. If found in the file's path, the file is
+ignored and excluded from the bundle created and submitted to CodeBuild.
+"""
+
 
 __all__ = [
     "__description__",
@@ -41,10 +69,23 @@ __all__ = [
     "LOGGER",
     "CLI_ROOT",
     "BUNDLE_ROOT",
+    "BUNDLE_IGNORED_FILE_PATHS",
 ]
 
 
 def create_output_dir(name: str) -> str:
+    """Helper function for creating or clearing a codeseeder.out output directory
+
+    Parameters
+    ----------
+    name : str
+        Name of the directory to create in  the codeseeder.out directory
+
+    Returns
+    -------
+    str
+        Full path of the created directory
+    """
     out_dir = os.path.join(os.getcwd(), "codeseeder.out", name)
     try:
         shutil.rmtree(out_dir)

@@ -108,7 +108,7 @@ def remote_function(
     abort_phases_on_failure: Optional[bool] = None,
     runtime_versions: Optional[Dict[str, str]] = None,
     bundle_id: Optional[str] = None,
-    boto3_session: Optional[Session] = None,
+    boto3_session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> RemoteFunctionDecorator:
     """Decorator marking a Remote Function
 
@@ -167,8 +167,8 @@ def remote_function(
     bundle_id : Optional[str], optional
         Optional identifier to uniquely identify a bundle locally when multiple ``remote_functions`` are executed
         concurrently, by default None
-    boto3_session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    boto3_session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
     Returns
     -------
     RemoteFunctionDecorator

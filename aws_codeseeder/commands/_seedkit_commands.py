@@ -12,7 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from typing import Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from boto3 import Session
 
@@ -20,7 +20,9 @@ from aws_codeseeder import LOGGER, _cfn_seedkit
 from aws_codeseeder.services import cfn, s3
 
 
-def seedkit_deployed(seedkit_name: str, session: Optional[Session] = None) -> Tuple[bool, str, Dict[str, str]]:
+def seedkit_deployed(
+    seedkit_name: str, session: Optional[Union[Callable[[], Session], Session]] = None
+) -> Tuple[bool, str, Dict[str, str]]:
     """Checks for existence of the Seedkit CloudFormation Stack
 
     If the Stack exists, then the Stack Outputs are also returned to eliminate need for another roundtrip call to
@@ -30,8 +32,8 @@ def seedkit_deployed(seedkit_name: str, session: Optional[Session] = None) -> Tu
     ----------
     seedkit_name : str
         Named of the seedkit to check.
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
 
     Returns
     -------
@@ -48,7 +50,7 @@ def deploy_seedkit(
     seedkit_name: str,
     managed_policy_arns: Optional[List[str]] = None,
     deploy_codeartifact: bool = False,
-    session: Optional[Session] = None,
+    session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> None:
     """Deploys the seedkit resources into the environment.
 
@@ -68,8 +70,8 @@ def deploy_seedkit(
     deploy_codeartifact : bool
         Trigger optional deployment of CodeArtifact Domain and Repository for use by the Seedkit and
         its libraries
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
     """
     deploy_id: Optional[str] = None
     stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name, session=session)
@@ -91,15 +93,15 @@ def deploy_seedkit(
     LOGGER.info("Seedkit Deployed")
 
 
-def destroy_seedkit(seedkit_name: str, session: Optional[Session] = None) -> None:
+def destroy_seedkit(seedkit_name: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> None:
     """Destroys the resources associated with the seedkit.
 
     Parameters
     ----------
     seedkit_name : str
         Name of the seedkit to destroy
-    session: Optional[Session], optional
-        Optional Session to use for all boto3 operations, by default None
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
     """
     stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name, session=session)
     LOGGER.info("Destroying Seedkit %s with Stack Name %s", seedkit_name, stack_name)
