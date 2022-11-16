@@ -26,16 +26,21 @@ black==22.1.0
 bleach==4.1.0
     # via readme-renderer
 boto3==1.20.47
-    # via aws-sam-translator
+    # via
+    #   aws-sam-translator
+    #   moto
 botocore==1.23.47
     # via
     #   awscli
     #   boto3
+    #   moto
     #   s3transfer
 build==0.7.0
     # via check-manifest
 certifi==2021.10.8
     # via requests
+cffi==1.15.1
+    # via cryptography
 cfn-lint==0.58.0
     # via -r requirements-dev.in
 changelog-cli==0.7.1
@@ -53,6 +58,10 @@ colorama==0.4.3
     # via
     #   awscli
     #   twine
+coverage[toml]==6.5.0
+    # via pytest-cov
+cryptography==38.0.3
+    # via moto
 docutils==0.15.2
     # via
     #   awscli
@@ -75,6 +84,7 @@ importlib-metadata==4.2.0
     #   jsonpickle
     #   jsonschema
     #   keyring
+    #   moto
     #   pep517
     #   pluggy
     #   pytest
@@ -85,6 +95,7 @@ isort==5.10.1
     # via -r requirements-dev.in
 jinja2==3.0.3
     # via
+    #   moto
     #   myst-parser
     #   sphinx
     #   sphinx-autoapi
@@ -114,14 +125,19 @@ markdown-it-py==2.0.1
     # via
     #   mdit-py-plugins
     #   myst-parser
-markupsafe==2.0.1
-    # via jinja2
+markupsafe==2.1.1
+    # via
+    #   jinja2
+    #   moto
+    #   werkzeug
 mccabe==0.6.1
     # via flake8
 mdit-py-plugins==0.3.0
     # via myst-parser
 mdurl==0.1.0
     # via markdown-it-py
+moto==4.0.9
+    # via -r requirements-dev.in
 mypy==0.931
     # via -r requirements-dev.in
 mypy-extensions==0.4.3
@@ -162,6 +178,8 @@ pyasn1==0.4.8
     # via rsa
 pycodestyle==2.8.0
     # via flake8
+pycparser==2.21
+    # via cffi
 pyflakes==2.4.0
     # via flake8
 pygments==2.11.2
@@ -176,11 +194,19 @@ pyroma==3.2
 pyrsistent==0.18.1
     # via jsonschema
 pytest==6.2.5
+    # via
+    #   -r requirements-dev.in
+    #   pytest-cov
+pytest-cov==4.0.0
     # via -r requirements-dev.in
 python-dateutil==2.8.2
-    # via botocore
+    # via
+    #   botocore
+    #   moto
 pytz==2021.3
-    # via babel
+    # via
+    #   babel
+    #   moto
 pyyaml==5.4.1
     # via
     #   awscli
@@ -191,12 +217,16 @@ readme-renderer==32.0
     # via twine
 requests==2.27.1
     # via
+    #   moto
     #   pyroma
     #   requests-toolbelt
+    #   responses
     #   sphinx
     #   twine
 requests-toolbelt==0.9.1
     # via twine
+responses==0.22.0
+    # via moto
 rfc3986==2.0.0
     # via twine
 rsa==4.7.2
@@ -243,10 +273,12 @@ toml==0.10.2
     # via
     #   check-manifest
     #   pytest
+    #   responses
 tomli==2.0.0
     # via
     #   black
     #   build
+    #   coverage
     #   mypy
     #   pep517
 tqdm==4.62.3
@@ -262,6 +294,8 @@ types-pyyaml==6.0.4
     # via -r requirements-dev.in
 types-setuptools==57.4.8
     # via -r requirements-dev.in
+types-toml==0.10.8.1
+    # via responses
 typing-extensions==4.0.1
     # via
     #   astroid
@@ -269,19 +303,25 @@ typing-extensions==4.0.1
     #   importlib-metadata
     #   markdown-it-py
     #   mypy
+    #   responses
 unidecode==1.3.2
     # via sphinx-autoapi
 urllib3==1.26.8
     # via
     #   botocore
     #   requests
+    #   responses
     #   twine
 webencodings==0.5.1
     # via bleach
+werkzeug==2.2.2
+    # via moto
 wheel==0.37.1
     # via pip-tools
 wrapt==1.13.3
     # via astroid
+xmltodict==0.13.0
+    # via moto
 zipp==3.7.0
     # via
     #   importlib-metadata
