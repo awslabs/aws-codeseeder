@@ -38,3 +38,5 @@ jobs:
         run: black --check .
       - name: Isort Check
         run: isort --check .
+      - name: PyTest
+        run: pytest -v --cov=aws_codeseeder
