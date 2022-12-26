@@ -105,7 +105,7 @@ urllib3==1.26.7
     #   requests
 webencodings==0.5.1
     # via bleach
-wheel==0.37.0
+wheel==0.38.1
     # via softwarelabs-remote-toolkit (setup.py)
 zipp==3.6.0
     # via importlib-metadata
