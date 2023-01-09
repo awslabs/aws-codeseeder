@@ -97,9 +97,12 @@ def run(
     overrides: Optional[Dict[str, Any]] = None,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
     session: Optional[Union[Callable[[], Session], Session]] = None,
+    bundle_id: Optional[str] = None,
 ) -> Optional[codebuild.BuildInfo]:
     execution_id = "".join(random.choice(string.ascii_lowercase) for i in range(8))
-    key: str = f"codeseeder/{execution_id}/bundle.zip"
+    key: str = (
+        f"codeseeder/{bundle_id}/{execution_id}/bundle.zip" if bundle_id else f"codeseeder/{execution_id}/bundle.zip"
+    )
     bucket = stack_outputs["Bucket"]
     s3.delete_objects(bucket=bucket, keys=[key], session=session)
     s3.upload_file(src=bundle_path, bucket=bucket, key=key, session=session)
