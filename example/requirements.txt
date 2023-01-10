@@ -16,7 +16,7 @@ botocore==1.22.8
     #   boto3
     #   s3transfer
     #   softwarelabs-remote-toolkit (setup.py)
-certifi==2021.10.8
+certifi==2022.12.7
     # via requests
 cfn-flip==1.2.3
     # via softwarelabs-remote-toolkit (setup.py)
