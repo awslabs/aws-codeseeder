@@ -370,6 +370,7 @@ def remote_function(
                     codebuild_log_callback=codebuild_log_callback,
                     overrides=overrides if overrides != {} else None,
                     session=boto3_session,
+                    bundle_id=bundle_id,
                 )
                 if build_info:
                     LOGGER.debug("exported_env_vars: %s", build_info.exported_env_vars)

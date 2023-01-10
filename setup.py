@@ -54,7 +54,7 @@ setup(
     extras_require={
         "modules": [
             "awscli>=1.19.0",
-            "wheel>=0.36.0",
+            "wheel>=0.38.1",
             "twine>=3.3.0",
         ]
     },
