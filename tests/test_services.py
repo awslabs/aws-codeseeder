@@ -64,19 +64,23 @@ def test_get_stack_name():
     assert cfn.get_stack_name(seedkit_name="test-seedkit") == "aws-codeseeder-test-seedkit"
 
 
-def test_cfn_get_stack_status(cloudformation_client):
+def test_cfn_get_stack_status_fails(cloudformation_client):
     with pytest.raises(ClientError):
         result = cfn.get_stack_status(stack_name="test-stack", session=None)
 
+
+def test_cfn_get_stack_status_successful(cloudformation_client):
     cloudformation_client.create_stack(StackName="test-stack", TemplateBody="{Resources:[]}")
     result = cfn.get_stack_status(stack_name="test-stack", session=None)
     assert result == "CREATE_COMPLETE"
 
 
-def test_cfn_does_stack_exist(cloudformation_client):
+def test_cfn_does_stack_not_exist(cloudformation_client):
     result = cfn.does_stack_exist("test-stack", session=None)
     assert not result[0]
 
+
+def test_cfn_does_stack_exist(cloudformation_client):
     cloudformation_client.create_stack(StackName="test-stack", TemplateBody="{Resources:[]}")
     result = cfn.does_stack_exist("test-stack", session=None)
     assert result[0]
@@ -104,36 +108,50 @@ def test_cfn_destroy_stack(cloudformation_client):
     cfn.destroy_stack(stack_name="test-stack", session=None)
 
 
-def test_cloudwatch_get_stream_name_by_prefix(logs_client):
+def test_cloudwatch_get_stream_name_by_prefix_fails(logs_client):
     with pytest.raises(ClientError) as e:
         cloudwatch.get_stream_name_by_prefix(group_name="test-group", prefix="test-stream")
     assert "ResourceNotFoundException" in str(e)
 
+
+def test_cloudwatch_get_stream_name_by_prefix_not_found(logs_client):
     logs_client.create_log_group(logGroupName="test-group")
     result = cloudwatch.get_stream_name_by_prefix(group_name="test-group", prefix="test-stream")
     assert result is None
 
+
+def test_cloudwatch_get_stream_name_by_prefix(logs_client):
+    logs_client.create_log_group(logGroupName="test-group")
     logs_client.create_log_stream(logGroupName="test-group", logStreamName="test-stream-0")
     result = cloudwatch.get_stream_name_by_prefix(group_name="test-group", prefix="test-stream")
     assert result == "test-stream-0"
 
 
-def test_cloudwatch_get_log_events(logs_client):
+def test_cloudwatch_get_log_events_fails(logs_client):
     with pytest.raises(ClientError) as e:
         events = cloudwatch.get_log_events(group_name="test-group", stream_name="test-stream-0", start_time=None)
     assert "ResourceNotFoundException" in str(e)
 
+
+def test_cloudwatch_get_log_events_not_found(logs_client):
     logs_client.create_log_group(logGroupName="test-group")
     with pytest.raises(ClientError) as e:
         events = cloudwatch.get_log_events(group_name="test-group", stream_name="test-stream-0", start_time=None)
     assert "ResourceNotFoundException" in str(e)
 
+
+def test_cloudwatch_get_log_events_no_events(logs_client):
+    logs_client.create_log_group(logGroupName="test-group")
     logs_client.create_log_stream(logGroupName="test-group", logStreamName="test-stream-0")
     events = cloudwatch.get_log_events(group_name="test-group", stream_name="test-stream-0", start_time=None)
     assert events.group_name == "test-group"
     assert events.stream_name_prefix == "test-stream-0"
     assert len(events.events) == 0
 
+
+def test_cloudwatch_get_log_events(logs_client):
+    logs_client.create_log_group(logGroupName="test-group")
+    logs_client.create_log_stream(logGroupName="test-group", logStreamName="test-stream-0")
     logs_client.put_log_events(
         logGroupName="test-group",
         logStreamName="test-stream-0",
