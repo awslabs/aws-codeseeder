@@ -17,6 +17,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+
+## 0.7.0 - (2023-01-13)
+---
+
+### New
+
+### Changes
+
+### Fixes
+* Include bundle_id in S3 path of uploaded bundles
+
+
 ## 0.6.0 - (2022-11-09)
 ---
 
