@@ -86,6 +86,26 @@ def destroy() -> None:
     show_default=True,
 )
 @click.option(
+    "--vpc-id",
+    help="The VPC ID that the Codebuild Project resides in (only 1)",
+    required=False,
+    default=None,
+)
+@click.option(
+    "--subnet-id",
+    help="A subnet that the Codebuild Project resides in (many can be passed in)",
+    multiple=True,
+    required=False,
+    default=[],
+)
+@click.option(
+    "--sg-id",
+    help="A Securtiy Group in the VPC that the Codebuild Project can leverage (up to 5)",
+    multiple=True,
+    required=False,
+    default=[],
+)
+@click.option(
     "--debug/--no-debug",
     default=False,
     help="Enable detailed logging.",
@@ -98,6 +118,9 @@ def deploy_seedkit(
     profile: Optional[str],
     region: Optional[str],
     debug: bool,
+    vpc_id: Optional[str],
+    subnet_id: Tuple[str, ...],
+    sg_id: Tuple[str, ...],
 ) -> None:
     if debug:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
@@ -109,6 +132,9 @@ def deploy_seedkit(
         managed_policy_arns=[p for p in policy_arn],
         deploy_codeartifact=deploy_codeartifact,
         session=session,
+        vpc_id=vpc_id,
+        subnet_ids=[s for s in subnet_id],
+        security_group_ids=[sg for sg in sg_id],
     )
 
 
