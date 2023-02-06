@@ -11,12 +11,23 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### New
 
 ### Changes
-- added VPC support for CodeBuild Project when creating `seedkit`
 
 ### Fixes
 
 ### Breaks
 
+
+## 0.8.0 - (2023-02-06)
+---
+
+### New
+
+### Changes
+- added VPC support for CodeBuild Project when creating `seedkit`
+
+### Fixes
+
+### Breaks
 
 
 ## 0.7.0 - (2023-01-13)
