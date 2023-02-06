@@ -37,6 +37,9 @@ def synth(
     managed_policy_arns: Optional[List[str]] = None,
     deploy_codeartifact: bool = False,
     session: Optional[Union[Callable[[], Session], Session]] = None,
+    vpc_id: Optional[str] = None,
+    subnet_ids: Optional[List[str]] = None,
+    security_group_ids: Optional[List[str]] = None,
 ) -> str:
     deploy_id = deploy_id if deploy_id else "".join(random.choice(string.ascii_lowercase) for i in range(6))
     out_dir = create_output_dir(f"seedkit-{deploy_id}")
@@ -48,6 +51,10 @@ def synth(
 
     if managed_policy_arns:
         input_template["Resources"]["CodeBuildRole"]["Properties"]["ManagedPolicyArns"] += managed_policy_arns
+
+    if vpc_id and subnet_ids and security_group_ids:
+        vpcConfig = {"VpcId": vpc_id, "SecurityGroupIds": security_group_ids, "Subnets": subnet_ids}
+        input_template["Resources"]["CodeBuildProject"]["Properties"]["VpcConfig"] = vpcConfig
 
     if not deploy_codeartifact:
         del input_template["Resources"]["CodeArtifactDomain"]
