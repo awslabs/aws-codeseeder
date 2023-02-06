@@ -51,6 +51,9 @@ def deploy_seedkit(
     managed_policy_arns: Optional[List[str]] = None,
     deploy_codeartifact: bool = False,
     session: Optional[Union[Callable[[], Session], Session]] = None,
+    vpc_id: Optional[str] = None,
+    subnet_ids: Optional[List[str]] = None,
+    security_group_ids: Optional[List[str]] = None,
 ) -> None:
     """Deploys the seedkit resources into the environment.
 
@@ -72,11 +75,23 @@ def deploy_seedkit(
         its libraries
     session: Optional[Union[Callable[[], Session], Session]], optional
         Optional Session or function returning a Session to use for all boto3 operations, by default None
+    vpc_id: Optional[str]
+        If deploying codebuild in a VPC, the VPC-ID to use
+        (must have vpc-id, subnets, and security_group_ids)
+    subnet_ids:  Optional[List[str]]
+        If deploying codebuild in a VPC, a list of Subnets to use
+        (must have vpc-id, subnets, and security_group_ids)
+    security_group_ids: Optional[List[str]]
+        If deploying codebuild in a VPC, a list of Security Group IDs to use
+        (must have vpc-id, subnets, and security_group_ids)
     """
     deploy_id: Optional[str] = None
     stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name, session=session)
     LOGGER.info("Deploying Seedkit %s with Stack Name %s", seedkit_name, stack_name)
     LOGGER.debug("Managed Policy Arns: %s", managed_policy_arns)
+    LOGGER.debug("VPC-ID: %s", vpc_id)
+    LOGGER.debug("Subnets: %s", subnet_ids)
+    LOGGER.debug("Security Groups %s", security_group_ids)
     if stack_exists:
         deploy_id = stack_outputs.get("DeployId")
         LOGGER.info("Seedkit found with DeployId: %s", deploy_id)
@@ -86,6 +101,9 @@ def deploy_seedkit(
         managed_policy_arns=managed_policy_arns,
         deploy_codeartifact=deploy_codeartifact,
         session=session,
+        vpc_id=vpc_id,
+        subnet_ids=subnet_ids,
+        security_group_ids=security_group_ids,
     )
     cfn.deploy_template(
         stack_name=stack_name, filename=template_filename, seedkit_tag=f"codeseeder-{seedkit_name}", session=session
