@@ -17,6 +17,20 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+
+## 0.8.1 - (2023-02-27)
+---
+
+### New
+
+### Changes
+
+### Fixes
+- fixed logic for applying decorator overrides to configration parameters
+
+### Breaks
+
+
 ## 0.8.0 - (2023-02-06)
 ---
 

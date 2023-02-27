@@ -214,15 +214,15 @@ def remote_function(
         python_modules = config_object.python_modules + python_modules
         local_modules = {**cast(Mapping[str, str], config_object.local_modules), **local_modules}
         requirements_files = {**cast(Mapping[str, str], config_object.requirements_files), **requirements_files}
-        codebuild_image = config_object.codebuild_image if config_object.codebuild_image else codebuild_image
-        codebuild_role = config_object.codebuild_role if config_object.codebuild_role else codebuild_role
+        codebuild_image = codebuild_image if codebuild_image is not None else config_object.codebuild_image
+        codebuild_role = codebuild_role if codebuild_role is not None else config_object.codebuild_role
         codebuild_environment_type = (
-            config_object.codebuild_environment_type
-            if config_object.codebuild_environment_type
-            else codebuild_environment_type
+            codebuild_environment_type
+            if codebuild_environment_type is not None
+            else config_object.codebuild_environment_type
         )
         codebuild_compute_type = (
-            config_object.codebuild_compute_type if config_object.codebuild_compute_type else codebuild_compute_type
+            codebuild_compute_type if codebuild_compute_type is not None else config_object.codebuild_compute_type
         )
         install_commands = config_object.install_commands + install_commands
         pre_build_commands = config_object.pre_build_commands + pre_build_commands
