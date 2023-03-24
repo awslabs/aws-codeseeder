@@ -22,7 +22,7 @@ from pprint import pformat
 from typing import Any, Dict, List, Optional, Tuple
 
 from aws_codeseeder import BUNDLE_IGNORED_FILE_PATHS, LOGGER, create_output_dir
-
+import pathlib
 
 def _is_valid_image_file(file_path: str) -> bool:
     return all([word not in file_path for word in BUNDLE_IGNORED_FILE_PATHS])
@@ -58,19 +58,22 @@ def _make_zipfile(
         with zipfile.ZipFile(zip_filename, "w", compression=zipfile.ZIP_DEFLATED) as zf:
             path = os.path.normpath(os.path.join(root_dir, base_dir))
             if path != os.curdir:
-                zf.write(path, path.replace(f"{root_dir}/", ""))
+                zip_relative_path = os.path.relpath(pathlib.Path(path), pathlib.Path(root_dir))
+                zf.write(path, zip_relative_path)
                 if logger is not None:
                     logger.debug("adding '%s'", path)
             for dirpath, dirnames, filenames in os.walk(os.path.join(root_dir, base_dir)):
                 for name in sorted(dirnames):
                     path = os.path.normpath(os.path.join(dirpath, name))
-                    zf.write(path, path.replace(f"{root_dir}/", ""))
+                    zip_relative_path = os.path.relpath(pathlib.Path(path), pathlib.Path(root_dir))
+                    zf.write(path, zip_relative_path)
                     if logger is not None:
                         logger.debug("adding '%s'", path)
                 for name in filenames:
                     path = os.path.normpath(os.path.join(dirpath, name))
                     if os.path.isfile(path):
-                        zf.write(path, path.replace(f"{root_dir}/", ""))
+                        zip_relative_path = os.path.relpath(pathlib.Path(path), pathlib.Path(root_dir))
+                        zf.write(path, zip_relative_path)
                         if logger is not None:
                             logger.debug("adding '%s'", path)
 
