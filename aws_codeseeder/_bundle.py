@@ -16,13 +16,14 @@ import glob
 import json
 import logging
 import os
+import pathlib
 import shutil
 import zipfile
 from pprint import pformat
 from typing import Any, Dict, List, Optional, Tuple
 
 from aws_codeseeder import BUNDLE_IGNORED_FILE_PATHS, LOGGER, create_output_dir
-import pathlib
+
 
 def _is_valid_image_file(file_path: str) -> bool:
     return all([word not in file_path for word in BUNDLE_IGNORED_FILE_PATHS])

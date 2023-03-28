@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Changes
 
 ### Fixes
+- adding support for Windows OS based deployments when bundling resources
 
 ### Breaks
 
