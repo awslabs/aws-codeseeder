@@ -84,6 +84,8 @@ ecdsa==0.18.0
     #   moto
     #   python-jose
     #   sshpubkeys
+exceptiongroup==1.1.1
+    # via pytest
 flake8==4.0.1
     # via -r requirements-dev.in
 graphql-core==3.2.3
@@ -199,8 +201,6 @@ platformdirs==3.2.0
     # via black
 pluggy==1.0.0
     # via pytest
-py==1.11.0
-    # via pytest
 pyasn1==0.4.8
     # via
     #   python-jose
@@ -226,7 +226,7 @@ pyroma==3.3
     # via -r requirements-dev.in
 pyrsistent==0.19.3
     # via jsonschema
-pytest==6.2.5
+pytest==7.2.2
     # via
     #   -r requirements-dev.in
     #   pytest-cov
@@ -311,8 +311,6 @@ sshpubkeys==3.3.1
     # via moto
 sympy==1.11.1
     # via cfn-lint
-toml==0.10.2
-    # via pytest
 tomli==2.0.1
     # via
     #   black
@@ -321,6 +319,7 @@ tomli==2.0.1
     #   coverage
     #   mypy
     #   pyproject-hooks
+    #   pytest
 tqdm==4.65.0
     # via twine
 twine==3.8.0
