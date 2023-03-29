@@ -147,6 +147,17 @@ Resources:
               - cloudformation:DescribeStacks
             Resource:
               - arn:aws:cloudformation:${region}:${account_id}:stack/aws-codeseeder*
+          - Effect: Allow
+            Action:
+              - ec2:DescribeDhcpOptions
+              - ec2:DescribeNetworkInterfaces
+              - ec2:DeleteNetworkInterface
+              - ec2:DescribeSubnets
+              - ec2:DescribeSecurityGroups
+              - ec2:DescribeVpcs
+              - ec2:CreateNetworkInterfacePermission
+              - ec2:CreateNetworkInterface
+            Resource: '*'
         Version: '2012-10-17'
 
   CodeBuildRole:
@@ -178,6 +189,8 @@ Resources:
 
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
+    DependsOn: 
+      - SeedkitResourcesPolicy
     Properties:
       Name: codeseeder-${seedkit_name}
       Tags:

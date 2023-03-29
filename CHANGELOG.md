@@ -13,9 +13,47 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Changes
 
 ### Fixes
-* Include bundle_id in S3 path of uploaded bundles
+- adding support for Windows OS based deployments when bundling resources
 
 ### Breaks
+
+
+
+## 0.8.1 - (2023-02-27)
+---
+
+### New
+
+### Changes
+
+### Fixes
+- fixed logic for applying decorator overrides to configration parameters
+
+### Breaks
+
+
+## 0.8.0 - (2023-02-06)
+---
+
+### New
+
+### Changes
+- added VPC support for CodeBuild Project when creating `seedkit`
+
+### Fixes
+
+### Breaks
+
+
+## 0.7.0 - (2023-01-13)
+---
+
+### New
+
+### Changes
+
+### Fixes
+* Include bundle_id in S3 path of uploaded bundles
 
 
 ## 0.6.0 - (2022-11-09)
