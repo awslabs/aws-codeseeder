@@ -57,6 +57,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### Fixes
 - fixed helm tool not installing. specifiying version prevents getting from the actively developed main
+
 ### Breaks
 
 ## 0.4.0 - (2022-08-16)
