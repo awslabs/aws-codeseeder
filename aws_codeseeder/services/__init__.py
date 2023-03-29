@@ -13,7 +13,7 @@
 #    limitations under the License.
 
 
-from aws_codeseeder.services import cfn, cloudwatch, codebuild, iam, s3
+from aws_codeseeder.services import cfn, cloudwatch, codebuild, s3
 from aws_codeseeder.services._utils import (
     boto3_client,
     boto3_resource,
@@ -31,7 +31,6 @@ __all__ = [
     "codebuild",
     "get_account_id",
     "get_region",
-    "iam",
     "s3",
     "set_boto3_session",
     "try_it",
