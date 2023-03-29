@@ -1,5 +1,5 @@
 awscli~=1.27.0
-black~=22.1.0
+black~=23.3.0
 check-manifest~=0.47
 flake8~=4.0.0
 isort~=5.10.0
