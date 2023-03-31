@@ -67,6 +67,16 @@ def sts_client(aws_credentials):
         yield _utils.boto3_client(service_name="sts", session=None)
 
 
+@pytest.fixture(scope="function")
+def test_bucket(s3_client):
+    bucket_name = "test-bucket"
+    s3_client.create_bucket(Bucket=bucket_name)
+    s3_client.upload_file(Filename="README.md", Bucket=bucket_name, Key="fixtures/00-README.md")
+    s3_client.upload_file(Filename="README.md", Bucket=bucket_name, Key="fixtures/01-README.md")
+    s3_client.upload_file(Filename="README.md", Bucket=bucket_name, Key="fixtures/02-README.md")
+    return bucket_name
+
+
 @pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
 def test_utils_boto3_client(aws_credentials, session):
     _utils.boto3_client("s3", session)
@@ -131,7 +141,7 @@ def test_cfn_does_stack_exist(cloudformation_client, session):
 
 
 @pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
-def test_cfn_deploy_template(cloudformation_client, s3_client, session):
+def test_cfn_deploy_template(cloudformation_client, s3_client, test_bucket, session):
     with open("test-template.json", "w") as template_file:
         template_file.write("{Resources:[]}")
 
@@ -140,13 +150,12 @@ def test_cfn_deploy_template(cloudformation_client, s3_client, session):
 
     with open("large-test-template.json", "w") as template_file:
         template_file.write("{Resources:[]}".ljust(51_201))
-    s3_client.create_bucket(Bucket="test-bucket")
 
     with pytest.raises(ValueError):
         cfn.deploy_template(stack_name="large-test-stack", filename="large-test-template.json", session=session)
 
     cfn.deploy_template(
-        stack_name="large-test-stack", filename="large-test-template.json", s3_bucket="test-bucket", session=session
+        stack_name="large-test-stack", filename="large-test-template.json", s3_bucket=test_bucket, session=session
     )
     os.remove("large-test-template.json")
 
@@ -271,3 +280,53 @@ def test_codebuild_generate_spec():
         runtime_versions={"python": "3.9"},
     )
     assert spec["version"] == 0.2
+
+
+@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+def test_s3_list_keys(s3_client, test_bucket, session):
+    keys = s3.list_keys(bucket=test_bucket, session=session)
+    assert len(keys) == 3
+
+
+@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+def test_s3_delete_objects(s3_client, test_bucket, session):
+    s3.delete_objects(bucket=test_bucket, keys=["fixtures/00-README.md", "fixtures/01-README.md"])
+    keys = s3.list_keys(bucket=test_bucket, session=session)
+    assert len(keys) == 1
+
+    s3.delete_objects(bucket=test_bucket)
+    keys = s3.list_keys(bucket=test_bucket, session=session)
+    assert len(keys) == 0
+
+
+@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+def test_s3_delete_bucket(s3_client, test_bucket, session):
+    s3.delete_bucket(bucket="no-such-bucket", session=session)
+    s3.delete_bucket(bucket=test_bucket, session=session)
+    assert s3_client.list_buckets()["Buckets"] == []
+
+
+@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+def test_s3_upload_file(s3_client, test_bucket, session):
+    s3.upload_file(src="README.md", bucket=test_bucket, key="tests/00-README.md")
+    keys = s3.list_keys(bucket=test_bucket, session=session)
+    assert len(keys) == 4
+
+
+@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+def test_s3_list_s3_objects(s3_client, test_bucket, session):
+    s3.upload_file(src="README.md", bucket=test_bucket, key="tests/00-README.md")
+    keys = s3.list_s3_objects(bucket=test_bucket, prefix="fixtures/", session=session)
+    assert len(keys["Contents"]) == 3
+
+
+@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+def test_s3_delete_bucket_by_prefix(s3_client, test_bucket, session):
+    s3.delete_bucket_by_prefix(prefix="test-", session=session)
+    assert s3_client.list_buckets()["Buckets"] == []
+
+
+@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+def test_s3_object_exists(s3_client, test_bucket, session):
+    assert s3.object_exists(bucket=test_bucket, key="fixtures/00-README.md", session=session)
+    assert not s3.object_exists(bucket=test_bucket, key="fixtures/04-README.md", session=session)
