@@ -21,7 +21,6 @@ import pytest
 from botocore.exceptions import ClientError
 from moto import mock_cloudformation, mock_codebuild, mock_logs, mock_s3, mock_sts
 from moto.core.utils import unix_time_millis
-from moto.moto_api import state_manager
 
 from aws_codeseeder.services import _utils, cfn, cloudwatch, codebuild, s3
 
