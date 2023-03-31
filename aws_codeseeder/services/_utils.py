@@ -47,7 +47,7 @@ def boto3_client(
 
 def boto3_resource(
     service_name: str, session: Optional[Union[Callable[[], boto3.Session], boto3.Session]] = None
-) -> boto3.client:
+) -> boto3.resource:
     if session is None:
         session = _session_singleton.value if _session_singleton.value is not None else boto3.Session()
     elif callable(session):
