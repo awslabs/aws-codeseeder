@@ -65,7 +65,7 @@ def deploy_modules(
     LOGGER.debug("Python Modules: %s", python_modules)
 
     if not stack_exists:
-        LOGGER.warn("Seedkit/Stack does not exist")
+        LOGGER.warning("Seedkit/Stack does not exist")
         return
 
     domain = stack_outputs.get("CodeArtifactDomain")
@@ -77,7 +77,7 @@ def deploy_modules(
     region = session.region_name if session else "None"
 
     if domain is None or repository is None:
-        LOGGER.warn("CodeArtifact Repository/Domain was not deployed with the Seedkit")
+        LOGGER.warning("CodeArtifact Repository/Domain was not deployed with the Seedkit")
         return
 
     if any([":" not in pm for pm in python_modules]):
