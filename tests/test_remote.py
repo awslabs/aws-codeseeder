@@ -12,25 +12,37 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import pytest
-
 from datetime import datetime
 
+import pytest
+
 from aws_codeseeder import _remote
-from aws_codeseeder.services.codebuild import BuildInfo, BuildStatus, BuildPhaseType, BuildCloudWatchLogs
+from aws_codeseeder.services.codebuild import BuildCloudWatchLogs, BuildInfo, BuildPhaseType, BuildStatus
+
 
 def test_run(mocker):
     mocker.patch("aws_codeseeder._remote.s3.delete_objects", return_value=None)
     mocker.patch("aws_codeseeder._remote.s3.upload_file", return_value=None)
     mocker.patch("aws_codeseeder._remote.codebuild.start", return_value="test-xxxxxxxx")
-    mocker.patch("aws_codeseeder._remote.codebuild.wait", return_value=[BuildInfo(
-        build_id="test-xxxxxxxx",
-        status=BuildStatus.succeeded,
-        current_phase=BuildPhaseType.completed,
-        start_time=datetime.utcnow(),
-        end_time=datetime.utcnow(),
-        duration_in_seconds=1.0,
-        exported_env_vars=[],
-        phases=[],
-        logs=BuildCloudWatchLogs(enabled=False, group_name=None, stream_name=None))])
-    _remote.run(stack_outputs={"Bucket": "test-bucket", "CodeBuildProject": "test-project"}, bundle_path=".", buildspec={}, timeout=60)
+    mocker.patch(
+        "aws_codeseeder._remote.codebuild.wait",
+        return_value=[
+            BuildInfo(
+                build_id="test-xxxxxxxx",
+                status=BuildStatus.succeeded,
+                current_phase=BuildPhaseType.completed,
+                start_time=datetime.utcnow(),
+                end_time=datetime.utcnow(),
+                duration_in_seconds=1.0,
+                exported_env_vars=[],
+                phases=[],
+                logs=BuildCloudWatchLogs(enabled=False, group_name=None, stream_name=None),
+            )
+        ],
+    )
+    _remote.run(
+        stack_outputs={"Bucket": "test-bucket", "CodeBuildProject": "test-project"},
+        bundle_path=".",
+        buildspec={},
+        timeout=60,
+    )
