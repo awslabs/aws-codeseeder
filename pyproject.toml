@@ -31,7 +31,7 @@ skip_gitignore = false
 skip =["codeseeder.out"]
 
 [tool.pytest.ini_options]
-addopts = "-v --cov=. --cov-report term --cov-config=coverage.ini --cov-fail-under=50"
+addopts = "-v --cov=. --cov-report term --cov-config=coverage.ini --cov-fail-under=80"
 pythonpath = [
   "."
 ]

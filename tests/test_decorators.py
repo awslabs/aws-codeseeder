@@ -12,16 +12,19 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+import os
 from typing import Any
 
 from aws_codeseeder import codeseeder
 
 
-def test_remote_function() -> None:
+def test_configure() -> None:
     @codeseeder.configure("test")
     def config(configuration: codeseeder.CodeSeederConfig) -> None:
         configuration.python_modules = ["test~=0.0.0"]
 
+
+def test_remote_function(mocker) -> None:
     @codeseeder.remote_function("test")
     def fn(**_: Any) -> None:
         pass
@@ -29,3 +32,17 @@ def test_remote_function() -> None:
     # fn.module_importer = ModuleImporter.CODESEEDER_CLI
     assert codeseeder.MODULE_IMPORTER == codeseeder.ModuleImporterEnum.OTHER
     assert not codeseeder.EXECUTING_REMOTELY
+
+    mocker.patch("aws_codeseeder.codeseeder.seedkit_deployed", return_value=(True, "", {}))
+    mocker.patch("aws_codeseeder.codeseeder._bundle.generate_dir", return_value=None)
+    mocker.patch("aws_codeseeder.codeseeder._remote.run", return_value=None)
+    fn()
+
+
+def test_remote_function_remote_execution():
+    @codeseeder.remote_function("test")
+    def fn(**_: Any) -> None:
+        pass
+
+    codeseeder.EXECUTING_REMOTELY = "Yes"
+    fn()
