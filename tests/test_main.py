@@ -13,8 +13,8 @@
 #    limitations under the License.
 
 import pytest
-
 from click.testing import CliRunner
+
 from aws_codeseeder import __main__
 
 
