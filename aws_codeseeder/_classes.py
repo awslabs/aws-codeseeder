@@ -116,8 +116,12 @@ class CodeSeederConfig:
         Commands to execute during the Install phase of the CodeBuild execution, by default None
     pre_build_commands : Optional[List[str]], optional
         Commands to execute during the PreBuild phase of the CodeBuild execution, by default None
+    pre_execution_commands : Optional[List[str]], optional
+        Commands to execute during the Build phase of the CodeBuild execution prior to calling the remote_function,
+        by default None
     build_commands : Optional[List[str]], optional
-        Commands to execute during the Build phase of the CodeBuild execution, by default None
+        Commands to execute during the Build phase of the CodeBuild execution after calling the remote_functin,
+        by default None
     post_build_commands : Optional[List[str]], optional
         Commands to execute during the PostBuild phase of the CodeBuild execution, by default None
     dirs : Optional[Dict[str, str]], optional
@@ -145,6 +149,7 @@ class CodeSeederConfig:
     codebuild_compute_type: Optional[str] = None
     install_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     pre_build_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
+    pre_execution_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     build_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     post_build_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     dirs: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))

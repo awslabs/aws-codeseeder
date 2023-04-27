@@ -129,7 +129,10 @@ def generate_bundle(
     if files is not None:
         for src_file, name in files:
             LOGGER.debug(f"***file={src_file}:name={name}")
-            shutil.copy(src=src_file, dst=os.path.realpath(os.path.join(bundle_dir, name)))
+            dst_file = os.path.realpath(os.path.join(bundle_dir, name))
+            if "/" in name:
+                os.makedirs(os.path.dirname(dst_file), exist_ok=True)
+            shutil.copy(src=src_file, dst=dst_file)
 
     LOGGER.debug("bundle_dir: %s", bundle_dir)
 

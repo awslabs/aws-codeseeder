@@ -9,11 +9,14 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+- added `pre_execution_commands` and `extra_pre_execution_commands` to enable commands in the Build phase prior to
+  `remote_function execution`
 
 ### Changes
 
 ### Fixes
 - adding support for Windows OS based deployments when bundling resources
+- `files` and `extra_files` failed to create subdirectories in bundles if keys contained director paths
 
 ### Breaks
 
