@@ -15,7 +15,7 @@
 import logging
 import os
 import shutil
-from typing import MutableSet
+from typing import MutableSet, Optional
 
 import pkg_resources
 
@@ -93,3 +93,28 @@ def create_output_dir(name: str) -> str:
         pass
     os.makedirs(out_dir, exist_ok=True)
     return out_dir
+
+
+def get_logger(level: int, format: Optional[str] = None) -> logging.Logger:
+    """Helper function set LOG_LEVEL and optional log FORMAT
+
+    Parameters
+    ----------
+    level : int
+        logger.LOG_LEVEL
+    format : Optional[str], optional
+        Optional string format to apply to log lines, by default None
+    """
+    kwargs = {"level": level}
+    if format:
+        kwargs["format"] = format  # type: ignore
+    logging.basicConfig(**kwargs)  # type: ignore
+    LOGGER.setLevel(level=level)
+
+    # Force loggers on dependencies to ERROR
+    logging.getLogger("boto3").setLevel(logging.ERROR)
+    logging.getLogger("botocore").setLevel(logging.ERROR)
+    logging.getLogger("s3transfer").setLevel(logging.ERROR)
+    logging.getLogger("urllib3").setLevel(logging.ERROR)
+
+    return LOGGER
