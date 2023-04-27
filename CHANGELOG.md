@@ -17,6 +17,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+## 0.8.2 - (2023-04-27)
+---
+
+### New
+- added `pre_execution_commands` and `extra_pre_execution_commands` to enable commands in the Build phase prior to
+  `remote_function execution`
+
+
+### Fixes
+- adding support for Windows OS based deployments when bundling resources
+- `files` and `extra_files` failed to create subdirectories in bundles if keys contained director paths
+
 
 ## 0.8.1 - (2023-02-27)
 ---
@@ -94,6 +106,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### Fixes
 - fixed helm tool not installing. specifiying version prevents getting from the actively developed main
+
 ### Breaks
 
 ## 0.4.0 - (2022-08-16)

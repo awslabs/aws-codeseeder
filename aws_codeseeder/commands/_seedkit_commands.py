@@ -130,4 +130,4 @@ def destroy_seedkit(seedkit_name: str, session: Optional[Union[Callable[[], Sess
         cfn.destroy_stack(stack_name=stack_name, session=session)
         LOGGER.info("Seedkit Destroyed")
     else:
-        LOGGER.warn("Seedkit/Stack does not exist")
+        LOGGER.warning("Seedkit/Stack does not exist")

@@ -99,6 +99,7 @@ def remote_function(
     codebuild_compute_type: Optional[str] = None,
     extra_install_commands: Optional[List[str]] = None,
     extra_pre_build_commands: Optional[List[str]] = None,
+    extra_pre_execution_commands: Optional[List[str]] = None,
     extra_build_commands: Optional[List[str]] = None,
     extra_post_build_commands: Optional[List[str]] = None,
     extra_dirs: Optional[Dict[str, str]] = None,
@@ -147,8 +148,12 @@ def remote_function(
         Additional commands to execute during the Install phase of the CodeBuild execution, by default None
     extra_pre_build_commands : Optional[List[str]], optional
         Additional commands to execute during the PreBuild phase of the CodeBuild execution, by default None
+    extra_pre_execution_commands : Optional[List[str]], optional
+        Additional commands to execute during the Build phase of the CodeBuild execution prior to calling the
+        remote_function, by default None
     extra_build_commands : Optional[List[str]], optional
-        Additional commands to execute during the Build phase of the CodeBuild execution, by default None
+        Additional commands to execute during the Build phase of the CodeBuild execution after calling the
+        remote_function, by default None
     extra_post_build_commands : Optional[List[str]], optional
         Additional commands to execute during the PostBuild phase of the CodeBuild execution, by default None
     extra_dirs : Optional[Dict[str, str]], optional
@@ -194,6 +199,7 @@ def remote_function(
         codebuild_compute_type = decorator.codebuild_compute_type  # type: ignore
         install_commands = decorator.install_commands  # type: ignore
         pre_build_commands = decorator.pre_build_commands  # type: ignore
+        pre_execution_commands = decorator.pre_execution_commands  # type: ignore
         build_commands = decorator.build_commands  # type: ignore
         post_build_commands = decorator.post_build_commands  # type: ignore
         dirs = decorator.dirs  # type: ignore
@@ -226,6 +232,7 @@ def remote_function(
         )
         install_commands = config_object.install_commands + install_commands
         pre_build_commands = config_object.pre_build_commands + pre_build_commands
+        pre_execution_commands = config_object.pre_execution_commands + pre_execution_commands
         build_commands = config_object.build_commands + build_commands
         post_build_commands = config_object.post_build_commands + post_build_commands
         dirs = {**cast(Mapping[str, str], config_object.dirs), **dirs}
@@ -326,6 +333,9 @@ def remote_function(
                     cmds_build=[
                         ". ~/.venv/bin/activate",
                         "cd ${CODEBUILD_SRC_DIR}/bundle",
+                    ]
+                    + pre_execution_commands
+                    + [
                         "codeseeder execute --args-file fn_args.json --debug",
                         (
                             f"if [[ -f {RESULT_EXPORT_FILE} ]]; then source {RESULT_EXPORT_FILE}; "
@@ -396,6 +406,9 @@ def remote_function(
     decorator.codebuild_compute_type = codebuild_compute_type  # type: ignore
     decorator.install_commands = [] if extra_install_commands is None else extra_install_commands  # type: ignore
     decorator.pre_build_commands = [] if extra_pre_build_commands is None else extra_pre_build_commands  # type: ignore
+    decorator.pre_execution_commands = (  # type: ignore
+        [] if extra_pre_execution_commands is None else extra_pre_execution_commands
+    )
     decorator.build_commands = [] if extra_build_commands is None else extra_build_commands  # type: ignore
     decorator.post_build_commands = (  # type: ignore
         [] if extra_post_build_commands is None else extra_post_build_commands
