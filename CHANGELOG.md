@@ -5,12 +5,15 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 
 
-## Unreleased
+## 0.9.0 - (2023-05-02)
 ---
 
 ### New
 
 ### Changes
+
+- modifed default version of codebuild image to `aws/codebuild/standard:6.0`
+- moved `retrieve_docker_creds.py` to be a resource in the codebase and into the bundle
 
 ### Fixes
 

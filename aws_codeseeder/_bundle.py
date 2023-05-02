@@ -119,6 +119,12 @@ def generate_bundle(
     with open(fn_args_file, "w") as file:
         file.write(json.dumps(fn_args))
 
+    # Add the docker login script
+    shutil.copy(
+        src=os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources/retrieve_docker_creds.py"),
+        dst=os.path.join(bundle_dir, "retrieve_docker_creds.py"),
+    )
+
     LOGGER.debug(f"generate_bundle dirs={dirs}")
     # Extra Directories
     if dirs is not None:
