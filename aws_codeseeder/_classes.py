@@ -159,9 +159,7 @@ class CodeSeederConfig:
     )
     exported_env_vars: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     abort_phases_on_failure: bool = True
-    runtime_versions: Optional[Dict[str, str]] = dataclasses.field(
-        default_factory=lambda: {"python": "3.7", "nodejs": "12", "docker": "19"}
-    )
+    runtime_versions: Optional[Dict[str, str]] = None
 
 
 ConfigureFn = Callable[[NamedArg(CodeSeederConfig, "configuration")], None]  # noqa: F821

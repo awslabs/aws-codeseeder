@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### Fixes
 - allow the execution of docker login process to fail gracefully if the dir exists
+- remove configuration of python and node runtimes by default
 
 ### Breaks
 
