@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Changelog](http://keepachangelog.com/).
 
+## Unreleased
+---
+
+### New
+
+### Changes
+
+### Fixes
+
+### Breaks
+
+
+## 0.9.1 - (2023-05-09)
+---
+
+### New
+
+### Changes
+
+### Fixes
+- allow the execution of docker login process to fail gracefully if the dir exists
+- remove configuration of python and node runtimes by default
+
+### Breaks
 
 
 ## 0.9.0 - (2023-05-02)

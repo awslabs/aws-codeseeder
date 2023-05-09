@@ -312,7 +312,7 @@ def generate_spec(
     exported_variables: List[str] = [] if exported_env_vars is None else exported_env_vars
     exported_variables.append("AWS_CODESEEDER_OUTPUT")
     install = [
-        "mkdir /var/scripts/",
+        "mkdir -p /var/scripts/",
         "mv $CODEBUILD_SRC_DIR/bundle/retrieve_docker_creds.py /var/scripts/retrieve_docker_creds.py || true",
         "/var/scripts/retrieve_docker_creds.py && echo 'Docker logins successful' || echo 'Docker logins failed'",
     ]
