@@ -11,6 +11,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Changes
 
 ### Fixes
+
+### Breaks
+
+
+## 0.9.2 - (2023-05-09)
+---
+
+### New
+
+### Changes
+
+### Fixes
 - incompatibility with updated `dataclass` in python 3.11
 
 ### Breaks
