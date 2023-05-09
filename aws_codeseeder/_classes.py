@@ -159,7 +159,7 @@ class CodeSeederConfig:
     )
     exported_env_vars: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     abort_phases_on_failure: bool = True
-    runtime_versions: Optional[Dict[str, str]] = None
+    runtime_versions: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
 
 
 ConfigureFn = Callable[[NamedArg(CodeSeederConfig, "configuration")], None]  # noqa: F821
@@ -173,7 +173,7 @@ RemoteFunctionDecorator = Callable[..., RemoteFunctionFn]
 class RegistryEntry:
     configured: bool = False
     config_function: Optional[ConfigureFn] = None
-    config_object: CodeSeederConfig = CodeSeederConfig()
+    config_object: CodeSeederConfig = dataclasses.field(default_factory=CodeSeederConfig)
     stack_outputs: Optional[Dict[str, str]] = None
     remote_functions: Dict[str, RemoteFunctionFn] = dataclasses.field(default_factory=dict)
     deploy_if_not_exists: bool = False
