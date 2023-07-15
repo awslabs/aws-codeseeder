@@ -64,10 +64,11 @@ colorama==0.4.4
     #   twine
 coverage[toml]==7.2.2
     # via pytest-cov
-cryptography==40.0.1
+cryptography==41.0.2
     # via
     #   moto
     #   python-jose
+    #   secretstorage
     #   sshpubkeys
 docker==6.0.1
     # via moto
@@ -84,8 +85,6 @@ ecdsa==0.18.0
     #   moto
     #   python-jose
     #   sshpubkeys
-exceptiongroup==1.1.1
-    # via pytest
 flake8==4.0.1
     # via -r requirements-dev.in
 graphql-core==3.2.3
@@ -106,6 +105,10 @@ isort==5.10.1
     # via -r requirements-dev.in
 jaraco-classes==3.2.3
     # via keyring
+jeepney==0.8.0
+    # via
+    #   keyring
+    #   secretstorage
 jinja2==3.1.2
     # via
     #   moto
@@ -279,6 +282,8 @@ s3transfer==0.6.0
     #   boto3
 sarif-om==1.0.4
     # via cfn-lint
+secretstorage==3.3.3
+    # via keyring
 six==1.16.0
     # via
     #   bleach
@@ -314,15 +319,6 @@ sshpubkeys==3.3.1
     # via moto
 sympy==1.11.1
     # via cfn-lint
-tomli==2.0.1
-    # via
-    #   black
-    #   build
-    #   check-manifest
-    #   coverage
-    #   mypy
-    #   pyproject-hooks
-    #   pytest
 tqdm==4.65.0
     # via twine
 twine==3.8.0
@@ -335,9 +331,7 @@ types-setuptools==57.4.18
     # via -r requirements-dev.in
 typing-extensions==4.5.0
     # via
-    #   astroid
     #   aws-sam-translator
-    #   black
     #   jsonschema-spec
     #   mypy
     #   pydantic
