@@ -91,14 +91,6 @@ def get_sts_info(session: Optional[Union[Callable[[], boto3.Session], boto3.Sess
     return (sts_info.get("Account"), sts_info.get("Arn"), sts_info.get("Arn").split(":")[1])
 
 
-# def get_account_id(session: Optional[Union[Callable[[], boto3.Session], boto3.Session]] = None) -> str:
-#     return str(boto3_client(service_name="sts", session=session).get_caller_identity().get("Account"))
-
-
-# def get_partition(session: Optional[Union[Callable[[], boto3.Session], boto3.Session]] = None) -> str:
-#     return str(boto3_client(service_name="sts", session=session).get_caller_identity().get("Arn")).split(":")[1]
-
-
 def try_it(
     f: Callable[..., Any],
     ex: Any,
