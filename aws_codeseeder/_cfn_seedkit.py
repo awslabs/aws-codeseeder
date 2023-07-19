@@ -24,7 +24,7 @@ from cfn_flip import yaml_dumper
 from cfn_tools import load_yaml
 
 from aws_codeseeder import CLI_ROOT, LOGGER, create_output_dir
-from aws_codeseeder.services import get_account_id, get_region
+from aws_codeseeder.services import get_region, get_sts_info
 
 FILENAME = "template.yaml"
 RESOURCES_FILENAME = os.path.join(CLI_ROOT, "resources", FILENAME)
@@ -66,12 +66,14 @@ def synth(
 
     LOGGER.debug("Writing %s", output_filename)
     os.makedirs(out_dir, exist_ok=True)
+    account_id, _, partition = get_sts_info(session=session)
     with open(output_filename, "w") as file:
         file.write(
             output_template.safe_substitute(
                 seedkit_name=seedkit_name,
-                account_id=get_account_id(session=session),
+                account_id=account_id,
                 region=get_region(session=session),
+                partition=partition,
                 deploy_id=deploy_id,
                 role_prefix="/",
             )

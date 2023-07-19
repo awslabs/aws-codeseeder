@@ -14,7 +14,7 @@
 
 import random
 import time
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, Callable, Optional, Tuple, Union, cast
 
 import boto3
 import botocore
@@ -73,8 +73,22 @@ def get_region(session: Optional[Union[Callable[[], boto3.Session], boto3.Sessio
     return str(session.region_name)
 
 
-def get_account_id(session: Optional[Union[Callable[[], boto3.Session], boto3.Session]] = None) -> str:
-    return str(boto3_client(service_name="sts", session=session).get_caller_identity().get("Account"))
+def get_sts_info(session: Optional[Union[Callable[[], boto3.Session], boto3.Session]] = None) -> Tuple[str, str, str]:
+    """
+    get_sts_info _summary_
+
+    Parameters
+    ----------
+    session : Optional[Union[Callable[[], boto3.Session], boto3.Session]], optional
+        _description_, by default None
+
+    Returns
+    -------
+    Tuple[str, str, str]
+        returns the account id, role arn, and aws partition of the session provided
+    """
+    sts_info = boto3_client(service_name="sts", session=session).get_caller_identity()
+    return (sts_info.get("Account"), sts_info.get("Arn"), sts_info.get("Arn").split(":")[1])
 
 
 def try_it(

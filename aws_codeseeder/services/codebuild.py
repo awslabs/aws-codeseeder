@@ -23,7 +23,7 @@ from boto3 import Session
 
 from aws_codeseeder import LOGGER
 from aws_codeseeder.errors import CodeSeederRuntimeError
-from aws_codeseeder.services._utils import boto3_client, get_account_id, get_region, try_it
+from aws_codeseeder.services._utils import boto3_client, get_region, get_sts_info, try_it
 
 _BUILD_WAIT_POLLING_DELAY: float = 5  # SECONDS
 
@@ -254,9 +254,11 @@ def wait(build_id: str, session: Optional[Union[Callable[[], Session], Session]]
         yield build
 
     if build.status is not BuildStatus.succeeded:
+        account_id, _, partition = get_sts_info(session=session)
         deploy_info = {
             "AWS_REGION": get_region(session=session),
-            "AWS_ACCOUNT_ID": get_account_id(session=session),
+            "AWS_ACCOUNT_ID": account_id,
+            "AWS_PARTITION": partition,
             "CODEBUILD_BUILD_ID": build.build_id,
         }
         LOGGER.debug(f"Deploy Info on error from Codebuild {deploy_info}")

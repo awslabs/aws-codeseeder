@@ -24,7 +24,7 @@ def test_seedkit_not_deployed(mocker):
 def test_deploy_seedkit(mocker):
     mocker.patch("aws_codeseeder.services.cfn.does_stack_exist", return_value=(False, {}))
     mocker.patch("aws_codeseeder.services.cfn.deploy_template", return_value=None)
-    mocker.patch("aws_codeseeder._cfn_seedkit.get_account_id", return_value="123456789012")
+    mocker.patch("aws_codeseeder._cfn_seedkit.get_sts_info", return_value=("123456789012", "arn:aws::::", "aws"))
     mocker.patch("aws_codeseeder._cfn_seedkit.get_region", return_value="us-east-1")
     _seedkit_commands.deploy_seedkit("test-seedkit")
 
