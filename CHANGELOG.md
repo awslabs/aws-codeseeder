@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+- adding support for multple AWS partitions (aws-cn and aws-us-gov)
 
 ### Changes
 
