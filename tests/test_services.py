@@ -93,7 +93,8 @@ def test_utils_get_region(sts_client, session):
 
 @pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
 def test_utils_get_account_id(sts_client, session):
-    assert _utils.get_account_id(session) == "123456789012"
+    account_id, arn, partition = _utils.get_sts_info(session)
+    assert account_id == "123456789012"
 
 
 @pytest.mark.parametrize("test_args", [{}, {"key": "value"}])

@@ -15,6 +15,19 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+## 0.10.0 - (2023-06-19)
+---
+
+### New
+- adding support for multple AWS partitions (aws-cn and aws-us-gov)
+
+### Changes
+
+### Fixes
+
+### Breaks
+
+
 ## 0.9.2 - (2023-05-09)
 ---
 

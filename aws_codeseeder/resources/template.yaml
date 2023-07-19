@@ -46,19 +46,19 @@ Resources:
               - codebuild:BatchPutTestCases
               - codebuild:BatchPutCodeCoverages
             Resource:
-              - arn:aws:codebuild:${region}:${account_id}:*
+              - arn:${partition}:codebuild:${region}:${account_id}:*
           - Effect: Allow
             Action:
               - codebuild:StartBuild
               - codebuild:BatchGetBuilds
             Resource:
-              - arn:aws:codebuild:${region}:${account_id}:project/codeseeder-${seedkit_name}
+              - arn:${partition}:codebuild:${region}:${account_id}:project/codeseeder-${seedkit_name}
           - Effect: Allow
             Action:
               - ssm:Get*
               - ssm:Describe*
             Resource:
-              - arn:aws:ssm:${region}:${account_id}:parameter/codeseeder*
+              - arn:${partition}:ssm:${region}:${account_id}:parameter/codeseeder*
           - Effect: Allow
             Action:
               - ssm:PutParameter
@@ -66,18 +66,18 @@ Resources:
               - ssm:DeleteParameter
               - ssm:DeleteParameters
             Resource:
-              - arn:aws:ssm:${region}:${account_id}:parameter/codeseeder/${seedkit_name}/*
+              - arn:${partition}:ssm:${region}:${account_id}:parameter/codeseeder/${seedkit_name}/*
           - Effect: Allow
             Action:
               - ssm:DescribeParameters
             Resource:
-              - arn:aws:ssm:${region}:${account_id}:*
+              - arn:${partition}:ssm:${region}:${account_id}:*
           - Effect: Allow
             Action:
               - kms:*
             Resource:
-              - arn:aws:kms:${region}:${account_id}:alias/codeseeder-${seedkit_name}*
-              - arn:aws:kms:${region}:${account_id}:key/*
+              - arn:${partition}:kms:${region}:${account_id}:alias/codeseeder-${seedkit_name}*
+              - arn:${partition}:kms:${region}:${account_id}:key/*
           - Effect: Allow
             Action:
               - sts:GetServiceBearerToken
@@ -89,13 +89,13 @@ Resources:
             Action:
               - codecommit:*
             Resource:
-              - arn:aws:codecommit:${region}:${account_id}:codeseeder-${seedkit_name}-*
+              - arn:${partition}:codecommit:${region}:${account_id}:codeseeder-${seedkit_name}-*
           - Effect: Allow
             Action:
               - secretsmanager:*
             Resource:
-              - arn:aws:secretsmanager:${region}:${account_id}:secret:codeseeder-${seedkit_name}-*
-              - arn:aws:secretsmanager:${region}:${account_id}:secret:*-docker-credentials
+              - arn:${partition}:secretsmanager:${region}:${account_id}:secret:codeseeder-${seedkit_name}-*
+              - arn:${partition}:secretsmanager:${region}:${account_id}:secret:*-docker-credentials
           - Effect: Allow
             Action:
               - codeartifact:Create*
@@ -107,8 +107,8 @@ Resources:
               - codeartifact:TagResource
               - codeartifact:Associate*
             Resource:
-              - arn:aws:codeartifact:${region}:${account_id}:domain/aws-codeseeder-${seedkit_name}*
-              - arn:aws:codeartifact:${region}:${account_id}:repository/aws-codeseeder-${seedkit_name}*
+              - arn:${partition}:codeartifact:${region}:${account_id}:domain/aws-codeseeder-${seedkit_name}*
+              - arn:${partition}:codeartifact:${region}:${account_id}:repository/aws-codeseeder-${seedkit_name}*
           - Effect: Allow
             Action:
               - codeartifact:GetAuthorizationToken
@@ -131,8 +131,8 @@ Resources:
               - s3:DeleteObjectVersion
               - s3:DeleteBucket
             Resource:
-              - arn:aws:s3:::codeseeder-${seedkit_name}-${account_id}-${deploy_id}/*
-              - arn:aws:s3:::codeseeder-${seedkit_name}-${account_id}-${deploy_id}
+              - arn:${partition}:s3:::codeseeder-${seedkit_name}-${account_id}-${deploy_id}/*
+              - arn:${partition}:s3:::codeseeder-${seedkit_name}-${account_id}-${deploy_id}
           - Effect: Allow
             Action:
               - s3:GetEncryptionConfiguration
@@ -141,12 +141,12 @@ Resources:
             Action:
               - logs:*
             Resource:
-              - arn:aws:logs:${region}:${account_id}:log-group:/aws/codebuild/codeseeder-${seedkit_name}*
+              - arn:${partition}:logs:${region}:${account_id}:log-group:/aws/codebuild/codeseeder-${seedkit_name}*
           - Effect: Allow
             Action:
               - cloudformation:DescribeStacks
             Resource:
-              - arn:aws:cloudformation:${region}:${account_id}:stack/aws-codeseeder*
+              - arn:${partition}:cloudformation:${region}:${account_id}:stack/aws-codeseeder*
           - Effect: Allow
             Action:
               - ec2:DescribeDhcpOptions
@@ -252,7 +252,7 @@ Resources:
           - Sid: Enable IAM User Permissions
             Effect: Allow
             Principal:
-              AWS: arn:aws:iam::${account_id}:root
+              AWS: arn:${partition}:iam::${account_id}:root
             Action: kms:*
             Resource: '*'
           - Sid: Allow administration of the key

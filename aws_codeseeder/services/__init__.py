@@ -17,8 +17,8 @@ from aws_codeseeder.services import cfn, cloudwatch, codebuild, s3
 from aws_codeseeder.services._utils import (
     boto3_client,
     boto3_resource,
-    get_account_id,
     get_region,
+    get_sts_info,
     set_boto3_session,
     try_it,
 )
@@ -29,8 +29,8 @@ __all__ = [
     "cfn",
     "cloudwatch",
     "codebuild",
-    "get_account_id",
     "get_region",
+    "get_sts_info",
     "s3",
     "set_boto3_session",
     "try_it",
