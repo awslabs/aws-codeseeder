@@ -53,7 +53,7 @@ pkginfo==1.8.2
     # via twine
 pyasn1==0.4.8
     # via rsa
-pygments==2.11.2
+pygments==2.15.0
     # via readme-renderer
 pyparsing==3.0.7
     # via packaging
