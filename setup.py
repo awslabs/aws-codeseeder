@@ -50,6 +50,7 @@ setup(
         "click>=7.1.0",
         "cfn-flip>=1.2.3",
         "mypy_extensions>=0.4.3",
+        "certifi>=2023.7.22",
     ],
     extras_require={
         "modules": [
