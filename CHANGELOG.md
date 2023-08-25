@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### New
 
 ### Changes
+- pinning `certifi~=2023.7.22` in setup and requirements-dev
 
 ### Fixes
 
