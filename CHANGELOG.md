@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### New
 
 ### Changes
+- bumping `certifi~=2023.7.22` in requirements-dev and in requirements
+- bumping `cryptography==41.0.3` in requirements-dev
 
 ### Fixes
 
