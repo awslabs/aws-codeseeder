@@ -30,6 +30,31 @@ Resources:
             NoncurrentVersionExpirationInDays: 1
             Prefix: cli/remote/
 
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:*'
+            Effect: Deny
+            Resource:
+              - !GetAtt 
+                - Bucket
+                - Arn
+              - !Join 
+                - ''
+                - - !GetAtt 
+                    - Bucket
+                    - Arn
+                  - /*
+            Principal: '*'
+            Condition:
+              Bool:
+                'aws:SecureTransport': "false"
+
   SeedkitResourcesPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
