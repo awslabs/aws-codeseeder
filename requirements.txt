@@ -95,7 +95,7 @@ six==1.16.0
     #   python-dateutil
 twine==4.0.2
     # via aws-codeseeder (setup.py)
-urllib3==1.26.16
+urllib3==1.26.17
     # via
     #   botocore
     #   requests
