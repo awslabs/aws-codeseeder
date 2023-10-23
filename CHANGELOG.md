@@ -15,6 +15,19 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+## 0.10.1 - (2023-10-23)
+---
+
+### New
+
+### Changes
+- pinning `certifi~=2023.7.22` in setup and requirements-dev
+- pinning `urllib3~=1.26.18` requirements-dev
+### Fixes
+
+### Breaks
+
+
 ## 0.10.0 - (2023-06-19)
 ---
 
