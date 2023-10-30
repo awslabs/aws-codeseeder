@@ -9,6 +9,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### New
 
 ### Changes
+  
+### Fixes
+
+### Breaks
+
+
+## 0.10.2 - (2023-10-30)
+---
+
+### New
+
+### Changes
 - add the `StackStatus` to the Outputs when checking in `cfn.does_stack_exist` - the stack may exist and not be completed
   
 ### Fixes
