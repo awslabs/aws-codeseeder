@@ -174,7 +174,9 @@ def does_stack_exist(
         if len(resp["Stacks"]) < 1:
             return (False, {})
         else:
-            return (True, {o["OutputKey"]: o["OutputValue"] for o in resp["Stacks"][0].get("Outputs", [])})
+            output = {o["OutputKey"]: o["OutputValue"] for o in resp["Stacks"][0].get("Outputs", [])}
+            output["StackStatus"] = resp["Stacks"][0].get("StackStatus", None)
+            return (True, output)
     except botocore.exceptions.ClientError as ex:
         error: Dict[str, Any] = ex.response["Error"]
         if error["Code"] == "ValidationError" and f"Stack with id {stack_name} does not exist" in error["Message"]:
