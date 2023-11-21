@@ -379,6 +379,9 @@ def remote_function(
                     timeout=timeout if timeout else config_object.timeout if config_object.timeout else 30,
                     codebuild_log_callback=codebuild_log_callback,
                     overrides=overrides if overrides != {} else None,
+                    lambda_compute_mode=True
+                    if codebuild_environment_type and "LAMBDA" in codebuild_environment_type
+                    else False,
                     session=boto3_session,
                     bundle_id=bundle_id,
                 )

@@ -100,6 +100,7 @@ def start(
     buildspec: Dict[str, Any],
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
+    lambda_compute_mode: Optional[bool] = False,
     session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> str:
     """Start a CodeBuild Project execution
@@ -146,8 +147,14 @@ def start(
             "s3Logs": {"status": "DISABLED"},
         },
     }
+
     if credentials:
         build_params["imagePullCredentialsTypeOverride"] = credentials
+
+    if lambda_compute_mode:
+        build_params.pop("timeoutInMinutesOverride")
+        build_params.pop("privilegedModeOverride")
+        build_params.pop("imagePullCredentialsTypeOverride")
 
     if overrides:
         build_params = {**build_params, **overrides}

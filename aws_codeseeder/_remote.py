@@ -66,6 +66,7 @@ def _execute_codebuild(
     buildspec: Dict[str, Any],
     timeout: int,
     overrides: Optional[Dict[str, Any]] = None,
+    lambda_compute_mode: Optional[bool] = False,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
     session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> Optional[codebuild.BuildInfo]:
@@ -79,6 +80,7 @@ def _execute_codebuild(
         buildspec=buildspec,
         timeout=timeout,
         overrides=overrides,
+        lambda_compute_mode=lambda_compute_mode,
         session=session,
     )
     return _wait_execution(
@@ -97,6 +99,7 @@ def run(
     overrides: Optional[Dict[str, Any]] = None,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
     session: Optional[Union[Callable[[], Session], Session]] = None,
+    lambda_compute_mode: Optional[bool] = False,
     bundle_id: Optional[str] = None,
 ) -> Optional[codebuild.BuildInfo]:
     execution_id = "".join(random.choice(string.ascii_lowercase) for i in range(8))
@@ -114,6 +117,7 @@ def run(
         codebuild_log_callback=codebuild_log_callback,
         timeout=timeout,
         overrides=overrides,
+        lambda_compute_mode=lambda_compute_mode,
         session=session,
     )
     s3.delete_objects(bucket=bucket, keys=[key], session=session)
