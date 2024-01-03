@@ -127,15 +127,14 @@ def start(
         The CodeBuild Build/Exectuion Id
     """
     client = boto3_client("codebuild", session=session)
-    image_override = overrides.get("imageOverride", None)
+    image_override: Optional[str] = overrides.get("imageOverride", None)
+    image_pull_credentials: Optional[str] = None
     if image_override:
         if image_override.startswith('aws/'):
-            image_pull_credentials: Optional[str] = "CODEBUILD"
+            image_pull_credentials = "CODEBUILD"
         else:
-            image_pull_credentials: Optional[str] = "SERVICE_ROLE"
+            image_pull_credentials = "SERVICE_ROLE"
             LOGGER.debug("Image Pull Credentials: %s", image_pull_credentials)
-    else: 
-        image_pull_credentials: Optional[str] = None
 
     LOGGER.debug("Overrides: %s", overrides)
     build_params = {
