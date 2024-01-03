@@ -127,8 +127,12 @@ def start(
         The CodeBuild Build/Exectuion Id
     """
     client = boto3_client("codebuild", session=session)
-    credentials: Optional[str] = "SERVICE_ROLE" if overrides and overrides.get("imageOverride", None) else None
-    LOGGER.debug("Credentials: %s", credentials)
+    image_override = overrides.get("imageOverride", None)
+    if image_override.startswith('aws/'):
+        image_pull_credentials: Optional[str] = "CODEBUILD"
+    else:
+        image_pull_credentials: Optional[str] = "SERVICE_ROLE" if image_override else None
+    LOGGER.debug("Image Pull Credentials: %s", image_pull_credentials)
     LOGGER.debug("Overrides: %s", overrides)
     build_params = {
         "projectName": project_name,
@@ -146,8 +150,8 @@ def start(
             "s3Logs": {"status": "DISABLED"},
         },
     }
-    if credentials:
-        build_params["imagePullCredentialsTypeOverride"] = credentials
+    if image_pull_credentials:
+        build_params["imagePullCredentialsTypeOverride"] = image_pull_credentials
 
     if overrides:
         build_params = {**build_params, **overrides}
