@@ -9,7 +9,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### New
 
 ### Changes
-  
+- Allows override of codeseeder build image with aws curated images.
+- Updates codeseeder seedkit cloudformation template with a parameter `BuildImage``. This can be used in the future as an input for default image set in the seedkit and referenced as necessary.
+
 ### Fixes
 
 ### Breaks
