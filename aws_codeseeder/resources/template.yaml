@@ -1,6 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: |
   AWS CodeSeeder - codeseeder-${seedkit_name}
+Parameters:
+  BuildImage:
+    Type: String
+    Default: aws/codebuild/standard:6.0
 Resources:
   Bucket:
     Type: AWS::S3::Bucket
@@ -203,7 +207,7 @@ Resources:
       Environment:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/standard:6.0
+        Image: !Ref BuildImage
         EnvironmentVariables:
           - Name: AWS_ACCOUNT_ID
             Value:
@@ -347,6 +351,11 @@ Outputs:
         - Arn
     Export:
       Name: codeseeder-${seedkit_name}-codebuild-project-arn
+  
+  CodeBuildProjectBuildImage:
+    Value: !Ref BuildImage
+    Export:
+      Name: codeseeder-${seedkit_name}-codebuild-project-build-image
 
   CodeArtifactDomain:
     Value:
