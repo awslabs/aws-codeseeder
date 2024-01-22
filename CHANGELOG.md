@@ -16,6 +16,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### Breaks
 
+## 0.11.1 - (2024-01-22)
+---
+
+### New
+
+### Changes
+
+### Fixes
+- updating readthedocs configs as site has changed their requirements
+
+### Breaks
+
 
 ## 0.11.0 - (2024-01-22)
 ---
