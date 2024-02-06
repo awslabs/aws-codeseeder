@@ -68,7 +68,7 @@ coverage[toml]==7.2.7
     # via
     #   coverage
     #   pytest-cov
-cryptography==41.0.6
+cryptography==42.0.0
     # via
     #   moto
     #   python-jose
