@@ -33,7 +33,7 @@ docutils==0.16
     # via
     #   awscli
     #   readme-renderer
-idna==3.4
+idna==3.7
     # via requests
 importlib-metadata==6.8.0
     # via
