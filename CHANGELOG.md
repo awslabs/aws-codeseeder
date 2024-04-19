@@ -16,6 +16,17 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### Breaks
 
+## 0.12.0 - (2024-04-19)
+---
+
+### New
+- support for npm mirror and pypi mirror in decorators
+### Changes
+
+### Fixes
+
+### Breaks
+
 ## 0.11.1 - (2024-01-22)
 ---
 
