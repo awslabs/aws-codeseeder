@@ -147,6 +147,8 @@ class CodeSeederConfig:
     codebuild_role: Optional[str] = None
     codebuild_environment_type: Optional[str] = None
     codebuild_compute_type: Optional[str] = None
+    npm_mirror: Optional[str] = None
+    pypi_mirror: Optional[str] = None
     install_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     pre_build_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     pre_execution_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))

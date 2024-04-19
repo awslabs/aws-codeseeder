@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
-
+- support for npm mirror and pypi mirror in decorators
 ### Changes
 
 ### Fixes
