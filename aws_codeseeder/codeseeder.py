@@ -97,6 +97,8 @@ def remote_function(
     codebuild_role: Optional[str] = None,
     codebuild_environment_type: Optional[str] = None,
     codebuild_compute_type: Optional[str] = None,
+    npm_mirror: Optional[str] = None,
+    pypi_mirror: Optional[str] = None,
     extra_install_commands: Optional[List[str]] = None,
     extra_pre_build_commands: Optional[List[str]] = None,
     extra_pre_execution_commands: Optional[List[str]] = None,
@@ -144,6 +146,10 @@ def remote_function(
         Alternative Environment to use for the CodeBuild execution (e.g. LINUX_CONTAINER), by default None
     codebuild_compute_type : Optional[str], optional
         Alternative Compute to use for the CodeBuild execution (e.g. BUILD_GENERAL1_SMALL), by default None
+    npm_mirror: Optional[str]
+        Global config for the npm mirror to use
+    pypi_mirror: Optional[str]
+        Global config for the pypi mirror to use
     extra_install_commands : Optional[List[str]], optional
         Additional commands to execute during the Install phase of the CodeBuild execution, by default None
     extra_pre_build_commands : Optional[List[str]], optional
@@ -197,6 +203,8 @@ def remote_function(
         codebuild_role = decorator.codebuild_role  # type: ignore
         codebuild_environment_type = decorator.codebuild_environment_type  # type: ignore
         codebuild_compute_type = decorator.codebuild_compute_type  # type: ignore
+        npm_mirror = decorator.npm_mirror  # type: ignore
+        pypi_mirror = decorator.pypi_mirror  # type: ignore
         install_commands = decorator.install_commands  # type: ignore
         pre_build_commands = decorator.pre_build_commands  # type: ignore
         pre_execution_commands = decorator.pre_execution_commands  # type: ignore
@@ -230,6 +238,8 @@ def remote_function(
         codebuild_compute_type = (
             codebuild_compute_type if codebuild_compute_type is not None else config_object.codebuild_compute_type
         )
+        npm_mirror = npm_mirror if npm_mirror is not None else config_object.npm_mirror
+        pypi_mirror = pypi_mirror if pypi_mirror is not None else config_object.pypi_mirror
         install_commands = config_object.install_commands + install_commands
         pre_build_commands = config_object.pre_build_commands + pre_build_commands
         pre_execution_commands = config_object.pre_execution_commands + pre_execution_commands
@@ -299,8 +309,18 @@ def remote_function(
                     "python3 -m venv ~/.venv",
                     ". ~/.venv/bin/activate",
                     "cd ${CODEBUILD_SRC_DIR}/bundle",
-                    f"pip install aws-codeseeder~={__version__}",
                 ]
+
+                cmds_install.append(f"npm config set registry {npm_mirror}") if npm_mirror is not None else None
+                (
+                    cmds_install.append(f"pip config set global.index-url {pypi_mirror}")
+                    if pypi_mirror is not None
+                    else None
+                )
+                cmds_install.append(
+                    f"pip install aws-codeseeder~={__version__}",
+                )
+
                 # If this local env variable is set, don't attempt install of codeseeder from package repository
                 # This is used so that codeseeder can be installed from a local python module included in the bundle
                 # and is used for codeseeder development when codeartifact isn't used.
@@ -404,6 +424,8 @@ def remote_function(
     decorator.codebuild_role = codebuild_role  # type: ignore
     decorator.codebuild_environment_type = codebuild_environment_type  # type: ignore
     decorator.codebuild_compute_type = codebuild_compute_type  # type: ignore
+    decorator.npm_mirror = npm_mirror  # type: ignore
+    decorator.pypi_mirror = pypi_mirror  # type: ignore
     decorator.install_commands = [] if extra_install_commands is None else extra_install_commands  # type: ignore
     decorator.pre_build_commands = [] if extra_pre_build_commands is None else extra_pre_build_commands  # type: ignore
     decorator.pre_execution_commands = (  # type: ignore
