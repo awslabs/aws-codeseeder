@@ -11,6 +11,17 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### New
 
 ### Changes
+
+### Fixes
+
+### Breaks
+
+## 0.12.1 - (2024-04-23)
+---
+
+### New
+
+### Changes
 - updating the default codebuild image to `aws/codebuild/standard:7.0`
 
 ### Fixes
