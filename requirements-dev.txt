@@ -216,7 +216,7 @@ pycodestyle==2.8.0
     # via flake8
 pycparser==2.21
     # via cffi
-pydantic==1.10.11
+pydantic==1.10.13
     # via aws-sam-translator
 pyflakes==2.4.0
     # via flake8
