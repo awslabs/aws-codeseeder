@@ -336,7 +336,7 @@ tomli==2.0.1
     #   pip-tools
     #   pyproject-hooks
     #   pytest
-tqdm==4.65.0
+tqdm==4.66.3
     # via twine
 twine==3.8.0
     # via -r requirements-dev.in
