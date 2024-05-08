@@ -367,7 +367,7 @@ webencodings==0.5.1
     # via bleach
 websocket-client==1.6.1
     # via docker
-werkzeug==3.0.1
+werkzeug==3.0.3
     # via moto
 wheel==0.40.0
     # via pip-tools
