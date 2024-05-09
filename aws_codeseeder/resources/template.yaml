@@ -124,7 +124,8 @@ Resources:
               - secretsmanager:*
             Resource:
               - arn:${partition}:secretsmanager:${region}:${account_id}:secret:codeseeder-${seedkit_name}-*
-              - arn:${partition}:secretsmanager:${region}:${account_id}:secret:*-docker-credentials
+              - arn:${partition}:secretsmanager:${region}:${account_id}:secret:*-docker-credentials*
+              - arn:${partition}:secretsmanager:${region}:${account_id}:secret:*-mirror-credentials*
           - Effect: Allow
             Action:
               - codeartifact:Create*
@@ -240,6 +241,8 @@ Resources:
           - Name: AWS_CODESEEDER_NAME
             Value: ${seedkit_name}
           - Name: AWS_CODESEEDER_DOCKER_SECRET
+            Value: "NONE"
+          - Name: AWS_CODESEEDER_MIRROR_SECRET
             Value: "NONE"
       Source:
         Type: NO_SOURCE

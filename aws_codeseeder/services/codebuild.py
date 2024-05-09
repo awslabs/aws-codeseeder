@@ -289,6 +289,7 @@ def generate_spec(
     exported_env_vars: Optional[List[str]] = None,
     runtime_versions: Optional[Dict[str, str]] = None,
     abort_phases_on_failure: bool = True,
+    pypi_mirror: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Generate a BuildSpec for a CodeBuild execution
 
@@ -325,6 +326,13 @@ def generate_spec(
         "mv $CODEBUILD_SRC_DIR/bundle/retrieve_docker_creds.py /var/scripts/retrieve_docker_creds.py || true",
         "/var/scripts/retrieve_docker_creds.py && echo 'Docker logins successful' || echo 'Docker logins failed'",
     ]
+    if pypi_mirror is not None:
+        install.append(
+            "mv $CODEBUILD_SRC_DIR/bundle/pypi_mirror_support.py /var/scripts/pypi_mirror_support.py || true"
+        )
+        install.append(
+            f"/var/scripts/pypi_mirror_support.py {pypi_mirror} && echo 'Pypi Mirror Set' || echo 'Pypi Mirrror failed'"
+        )
 
     if "CodeArtifactDomain" in stack_outputs and "CodeArtifactRepository" in stack_outputs:
         install.append(
