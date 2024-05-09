@@ -125,6 +125,12 @@ def generate_bundle(
         dst=os.path.join(bundle_dir, "retrieve_docker_creds.py"),
     )
 
+    # Add the pypi credentials suppprt
+    shutil.copy(
+        src=os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources/pypi_mirror_support.py"),
+        dst=os.path.join(bundle_dir, "pypi_mirror_support.py"),
+    )
+
     LOGGER.debug(f"generate_bundle dirs={dirs}")
     # Extra Directories
     if dirs is not None:

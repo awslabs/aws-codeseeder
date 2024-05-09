@@ -113,7 +113,7 @@ jeepney==0.8.0
     # via
     #   keyring
     #   secretstorage
-jinja2==3.1.3
+jinja2==3.1.4
     # via
     #   moto
     #   myst-parser
@@ -216,7 +216,7 @@ pycodestyle==2.8.0
     # via flake8
 pycparser==2.21
     # via cffi
-pydantic==1.10.11
+pydantic==1.10.13
     # via aws-sam-translator
 pyflakes==2.4.0
     # via flake8
@@ -336,7 +336,7 @@ tomli==2.0.1
     #   pip-tools
     #   pyproject-hooks
     #   pytest
-tqdm==4.65.0
+tqdm==4.66.3
     # via twine
 twine==3.8.0
     # via -r requirements-dev.in
@@ -367,7 +367,7 @@ webencodings==0.5.1
     # via bleach
 websocket-client==1.6.1
     # via docker
-werkzeug==3.0.1
+werkzeug==3.0.3
     # via moto
 wheel==0.40.0
     # via pip-tools
