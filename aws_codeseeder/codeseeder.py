@@ -312,11 +312,6 @@ def remote_function(
                 ]
 
                 cmds_install.append(f"npm config set registry {npm_mirror}") if npm_mirror is not None else None
-                (
-                    cmds_install.append(f"pip config set global.index-url {pypi_mirror}")
-                    if pypi_mirror is not None
-                    else None
-                )
                 cmds_install.append(
                     f"pip install aws-codeseeder~={__version__}",
                 )
@@ -371,6 +366,7 @@ def remote_function(
                     exported_env_vars=exported_env_vars,
                     abort_phases_on_failure=abort_on_failure,
                     runtime_versions=runtimes,
+                    pypi_mirror=pypi_mirror,
                 )
 
                 overrides = {}

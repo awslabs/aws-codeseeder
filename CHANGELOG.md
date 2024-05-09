@@ -9,6 +9,13 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+- adding support for AWS SecretsManager to support mirror credentials
+  - the SecretsManager name MUST be of the form `*-mirror-credentials`
+  - the content must be JSON
+  - the content has the form `{
+          "pypi": { "username": "testingpypi", "password": "thepasswordpypi" },
+          "something": {"username": "testing","password": "testing"
+          }}`
 
 ### Changes
 
