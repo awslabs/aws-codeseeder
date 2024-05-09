@@ -14,7 +14,6 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-# os.environ["AWS_CODESEEDER_MIRROR_SECRET"]="derek/idf-mirror-credentials::artifactory"
 def get_secret(secret_name: str) -> Dict[str, Dict[str, str]]:
     region_name = os.environ.get("AWS_DEFAULT_REGION")
     session = boto3.session.Session()
@@ -60,7 +59,7 @@ def main(url: str) -> None:
     secured_url, obfusctated_url = create_url(url, username, password)
     logger.info("Calling pip config with %s", obfusctated_url)
     print(f"pip config being set for : {obfusctated_url}")
-    subprocess.call(f"pip config set global.index-url {secured_url}", shell=True)
+    subprocess.call(["pip", "config", "set", "global.index-url", secured_url])
 
 
 if __name__ == "__main__":
