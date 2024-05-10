@@ -24,7 +24,7 @@ from aws_codeseeder import LOGGER, __version__, _classes
 
 _session_singleton: _classes.SessionSingleton = _classes.SessionSingleton()
 
-_endpoint_url =  os.getenv('ENV_VARIABLE_NAME')
+_endpoint_url =  os.getenv('ENDPOINT_URL')
 
 
 def _get_botocore_config() -> botocore.config.Config:
