@@ -379,3 +379,7 @@ cdk.json
 
 # codeseeder
 codeseeder.out
+
+# npm pacakge
+package-lock.json
+package.json

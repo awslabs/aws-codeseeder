@@ -18,10 +18,13 @@ from typing import Any, Callable, Optional, Tuple, Union, cast
 
 import boto3
 import botocore
+import os
 
 from aws_codeseeder import LOGGER, __version__, _classes
 
 _session_singleton: _classes.SessionSingleton = _classes.SessionSingleton()
+
+_endpoint_url =  os.getenv('ENV_VARIABLE_NAME')
 
 
 def _get_botocore_config() -> botocore.config.Config:
@@ -42,7 +45,10 @@ def boto3_client(
         session = session()
 
     session = cast(boto3.Session, session)
-    return session.client(service_name=service_name, use_ssl=True, config=_get_botocore_config())
+    if not _endpoint_url:
+        return session.client(service_name=service_name, use_ssl=True, config=_get_botocore_config(), endpoint_url=_endpoint_url)
+    else:
+        return session.client(service_name=service_name, use_ssl=True, config=_get_botocore_config(), endpoint_url=_endpoint_url)
 
 
 def boto3_resource(
