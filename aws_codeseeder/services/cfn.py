@@ -174,7 +174,7 @@ def does_stack_exist(
         if len(resp["Stacks"]) < 1:
             return (False, {})
         else:
-            output = {o["OutputKey"]: o["OutputValue"] for o in resp["Stacks"][0].get("Outputs", [])}
+            output = {o["OutputKey"]: o.get("OutputValue", o.get("ExportName")) for o in resp["Stacks"][0].get("Outputs", [])}
             output["StackStatus"] = resp["Stacks"][0].get("StackStatus", None)
             return (True, output)
     except botocore.exceptions.ClientError as ex:
