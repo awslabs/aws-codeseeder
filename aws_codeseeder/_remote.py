@@ -98,17 +98,28 @@ def run(
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
     session: Optional[Union[Callable[[], Session], Session]] = None,
     bundle_id: Optional[str] = None,
+    prebuilt_bundle: Optional[str] = None,
 ) -> Optional[codebuild.BuildInfo]:
     execution_id = "".join(random.choice(string.ascii_lowercase) for i in range(8))
-    key: str = (
-        f"codeseeder/{bundle_id}/{execution_id}/bundle.zip" if bundle_id else f"codeseeder/{execution_id}/bundle.zip"
-    )
-    bucket = stack_outputs["Bucket"]
-    s3.delete_objects(bucket=bucket, keys=[key], session=session)
-    s3.upload_file(src=bundle_path, bucket=bucket, key=key, session=session)
+
+    if prebuilt_bundle:
+        prebuilt_bundle = prebuilt_bundle[5:] if prebuilt_bundle.startswith("s3://") else prebuilt_bundle
+        o = prebuilt_bundle.split("/", 1)
+        loc = f"{o[0]}/{o[1]}"
+    else:
+        key: str = (
+            f"codeseeder/{bundle_id}/{execution_id}/bundle.zip"
+            if bundle_id
+            else f"codeseeder/{execution_id}/bundle.zip"
+        )
+        bucket = stack_outputs["Bucket"]
+        s3.delete_objects(bucket=bucket, keys=[key], session=session)
+        s3.upload_file(src=bundle_path, bucket=bucket, key=key, session=session)
+        loc = f"{bucket}/{key}"
+
     build_info = _execute_codebuild(
         stack_outputs=stack_outputs,
-        bundle_location=f"{bucket}/{key}",
+        bundle_location=loc,
         execution_id=execution_id,
         buildspec=buildspec,
         codebuild_log_callback=codebuild_log_callback,
@@ -116,5 +127,6 @@ def run(
         overrides=overrides,
         session=session,
     )
-    s3.delete_objects(bucket=bucket, keys=[key], session=session)
+    if not prebuilt_bundle:
+        s3.delete_objects(bucket=bucket, keys=[key], session=session)
     return build_info

@@ -330,3 +330,18 @@ def test_s3_delete_bucket_by_prefix(s3_client, test_bucket, session):
 def test_s3_object_exists(s3_client, test_bucket, session):
     assert s3.object_exists(bucket=test_bucket, key="fixtures/00-README.md", session=session)
     assert not s3.object_exists(bucket=test_bucket, key="fixtures/04-README.md", session=session)
+
+
+@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+def test_s3_bucket_empty(s3_client, test_bucket, session):
+    assert not s3.is_bucket_empty(bucket=test_bucket, folder="fixtures", session=session)
+
+
+@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+def test_s3_copy_object(s3_client, test_bucket, session):
+    s3.copy_s3_object(
+        src_bucket=test_bucket,
+        src_key="fixtures/00-README.md",
+        dest_bucket=test_bucket,
+        dest_key="fixtures/TEST-README.md",
+    )

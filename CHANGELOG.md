@@ -9,7 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
-
+- adding support to pass in an existin bundle (assuming it is compliant)
+  
 ### Changes
 
 ### Fixes
