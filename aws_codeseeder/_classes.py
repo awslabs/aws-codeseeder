@@ -112,6 +112,10 @@ class CodeSeederConfig:
         Alternative Environment to use for the CodeBuild execution (e.g. LINUX_CONTAINER), by default None
     codebuild_compute_type : Optional[str], optional
         Alternative Compute to use for the CodeBuild execution (e.g. BUILD_GENERAL1_SMALL), by default None
+    npm_mirror: Optional[str]
+        Global config for the npm mirror to use, by default None
+    pypi_mirror: Optional[str]
+        Global config for the pypi mirror to use, by default None
     install_commands : Optional[List[str]], optional
         Commands to execute during the Install phase of the CodeBuild execution, by default None
     pre_build_commands : Optional[List[str]], optional
@@ -137,6 +141,8 @@ class CodeSeederConfig:
     runtime_versions: Optional[Dict[str, str]], optional
         Runtime versions (e.g. python, nodejs) to install, by default
         ``{"python": "3.7", "nodejs": "12", "docker": "19"}``
+    prebuilt_bundle: Optional[str]
+        Provide S3 path to a prebuild bundle to use to deploy
     """
 
     timeout: Optional[int] = 30
@@ -162,6 +168,7 @@ class CodeSeederConfig:
     exported_env_vars: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     abort_phases_on_failure: bool = True
     runtime_versions: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
+    prebuilt_bundle: Optional[str] = None
 
 
 ConfigureFn = Callable[[NamedArg(CodeSeederConfig, "configuration")], None]  # noqa: F821

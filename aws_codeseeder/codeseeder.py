@@ -108,6 +108,7 @@ def remote_function(
     extra_files: Optional[Dict[str, str]] = None,
     extra_env_vars: Optional[Dict[str, Union[str, EnvVar]]] = None,
     extra_exported_env_vars: Optional[List[str]] = None,
+    prebuilt_bundle: Optional[str] = None,
     abort_phases_on_failure: Optional[bool] = None,
     runtime_versions: Optional[Dict[str, str]] = None,
     bundle_id: Optional[str] = None,
@@ -216,6 +217,7 @@ def remote_function(
         exported_env_vars = decorator.exported_env_vars  # type: ignore
         abort_on_failure = decorator.abort_on_failure  # type: ignore
         runtimes = decorator.runtimes  # type: ignore
+        prebuilt_bundle = decorator.prebuilt_bundle  # type: ignore
 
         if not registry_entry.configured:
             if registry_entry.config_function:
@@ -251,6 +253,7 @@ def remote_function(
         exported_env_vars = config_object.exported_env_vars + exported_env_vars
         abort_on_failure = abort_on_failure if abort_on_failure is not None else config_object.abort_phases_on_failure
         runtimes = runtimes if runtimes is not None else config_object.runtime_versions
+        prebuilt_bundle = prebuilt_bundle if prebuilt_bundle is not None else config_object.prebuilt_bundle
 
         LOGGER.debug("MODULE_IMPORTER: %s", MODULE_IMPORTER)
         LOGGER.debug("EXECUTING_REMOTELY: %s", EXECUTING_REMOTELY)
@@ -397,6 +400,7 @@ def remote_function(
                     overrides=overrides if overrides != {} else None,
                     session=boto3_session,
                     bundle_id=bundle_id,
+                    prebuilt_bundle=prebuilt_bundle,
                 )
                 if build_info:
                     LOGGER.debug("exported_env_vars: %s", build_info.exported_env_vars)
@@ -437,5 +441,6 @@ def remote_function(
     decorator.exported_env_vars = [] if extra_exported_env_vars is None else extra_exported_env_vars  # type: ignore
     decorator.abort_on_failure = abort_phases_on_failure  # type: ignore
     decorator.runtimes = runtime_versions  # type: ignore
+    decorator.prebuilt_bundle = prebuilt_bundle  # type: ignore
 
     return decorator

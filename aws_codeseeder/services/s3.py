@@ -216,3 +216,56 @@ def object_exists(bucket: str, key: str, session: Optional[Union[Callable[[], Se
             raise
     else:
         return True
+
+
+def copy_s3_object(
+    src_bucket: str,
+    src_key: str,
+    dest_bucket: str,
+    dest_key: str,
+    session: Optional[Union[Callable[[], Session], Session]] = None,
+) -> None:
+    """Copy an S3 Object to another bucket
+
+    Parameters
+    ----------
+    src_bucket : str
+        Source S3 Bucket
+    src_key : str
+        Source Key
+    dest_bucket : str
+        Destination S3 Bucket
+    dest_key : str
+        Destination Key
+    session: Optional[Union[Callable[[], Session], Session]], optional
+        Optional Session or function returning a Session to use for all boto3 operations, by default None
+    """
+    client_s3 = boto3_client("s3", session=session)
+    client_s3.copy_object(Bucket=dest_bucket, Key=dest_key, CopySource=f"{src_bucket}/{src_key}")
+
+
+def is_bucket_empty(bucket: str, folder: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> bool:
+    """
+    Checks if there is any file in a specified folder within an S3 bucket.
+
+    Parameters:
+    - bucket: The name of the S3 bucket.
+    - folder: The name of the folder inside the bucket.
+
+    Returns:
+    - False if the folder contains files, True otherwise.
+    """
+    if not folder.endswith("/"):
+        folder += "/"
+    client_s3 = boto3_client("s3", session=session)
+
+    try:
+        response = client_s3.list_objects_v2(Bucket=bucket, Prefix=folder)
+        if "KeyCount" in response and response["KeyCount"] > 0:
+            LOGGER.debug(f"Found {response['KeyCount']} objects under {folder}")
+            return False
+        else:
+            return True
+    except Exception as e:
+        LOGGER.warn(f"Bucket ({bucket} - {e}) failed when looking for object count, have to assume there are objects")
+        return False
