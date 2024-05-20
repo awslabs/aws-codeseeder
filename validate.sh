@@ -17,7 +17,6 @@
 
 set -ex
 
-isort --check .
-black --check .
+ruff format --check .
+ruff check .
 mypy . --ignore-missing-imports
-flake8 .

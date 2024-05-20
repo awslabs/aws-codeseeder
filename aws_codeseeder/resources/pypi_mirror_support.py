@@ -63,7 +63,6 @@ def main(url: str) -> None:
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="URL to evaluate")
     parser.add_argument("url", type=str, help="The url to set in pypi'")
     args = parser.parse_args()
