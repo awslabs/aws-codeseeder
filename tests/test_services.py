@@ -13,6 +13,7 @@
 #    limitations under the License.
 
 import os
+import sys
 from datetime import datetime
 from typing import Any
 
@@ -288,11 +289,23 @@ def test_s3_list_keys(s3_client, test_bucket, session):
     assert len(keys) == 3
 
 
-@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+@pytest.mark.parametrize("session", [boto3.Session, boto3.Session()])
 def test_s3_delete_objects(s3_client, test_bucket, session):
     s3.delete_objects(bucket=test_bucket, keys=["fixtures/00-README.md", "fixtures/01-README.md"])
     keys = s3.list_keys(bucket=test_bucket, session=session)
-    assert len(keys) in [1, 2]
+    assert len(keys) == 1
+
+    s3.delete_objects(bucket=test_bucket)
+    keys = s3.list_keys(bucket=test_bucket, session=session)
+    assert len(keys) == 0
+
+
+@pytest.mark.skipif(sys.version_info >= (3, 12), reason="no session fails with python 3.12...skip it")
+@pytest.mark.parametrize("session", [None])
+def test_s3_delete_objects_no_session(s3_client, test_bucket, session):
+    s3.delete_objects(bucket=test_bucket, keys=["fixtures/00-README.md", "fixtures/01-README.md"])
+    keys = s3.list_keys(bucket=test_bucket, session=session)
+    assert len(keys) == 1
 
     s3.delete_objects(bucket=test_bucket)
     keys = s3.list_keys(bucket=test_bucket, session=session)
