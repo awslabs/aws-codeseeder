@@ -292,7 +292,7 @@ def test_s3_list_keys(s3_client, test_bucket, session):
 def test_s3_delete_objects(s3_client, test_bucket, session):
     s3.delete_objects(bucket=test_bucket, keys=["fixtures/00-README.md", "fixtures/01-README.md"])
     keys = s3.list_keys(bucket=test_bucket, session=session)
-    assert len(keys) in [1,2]
+    assert len(keys) in [1, 2]
 
     s3.delete_objects(bucket=test_bucket)
     keys = s3.list_keys(bucket=test_bucket, session=session)
