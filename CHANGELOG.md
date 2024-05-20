@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### New
 - adding support to pass in an existing bundle (assuming it is compliant)
-- adding support for python 3.12
+- adding support for python 3.12, removed support for python 3.7 (considered a breaking change)
 - adding tox to be able to test on all python versions locally
   
 ### Changes
