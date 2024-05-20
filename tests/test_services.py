@@ -14,7 +14,6 @@
 
 import os
 from datetime import datetime
-from typing import Any
 
 import boto3
 import pytest
@@ -117,7 +116,7 @@ def test_get_stack_name():
 @pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
 def test_cfn_get_stack_status_fails(cloudformation_client, session):
     with pytest.raises(ClientError):
-        result = cfn.get_stack_status(stack_name="test-stack", session=session)
+        cfn.get_stack_status(stack_name="test-stack", session=session)
 
 
 @pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
@@ -190,7 +189,7 @@ def test_cloudwatch_get_stream_name_by_prefix(logs_client, session):
 @pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
 def test_cloudwatch_get_log_events_fails(logs_client, session):
     with pytest.raises(ClientError) as e:
-        events = cloudwatch.get_log_events(
+        cloudwatch.get_log_events(
             group_name="test-group", stream_name="test-stream-0", start_time=None, session=session
         )
     assert "ResourceNotFoundException" in str(e)
@@ -200,7 +199,7 @@ def test_cloudwatch_get_log_events_fails(logs_client, session):
 def test_cloudwatch_get_log_events_not_found(logs_client, session):
     logs_client.create_log_group(logGroupName="test-group")
     with pytest.raises(ClientError) as e:
-        events = cloudwatch.get_log_events(
+        cloudwatch.get_log_events(
             group_name="test-group", stream_name="test-stream-0", start_time=None, session=session
         )
     assert "ResourceNotFoundException" in str(e)
@@ -222,7 +221,7 @@ def test_cloudwatch_get_log_events_no_events(logs_client, session):
 def test_cloudwatch_get_log_events(logs_client, session):
     logs_client.create_log_group(logGroupName="test-group")
     logs_client.create_log_stream(logGroupName="test-group", logStreamName="test-stream-0")
-    response = logs_client.put_log_events(
+    logs_client.put_log_events(
         logGroupName="test-group",
         logStreamName="test-stream-0",
         logEvents=[

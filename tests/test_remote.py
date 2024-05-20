@@ -14,8 +14,6 @@
 
 from datetime import datetime
 
-import pytest
-
 from aws_codeseeder import _remote
 from aws_codeseeder.services.codebuild import BuildCloudWatchLogs, BuildInfo, BuildPhaseType, BuildStatus
 

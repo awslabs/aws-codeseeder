@@ -32,13 +32,11 @@ jobs:
           pip install -r ./requirements.txt
           pip install -e .
           pip install -r ./requirements-dev.txt
+      - name: Ruff Format Check
+        run: ruff format --check .
+      - name: Ruff Check
+        run: ruff check --output-format=github .
       - name: Mypy Check
         run: mypy --ignore-missing-imports .
-      - name: Flake8 Check
-        run: flake8 .
-      - name: Black Check
-        run: black --check .
-      - name: Isort Check
-        run: isort --check .
       - name: PyTest
         run: pytest
