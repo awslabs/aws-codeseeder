@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### New
 - adding support to pass in an existing bundle (assuming it is compliant)
+- adding support for python 3.12
   
 ### Changes
 
