@@ -102,7 +102,7 @@ filelock==3.14.0
     #   virtualenv
 graphql-core==3.2.3
     # via moto
-idna==3.4
+idna==3.7
     # via
     #   moto
     #   requests
