@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 - adding tox to be able to test on all python versions locally
   
 ### Changes
+- updating dev dependencies
 
 ### Fixes
 
