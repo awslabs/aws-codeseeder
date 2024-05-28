@@ -17,5 +17,5 @@
 
 set -ex
 
-isort .
-black .
+ruff format .
+ruff check --fix .

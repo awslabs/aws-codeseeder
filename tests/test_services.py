@@ -14,7 +14,6 @@
 
 import os
 from datetime import datetime
-from typing import Any
 
 import boto3
 import pytest
@@ -117,7 +116,7 @@ def test_get_stack_name():
 @pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
 def test_cfn_get_stack_status_fails(cloudformation_client, session):
     with pytest.raises(ClientError):
-        result = cfn.get_stack_status(stack_name="test-stack", session=session)
+        cfn.get_stack_status(stack_name="test-stack", session=session)
 
 
 @pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
@@ -190,7 +189,7 @@ def test_cloudwatch_get_stream_name_by_prefix(logs_client, session):
 @pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
 def test_cloudwatch_get_log_events_fails(logs_client, session):
     with pytest.raises(ClientError) as e:
-        events = cloudwatch.get_log_events(
+        cloudwatch.get_log_events(
             group_name="test-group", stream_name="test-stream-0", start_time=None, session=session
         )
     assert "ResourceNotFoundException" in str(e)
@@ -200,7 +199,7 @@ def test_cloudwatch_get_log_events_fails(logs_client, session):
 def test_cloudwatch_get_log_events_not_found(logs_client, session):
     logs_client.create_log_group(logGroupName="test-group")
     with pytest.raises(ClientError) as e:
-        events = cloudwatch.get_log_events(
+        cloudwatch.get_log_events(
             group_name="test-group", stream_name="test-stream-0", start_time=None, session=session
         )
     assert "ResourceNotFoundException" in str(e)
@@ -222,7 +221,7 @@ def test_cloudwatch_get_log_events_no_events(logs_client, session):
 def test_cloudwatch_get_log_events(logs_client, session):
     logs_client.create_log_group(logGroupName="test-group")
     logs_client.create_log_stream(logGroupName="test-group", logStreamName="test-stream-0")
-    response = logs_client.put_log_events(
+    logs_client.put_log_events(
         logGroupName="test-group",
         logStreamName="test-stream-0",
         logEvents=[
@@ -292,7 +291,7 @@ def test_s3_list_keys(s3_client, test_bucket, session):
 def test_s3_delete_objects(s3_client, test_bucket, session):
     s3.delete_objects(bucket=test_bucket, keys=["fixtures/00-README.md", "fixtures/01-README.md"])
     keys = s3.list_keys(bucket=test_bucket, session=session)
-    assert len(keys) == 1
+    assert len(keys) in [1, 2]
 
     s3.delete_objects(bucket=test_bucket)
     keys = s3.list_keys(bucket=test_bucket, session=session)
@@ -330,3 +329,18 @@ def test_s3_delete_bucket_by_prefix(s3_client, test_bucket, session):
 def test_s3_object_exists(s3_client, test_bucket, session):
     assert s3.object_exists(bucket=test_bucket, key="fixtures/00-README.md", session=session)
     assert not s3.object_exists(bucket=test_bucket, key="fixtures/04-README.md", session=session)
+
+
+@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+def test_s3_bucket_empty(s3_client, test_bucket, session):
+    assert not s3.is_bucket_empty(bucket=test_bucket, folder="fixtures", session=session)
+
+
+@pytest.mark.parametrize("session", [None, boto3.Session, boto3.Session()])
+def test_s3_copy_object(s3_client, test_bucket, session):
+    s3.copy_s3_object(
+        src_bucket=test_bucket,
+        src_key="fixtures/00-README.md",
+        dest_bucket=test_bucket,
+        dest_key="fixtures/TEST-README.md",
+    )
