@@ -44,7 +44,7 @@ build==0.10.0
     #   pip-tools
 cachetools==5.3.3
     # via tox
-certifi==2023.7.22
+certifi==2024.2.2
     # via
     #   -r requirements-dev.in
     #   requests
@@ -69,13 +69,12 @@ colorama==0.4.6
     #   awscli
     #   tox
 coverage[toml]==7.2.7
-    # via
-    #   coverage
-    #   pytest-cov
+    # via pytest-cov
 cryptography==42.0.7
     # via
     #   moto
     #   python-jose
+    #   secretstorage
     #   sshpubkeys
 distlib==0.3.8
     # via virtualenv
@@ -116,6 +115,10 @@ iniconfig==2.0.0
     # via pytest
 jaraco-classes==3.3.0
     # via keyring
+jeepney==0.8.0
+    # via
+    #   keyring
+    #   secretstorage
 jinja2==3.1.4
     # via
     #   moto
@@ -173,9 +176,7 @@ mdurl==0.1.2
 more-itertools==9.1.0
     # via jaraco-classes
 moto[all]==4.0.13
-    # via
-    #   -r requirements-dev.in
-    #   moto
+    # via -r requirements-dev.in
 mpmath==1.3.0
     # via sympy
 mypy==1.10.0
@@ -256,9 +257,7 @@ python-dateutil==2.8.2
     #   botocore
     #   moto
 python-jose[cryptography]==3.3.0
-    # via
-    #   moto
-    #   python-jose
+    # via moto
 pyyaml==6.0.1
     # via
     #   awscli
@@ -313,6 +312,8 @@ s3transfer==0.10.1
     #   boto3
 sarif-om==1.0.4
     # via cfn-lint
+secretstorage==3.3.3
+    # via keyring
 six==1.16.0
     # via
     #   bleach
