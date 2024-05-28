@@ -18,7 +18,7 @@ from datetime import datetime
 import boto3
 import pytest
 from botocore.exceptions import ClientError
-from moto import mock_cloudformation, mock_codebuild, mock_logs, mock_s3, mock_sts
+from moto import mock_aws
 from moto.core.utils import unix_time_millis
 
 from aws_codeseeder.services import _utils, cfn, cloudwatch, codebuild, s3
@@ -37,31 +37,31 @@ def aws_credentials():
 
 @pytest.fixture(scope="function")
 def cloudformation_client(aws_credentials):
-    with mock_cloudformation():
+    with mock_aws():
         yield _utils.boto3_client(service_name="cloudformation", session=None)
 
 
 @pytest.fixture(scope="function")
 def s3_client(aws_credentials):
-    with mock_s3():
+    with mock_aws():
         yield _utils.boto3_client(service_name="s3", session=None)
 
 
 @pytest.fixture(scope="function")
 def logs_client(aws_credentials):
-    with mock_logs():
+    with mock_aws():
         yield _utils.boto3_client(service_name="logs", session=None)
 
 
 @pytest.fixture(scope="function")
 def codebuild_client(aws_credentials):
-    with mock_codebuild():
+    with mock_aws():
         yield _utils.boto3_client(service_name="codebuild", session=None)
 
 
 @pytest.fixture(scope="function")
 def sts_client(aws_credentials):
-    with mock_sts():
+    with mock_aws():
         yield _utils.boto3_client(service_name="sts", session=None)
 
 
