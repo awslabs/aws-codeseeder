@@ -4,33 +4,33 @@
 #
 #    pip-compile
 #
-aws-codeseeder==0.6.0
+aws-codeseeder==0.13.0
     # via my-example (setup.py)
-boto3==1.19.8
+boto3==1.34.113
     # via aws-codeseeder
-botocore==1.22.8
+botocore==1.34.113
     # via
     #   boto3
     #   s3transfer
-cfn-flip==1.2.3
+cfn-flip==1.3.0
     # via aws-codeseeder
-click==7.1.2
+click==8.1.7
     # via
     #   aws-codeseeder
     #   cfn-flip
-jmespath==0.10.0
+jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-mypy-extensions==0.4.3
+mypy-extensions==1.0.0
     # via aws-codeseeder
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via botocore
-pyyaml==5.4.1
+pyyaml==6.0.1
     # via
     #   aws-codeseeder
     #   cfn-flip
-s3transfer==0.5.0
+s3transfer==0.10.1
     # via boto3
 six==1.16.0
     # via
