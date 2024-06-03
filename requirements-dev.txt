@@ -24,7 +24,7 @@ aws-sam-translator==1.89.0
     # via cfn-lint
 aws-xray-sdk==2.13.1
     # via moto
-awscli==1.32.113
+awscli==1.32.117
     # via -r requirements-dev.in
 babel==2.12.1
     # via sphinx
@@ -34,7 +34,7 @@ boto3==1.34.109
     # via
     #   aws-sam-translator
     #   moto
-botocore==1.34.113
+botocore==1.34.117
     # via
     #   aws-xray-sdk
     #   awscli
@@ -176,7 +176,7 @@ mdurl==0.1.2
     # via markdown-it-py
 more-itertools==9.1.0
     # via jaraco-classes
-moto[all]==5.0.8
+moto[all]==5.0.9
     # via -r requirements-dev.in
 mpmath==1.3.0
     # via sympy
@@ -186,7 +186,7 @@ mypy==1.10.0
     # via -r requirements-dev.in
 mypy-extensions==1.0.0
     # via mypy
-myst-parser==0.18.1
+myst-parser==1.0.0
     # via -r requirements-dev.in
 networkx==3.1
     # via
@@ -308,7 +308,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.7.2
     # via awscli
-ruff==0.4.5
+ruff==0.4.7
     # via -r requirements-dev.in
 s3transfer==0.10.1
     # via
@@ -379,7 +379,6 @@ typing-extensions==4.7.1
     #   astroid
     #   aws-sam-translator
     #   mypy
-    #   myst-parser
     #   pydantic
     #   pydantic-core
 urllib3==1.26.18
