@@ -24,7 +24,7 @@ aws-sam-translator==1.89.0
     # via cfn-lint
 aws-xray-sdk==2.13.1
     # via moto
-awscli==1.33.4
+awscli==1.33.9
     # via -r requirements-dev.in
 babel==2.12.1
     # via sphinx
@@ -35,7 +35,7 @@ boto3==1.34.122
     #   -c requirements.txt
     #   aws-sam-translator
     #   moto
-botocore==1.34.122
+botocore==1.34.127
     # via
     #   -c requirements.txt
     #   aws-xray-sdk
@@ -306,7 +306,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.7.2
     # via awscli
-ruff==0.4.8
+ruff==0.4.9
     # via -r requirements-dev.in
 s3transfer==0.10.1
     # via
