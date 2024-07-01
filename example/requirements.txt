@@ -6,9 +6,9 @@
 #
 aws-codeseeder==1.0.0
     # via my-example (setup.py)
-boto3==1.34.131
+boto3==1.34.136
     # via aws-codeseeder
-botocore==1.34.131
+botocore==1.34.136
     # via
     #   boto3
     #   s3transfer
@@ -30,7 +30,7 @@ pyyaml==6.0.1
     # via
     #   aws-codeseeder
     #   cfn-flip
-s3transfer==0.10.1
+s3transfer==0.10.2
     # via boto3
 six==1.16.0
     # via
