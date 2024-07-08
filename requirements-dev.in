@@ -1,5 +1,5 @@
 awscli~=1.33.22
-certifi~=2024.6.2
+certifi~=2024.7.4
 check-manifest~=0.47
 mypy~=1.10.1
 myst-parser~=1.0.0
