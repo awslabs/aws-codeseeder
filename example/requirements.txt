@@ -6,9 +6,9 @@
 #
 aws-codeseeder==1.0.0
     # via my-example (setup.py)
-boto3==1.34.136
+boto3==1.34.141
     # via aws-codeseeder
-botocore==1.34.136
+botocore==1.34.141
     # via
     #   boto3
     #   s3transfer
