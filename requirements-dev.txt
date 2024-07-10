@@ -24,7 +24,7 @@ aws-sam-translator==1.89.0
     # via cfn-lint
 aws-xray-sdk==2.13.1
     # via moto
-awscli==1.33.18
+awscli==1.33.22
     # via -r requirements-dev.in
 babel==2.12.1
     # via sphinx
@@ -34,7 +34,7 @@ boto3==1.34.136
     # via
     #   aws-sam-translator
     #   moto
-botocore==1.34.136
+botocore==1.34.140
     # via
     #   aws-xray-sdk
     #   awscli
@@ -91,7 +91,7 @@ docutils==0.16
     #   readme-renderer
     #   sphinx
     #   sphinx-rtd-theme
-filelock==3.14.0
+filelock==3.15.4
     # via
     #   tox
     #   virtualenv
@@ -170,7 +170,7 @@ mdurl==0.1.2
     # via markdown-it-py
 more-itertools==9.1.0
     # via jaraco-classes
-moto[all]==5.0.10
+moto[all]==5.0.11
     # via -r requirements-dev.in
 mpmath==1.3.0
     # via sympy
@@ -190,7 +190,7 @@ openapi-schema-validator==0.6.2
     # via openapi-spec-validator
 openapi-spec-validator==0.7.1
     # via moto
-packaging==24.0
+packaging==24.1
     # via
     #   build
     #   docker
@@ -237,7 +237,7 @@ pygments==2.15.1
     #   sphinx
 pyparsing==3.1.2
     # via moto
-pyproject-api==1.6.1
+pyproject-api==1.7.1
     # via tox
 pyproject-hooks==1.0.0
     # via
@@ -302,7 +302,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.7.2
     # via awscli
-ruff==0.5.0
+ruff==0.5.1
     # via -r requirements-dev.in
 s3transfer==0.10.2
     # via
@@ -347,7 +347,7 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 sympy==1.12
     # via cfn-lint
-tox==4.15.1
+tox==4.16.0
     # via -r requirements-dev.in
 trove-classifiers==2024.5.22
     # via pyroma
@@ -355,7 +355,7 @@ twine==5.1.1
     # via -r requirements-dev.in
 types-pyyaml==6.0.12.20240311
     # via -r requirements-dev.in
-types-setuptools==70.1.0.20240627
+types-setuptools==70.2.0.20240704
     # via -r requirements-dev.in
 typing-extensions==4.7.1
     # via
@@ -371,7 +371,7 @@ urllib3==1.26.19
     #   requests
     #   responses
     #   twine
-virtualenv==20.26.2
+virtualenv==20.26.3
     # via tox
 webencodings==0.5.1
     # via bleach
