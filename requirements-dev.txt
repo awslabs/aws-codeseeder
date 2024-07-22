@@ -30,7 +30,7 @@ babel==2.12.1
     # via sphinx
 bleach==6.0.0
     # via readme-renderer
-boto3==1.34.144
+boto3==1.34.145
     # via
     #   aws-sam-translator
     #   moto
