@@ -24,7 +24,7 @@ aws-sam-translator==1.89.0
     # via cfn-lint
 aws-xray-sdk==2.13.1
     # via moto
-awscli==1.33.26
+awscli==1.33.27
     # via -r requirements-dev.in
 babel==2.12.1
     # via sphinx
@@ -32,12 +32,10 @@ bleach==6.0.0
     # via readme-renderer
 boto3==1.34.144
     # via
-    #   -c requirements.txt
     #   aws-sam-translator
     #   moto
-botocore==1.34.144
+botocore==1.34.145
     # via
-    #   -c requirements.txt
     #   aws-xray-sdk
     #   awscli
     #   boto3
@@ -52,7 +50,6 @@ cachetools==5.3.3
     # via tox
 certifi==2024.7.4
     # via
-    #   -c requirements.txt
     #   -r requirements-dev.in
     #   requests
 cffi==1.16.0
@@ -69,7 +66,6 @@ check-manifest==0.49
     # via -r requirements-dev.in
 click==8.1.7
     # via
-    #   -c requirements.txt
     #   changelog-cli
     #   pip-tools
 colorama==0.4.6
@@ -82,6 +78,7 @@ cryptography==42.0.7
     # via
     #   joserfc
     #   moto
+    #   secretstorage
 distlib==0.3.8
     # via virtualenv
 docker==7.0.0
@@ -110,6 +107,10 @@ iniconfig==2.0.0
     # via pytest
 jaraco-classes==3.3.0
     # via keyring
+jeepney==0.8.0
+    # via
+    #   keyring
+    #   secretstorage
 jinja2==3.1.4
     # via
     #   moto
@@ -118,7 +119,6 @@ jinja2==3.1.4
     #   sphinx-autoapi
 jmespath==1.0.1
     # via
-    #   -c requirements.txt
     #   boto3
     #   botocore
 joserfc==0.10.0
@@ -176,12 +176,10 @@ mpmath==1.3.0
     # via sympy
 multipart==0.2.4
     # via moto
-mypy==1.10.1
+mypy==1.11.0
     # via -r requirements-dev.in
 mypy-extensions==1.0.0
-    # via
-    #   -c requirements.txt
-    #   mypy
+    # via mypy
 myst-parser==1.0.0
     # via -r requirements-dev.in
 networkx==3.1
@@ -247,7 +245,7 @@ pyproject-hooks==1.0.0
     #   pip-tools
 pyroma==4.2
     # via -r requirements-dev.in
-pytest==8.2.2
+pytest==8.3.1
     # via
     #   -r requirements-dev.in
     #   pytest-cov
@@ -258,12 +256,10 @@ pytest-mock==3.14.0
     # via -r requirements-dev.in
 python-dateutil==2.9.0.post0
     # via
-    #   -c requirements.txt
     #   botocore
     #   moto
 pyyaml==6.0.1
     # via
-    #   -c requirements.txt
     #   awscli
     #   cfn-lint
     #   jsonschema-path
@@ -306,18 +302,18 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.7.2
     # via awscli
-ruff==0.5.2
+ruff==0.5.4
     # via -r requirements-dev.in
 s3transfer==0.10.2
     # via
-    #   -c requirements.txt
     #   awscli
     #   boto3
 sarif-om==1.0.4
     # via cfn-lint
+secretstorage==3.3.3
+    # via keyring
 six==1.16.0
     # via
-    #   -c requirements.txt
     #   bleach
     #   junit-xml
     #   python-dateutil
@@ -359,7 +355,7 @@ twine==5.1.1
     # via -r requirements-dev.in
 types-pyyaml==6.0.12.20240311
     # via -r requirements-dev.in
-types-setuptools==70.3.0.20240710
+types-setuptools==71.0.0.20240722
     # via -r requirements-dev.in
 typing-extensions==4.7.1
     # via
@@ -369,7 +365,6 @@ typing-extensions==4.7.1
     #   pydantic-core
 urllib3==1.26.19
     # via
-    #   -c requirements.txt
     #   -r requirements-dev.in
     #   botocore
     #   docker
