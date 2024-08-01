@@ -106,6 +106,8 @@ class CodeSeederConfig:
         Local requirements.txt files to bundle and install during CodeBuild execution, by default None
     codebuild_image : Optional[str], optional
         Alternative container image to use during CodeBuild execution, by default None
+    codebuild_fleet_arn: Optional[str], optional
+        Alternative CodeBuild Fleet ARN to use during CodeBuild execution, by default None
     codebuild_role : Optional[str], optional
         Alternative IAM Role to use during CodeBuild execution, by default None
     codebuild_environment_type : Optional[str], optional
@@ -153,6 +155,7 @@ class CodeSeederConfig:
     codebuild_role: Optional[str] = None
     codebuild_environment_type: Optional[str] = None
     codebuild_compute_type: Optional[str] = None
+    codebuild_fleet_arn: Optional[str] = None
     npm_mirror: Optional[str] = None
     pypi_mirror: Optional[str] = None
     install_commands: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
