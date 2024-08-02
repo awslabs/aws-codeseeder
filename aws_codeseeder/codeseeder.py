@@ -97,7 +97,6 @@ def remote_function(
     codebuild_role: Optional[str] = None,
     codebuild_environment_type: Optional[str] = None,
     codebuild_compute_type: Optional[str] = None,
-    codebuild_fleet_arn: Optional[str] = None,
     npm_mirror: Optional[str] = None,
     pypi_mirror: Optional[str] = None,
     extra_install_commands: Optional[List[str]] = None,
@@ -205,7 +204,6 @@ def remote_function(
         codebuild_role = decorator.codebuild_role  # type: ignore
         codebuild_environment_type = decorator.codebuild_environment_type  # type: ignore
         codebuild_compute_type = decorator.codebuild_compute_type  # type: ignore
-        codebuild_fleet_arn = decorator.codebuild_fleet_arn  # type: ignore
         npm_mirror = decorator.npm_mirror  # type: ignore
         pypi_mirror = decorator.pypi_mirror  # type: ignore
         install_commands = decorator.install_commands  # type: ignore
@@ -242,10 +240,6 @@ def remote_function(
         codebuild_compute_type = (
             codebuild_compute_type if codebuild_compute_type is not None else config_object.codebuild_compute_type
         )
-        codebuild_fleet_arn = (
-            codebuild_fleet_arn if codebuild_fleet_arn is not None else config_object.codebuild_fleet_arn
-        )
-
         npm_mirror = npm_mirror if npm_mirror is not None else config_object.npm_mirror
         pypi_mirror = pypi_mirror if pypi_mirror is not None else config_object.pypi_mirror
         install_commands = config_object.install_commands + install_commands
@@ -387,8 +381,6 @@ def remote_function(
                     overrides["environmentTypeOverride"] = codebuild_environment_type
                 if codebuild_compute_type:
                     overrides["computeTypeOverride"] = codebuild_compute_type
-                if codebuild_fleet_arn:
-                    overrides["fleetOverride"] = {"fleetArn": codebuild_fleet_arn}
                 if env_vars:
                     overrides["environmentVariablesOverride"] = [
                         {
@@ -432,7 +424,6 @@ def remote_function(
     decorator.codebuild_role = codebuild_role  # type: ignore
     decorator.codebuild_environment_type = codebuild_environment_type  # type: ignore
     decorator.codebuild_compute_type = codebuild_compute_type  # type: ignore
-    decorator.codebuild_fleet_arn = codebuild_fleet_arn  # type: ignore
     decorator.npm_mirror = npm_mirror  # type: ignore
     decorator.pypi_mirror = pypi_mirror  # type: ignore
     decorator.install_commands = [] if extra_install_commands is None else extra_install_commands  # type: ignore

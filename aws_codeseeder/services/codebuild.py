@@ -184,7 +184,6 @@ def fetch_build_info(build_id: str, session: Optional[Union[Callable[[], Session
         If the Build Id is not found
     """
     client = boto3_client("codebuild", session=session)
-    time.sleep(10)  # used for polling managed fleet integration
     response: Dict[str, List[Dict[str, Any]]] = try_it(
         f=client.batch_get_builds, ex=botocore.exceptions.ClientError, ids=[build_id], max_num_tries=5
     )
