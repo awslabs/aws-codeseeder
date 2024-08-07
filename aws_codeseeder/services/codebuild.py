@@ -159,8 +159,8 @@ def start(
     if overrides:
         build_params = {**build_params, **overrides}
 
-    response: Dict[str, Any] = client.start_build(**build_params)
-    return str(response["build"]["id"])
+    response = client.start_build(**build_params)  # type: ignore[arg-type]
+    return response["build"]["id"]
 
 
 def fetch_build_info(build_id: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> BuildInfo:

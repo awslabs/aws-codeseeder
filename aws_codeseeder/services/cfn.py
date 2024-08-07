@@ -15,7 +15,7 @@
 import os
 import time
 from datetime import datetime
-from typing import Any, Callable, Dict, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, Union, cast
 
 import botocore.exceptions
 from boto3 import Session
@@ -24,6 +24,9 @@ from aws_codeseeder import LOGGER
 from aws_codeseeder.services import s3
 from aws_codeseeder.services._utils import boto3_client
 
+if TYPE_CHECKING:
+    from mypy_boto3_cloudformation.waiter import StackCreateCompleteWaiter, StackUpdateCompleteWaiter
+
 CHANGESET_PREFIX = "aws-codeseeder-"
 
 
@@ -31,9 +34,8 @@ def _wait_for_changeset(
     changeset_id: str, stack_name: str, session: Optional[Union[Callable[[], Session], Session]] = None
 ) -> bool:
     waiter = boto3_client("cloudformation", session=session).get_waiter("change_set_create_complete")
-    waiter_config = {"Delay": 1}
     try:
-        waiter.wait(ChangeSetName=changeset_id, StackName=stack_name, WaiterConfig=waiter_config)
+        waiter.wait(ChangeSetName=changeset_id, StackName=stack_name, WaiterConfig={"Delay": 1})
     except botocore.exceptions.WaiterError as ex:
         resp = ex.last_response
         status = resp["Status"]
@@ -91,17 +93,21 @@ def _execute_changeset(
 def _wait_for_execute(
     stack_name: str, changeset_type: str, session: Optional[Union[Callable[[], Session], Session]] = None
 ) -> None:
+    waiter: Union["StackCreateCompleteWaiter", "StackUpdateCompleteWaiter"]
     if changeset_type == "CREATE":
         waiter = boto3_client("cloudformation", session=session).get_waiter("stack_create_complete")
     elif changeset_type == "UPDATE":
         waiter = boto3_client("cloudformation", session=session).get_waiter("stack_update_complete")
     else:
         raise RuntimeError(f"Invalid changeset type {changeset_type}")
-    waiter_config = {
-        "Delay": 5,
-        "MaxAttempts": 480,
-    }
-    waiter.wait(StackName=stack_name, WaiterConfig=waiter_config)
+
+    waiter.wait(
+        StackName=stack_name,
+        WaiterConfig={
+            "Delay": 5,
+            "MaxAttempts": 480,
+        },
+    )
 
 
 def get_stack_name(seedkit_name: str) -> str:
@@ -175,10 +181,10 @@ def does_stack_exist(
             return (False, {})
         else:
             output = {o["OutputKey"]: o["OutputValue"] for o in resp["Stacks"][0].get("Outputs", [])}
-            output["StackStatus"] = resp["Stacks"][0].get("StackStatus", None)
+            output["StackStatus"] = resp["Stacks"][0].get("StackStatus", None)  # type: ignore[assignment]
             return (True, output)
     except botocore.exceptions.ClientError as ex:
-        error: Dict[str, Any] = ex.response["Error"]
+        error = ex.response["Error"]
         if error["Code"] == "ValidationError" and f"Stack with id {stack_name} does not exist" in error["Message"]:
             return (False, {})
         raise
