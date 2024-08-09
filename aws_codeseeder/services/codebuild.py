@@ -332,20 +332,12 @@ def generate_spec(
         "/var/scripts/retrieve_docker_creds.py && echo 'Docker logins successful' || echo 'Docker logins failed'",
     ]
     if pypi_mirror is not None:
-        install.append(
-            "mv $CODEBUILD_SRC_DIR/bundle/pypi_mirror_support.py /var/scripts/pypi_mirror_support.py || true"
-        )
-        install.append(
-            f"/var/scripts/pypi_mirror_support.py {pypi_mirror} && echo 'Pypi Mirror Set' || echo 'Pypi Mirror failed'"
-        )
-    
+        install.append("mv $CODEBUILD_SRC_DIR/bundle/pypi_mirror_support.py /var/scripts/pypi_mirror_support.py")
+        install.append(f"/var/scripts/pypi_mirror_support.py {pypi_mirror} && echo 'Pypi Mirror Set'")
+
     if npm_mirror:
-        install.append(
-            "mv $CODEBUILD_SRC_DIR/bundle/npm_mirror_support.py /var/scripts/npm_mirror_support.py || true"
-        )
-        install.append(
-            f"/var/scripts/npm_mirror_support.py {npm_mirror} && echo 'NPM Mirror Set' || echo 'NPM Mirror failed'"
-        )
+        install.append("mv $CODEBUILD_SRC_DIR/bundle/npm_mirror_support.py /var/scripts/npm_mirror_support.py")
+        install.append(f"/var/scripts/npm_mirror_support.py {npm_mirror} && echo 'NPM Mirror Set'")
 
     if "CodeArtifactDomain" in stack_outputs and "CodeArtifactRepository" in stack_outputs:
         install.append(
