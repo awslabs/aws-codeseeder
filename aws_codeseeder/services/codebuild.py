@@ -338,11 +338,13 @@ def generate_spec(
         install.append(
             f"/var/scripts/pypi_mirror_support.py {pypi_mirror} && echo 'Pypi Mirror Set' || echo 'Pypi Mirror failed'"
         )
-
+    
     if npm_mirror:
-        install.append("mv $CODEBUILD_SRC_DIR/bundle/npm_mirror_support.py /var/scripts/npm_mirror_support.py || true")
         install.append(
-            f"/var/scripts/pypi_mirror_support.py {npm_mirror} && echo 'NPM Mirror Set' || echo 'NPM Mirror failed'"
+            "mv $CODEBUILD_SRC_DIR/bundle/npm_mirror_support.py /var/scripts/npm_mirror_support.py || true"
+        )
+        install.append(
+            f"/var/scripts/npm_mirror_support.py {npm_mirror} && echo 'NPM Mirror Set' || echo 'NPM Mirror failed'"
         )
 
     if "CodeArtifactDomain" in stack_outputs and "CodeArtifactRepository" in stack_outputs:
