@@ -370,6 +370,7 @@ def remote_function(
                     abort_phases_on_failure=abort_on_failure,
                     runtime_versions=runtimes,
                     pypi_mirror=pypi_mirror,
+                    npm_mirror=npm_mirror,
                 )
 
                 overrides = {}
