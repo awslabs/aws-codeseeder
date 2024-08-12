@@ -1,4 +1,4 @@
-awscli~=1.33.31
+awscli~=1.33.40
 certifi~=2024.7.4
 check-manifest~=0.47
 mypy~=1.11.1
@@ -8,7 +8,7 @@ pyroma~=4.2
 pytest~=8.3.2
 pytest-cov~=5.0.0
 pytest-mock~=3.14.0
-ruff~=0.5.6
+ruff~=0.5.7
 sphinx-autoapi~=2.1.1
 sphinx-rtd-theme~=2.0.0
 types-PyYAML~=6.0.12
