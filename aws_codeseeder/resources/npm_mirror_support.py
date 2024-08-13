@@ -30,6 +30,9 @@ def get_secret(secret_name: str) -> Dict[str, Dict[str, str]]:
 
 def main(url: str) -> None:
     secret_name = os.environ.get("AWS_CODESEEDER_NPM_MIRROR_SECRET")
+    # Backwards Compatibility
+    if secret_name == "NO_SECRET":
+        secret_name = os.environ.get("AWS_CODESEEDER_MIRROR_SECRET", "NO_SECRET")
     if secret_name:
         secret_name_key = secret_name.split("::")[0] if "::" in secret_name else secret_name
         key = secret_name.split("::")[1] if "::" in secret_name else "npm"

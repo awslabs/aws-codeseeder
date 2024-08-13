@@ -246,6 +246,8 @@ Resources:
             Value: "NONE"
           - Name: AWS_CODESEEDER_NPM_MIRROR_SECRET
             Value: "NONE"
+          - Name: AWS_CODESEEDER_MIRROR_SECRET
+            Value: "NONE"
       Source:
         Type: NO_SOURCE
         BuildSpec:  |
