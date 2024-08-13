@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
     }`
 
 ### Changes
+- Add support for explicit secret environment variables for mirrors
 
 ### Fixes
 
