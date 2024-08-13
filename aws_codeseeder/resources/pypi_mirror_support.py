@@ -45,7 +45,7 @@ def create_url(url: str, username: Optional[str] = None, password: Optional[str]
 
 
 def main(url: str) -> None:
-    secret_name = os.environ.get("AWS_CODESEEDER_MIRROR_SECRET", "NO_SECRET")
+    secret_name = os.environ.get("AWS_CODESEEDER_PYPI_MIRROR_SECRET", "NO_SECRET")
     username = None
     password = None
     if secret_name not in ["NO_SECRET"]:
