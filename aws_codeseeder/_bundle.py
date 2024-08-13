@@ -131,6 +131,12 @@ def generate_bundle(
         dst=os.path.join(bundle_dir, "pypi_mirror_support.py"),
     )
 
+    # Add the npm credentials suppprt
+    shutil.copy(
+        src=os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources/npm_mirror_support.py"),
+        dst=os.path.join(bundle_dir, "npm_mirror_support.py"),
+    )
+
     LOGGER.debug(f"generate_bundle dirs={dirs}")
     # Extra Directories
     if dirs is not None:
