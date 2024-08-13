@@ -29,7 +29,7 @@ def get_secret(secret_name: str) -> Dict[str, Dict[str, str]]:
 
 
 def main(url: str) -> None:
-    secret_name = os.environ.get("AWS_CODESEEDER_NPM_MIRROR_SECRET")
+    secret_name = os.environ.get("AWS_CODESEEDER_NPM_MIRROR_SECRET", "NO_SECRET")
     # Backwards Compatibility
     if secret_name == "NO_SECRET":
         secret_name = os.environ.get("AWS_CODESEEDER_MIRROR_SECRET", "NO_SECRET")
