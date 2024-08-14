@@ -24,20 +24,20 @@ aws-sam-translator==1.89.0
     # via cfn-lint
 aws-xray-sdk==2.13.1
     # via moto
-awscli==1.33.35
+awscli==1.33.40
     # via -r requirements-dev.in
 babel==2.12.1
     # via sphinx
 bleach==6.0.0
     # via readme-renderer
-boto3==1.34.153
+boto3==1.34.158
     # via
     #   -c requirements.txt
     #   aws-sam-translator
     #   moto
 boto3-stubs[cloudformation,cloudwatch,codebuild,iam,logs,s3,sts]==1.34.155
     # via -r requirements-dev.in
-botocore==1.34.153
+botocore==1.34.158
     # via
     #   -c requirements.txt
     #   aws-xray-sdk
@@ -52,7 +52,7 @@ build==1.2.1
     #   check-manifest
     #   pip-tools
     #   pyroma
-cachetools==5.3.3
+cachetools==5.4.0
     # via tox
 certifi==2024.7.4
     # via
@@ -279,7 +279,7 @@ python-dateutil==2.9.0.post0
     #   -c requirements.txt
     #   botocore
     #   moto
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   -c requirements.txt
     #   awscli
@@ -324,7 +324,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.7.2
     # via awscli
-ruff==0.5.6
+ruff==0.5.7
     # via -r requirements-dev.in
 s3transfer==0.10.2
     # via
@@ -369,7 +369,7 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 sympy==1.12
     # via cfn-lint
-tox==4.16.0
+tox==4.17.1
     # via -r requirements-dev.in
 trove-classifiers==2024.5.22
     # via pyroma
@@ -377,11 +377,11 @@ twine==5.1.1
     # via -r requirements-dev.in
 types-awscrt==0.21.2
     # via botocore-stubs
-types-pyyaml==6.0.12.20240724
+types-pyyaml==6.0.12.20240808
     # via -r requirements-dev.in
 types-s3transfer==0.10.1
     # via boto3-stubs
-types-setuptools==71.1.0.20240726
+types-setuptools==71.1.0.20240806
     # via -r requirements-dev.in
 typing-extensions==4.7.1
     # via

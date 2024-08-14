@@ -242,6 +242,10 @@ Resources:
             Value: ${seedkit_name}
           - Name: AWS_CODESEEDER_DOCKER_SECRET
             Value: "NONE"
+          - Name: AWS_CODESEEDER_PYPI_MIRROR_SECRET
+            Value: "NONE"
+          - Name: AWS_CODESEEDER_NPM_MIRROR_SECRET
+            Value: "NONE"
           - Name: AWS_CODESEEDER_MIRROR_SECRET
             Value: "NONE"
       Source:
