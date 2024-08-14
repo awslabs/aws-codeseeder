@@ -41,6 +41,7 @@ def main(url: str) -> None:
             ssl_token = creds[key]["ssl_token"] if creds[key].get("ssl_token") else None
         logger.info("Calling npm config with %s", url)
         subprocess.call(["npm", "config", "set", f"{url.replace('https:', '')}:_auth={ssl_token}"])
+        subprocess.call(["npm", "config", "set", "registry", url])
     else:
         logger.info("'AWS_CODESEEDER_NPM_MIRROR_SECRET' is not set")
 
