@@ -314,7 +314,6 @@ def remote_function(
                     "cd ${CODEBUILD_SRC_DIR}/bundle",
                 ]
 
-                cmds_install.append(f"npm config set registry {npm_mirror}") if npm_mirror is not None else None
                 cmds_install.append(
                     f"pip install aws-codeseeder~={__version__}",
                 )
@@ -370,6 +369,7 @@ def remote_function(
                     abort_phases_on_failure=abort_on_failure,
                     runtime_versions=runtimes,
                     pypi_mirror=pypi_mirror,
+                    npm_mirror=npm_mirror,
                 )
 
                 overrides = {}

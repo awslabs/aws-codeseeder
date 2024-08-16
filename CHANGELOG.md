@@ -9,8 +9,28 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
-  
+
 ### Changes
+
+### Fixes
+
+### Breaks
+
+
+## 1.1.0 - (2024-08-15)
+---
+
+### New
+- adds support for npm mirrors to be set
+  - the SecretsManager secret name MUST be of the form `*-mirror-credentials`
+  - the content must be JSON
+  - the content has the form `{
+      "npm": { "ssl_token": "base64encodedtoken"},
+    }`
+  - npm registry is set via `npmMirror`
+    - `ssl_token` and `npmMirrorSecret` are *optional* when using a public mirror.
+### Changes
+- Add support for explicit secret environment variables for mirrors
 
 ### Fixes
 

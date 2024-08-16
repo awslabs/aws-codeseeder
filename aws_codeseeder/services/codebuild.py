@@ -290,6 +290,7 @@ def generate_spec(
     runtime_versions: Optional[Dict[str, str]] = None,
     abort_phases_on_failure: bool = True,
     pypi_mirror: Optional[str] = None,
+    npm_mirror: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Generate a BuildSpec for a CodeBuild execution
 
@@ -309,6 +310,10 @@ def generate_spec(
         Environment variables to set in the CodeBuild execution, by default None
     exported_env_vars: Optional[List[str]], optional
         Environment variables to export from the CodeBuild execution, by default None
+    pypi_mirror: Optional[str], optional
+        Pypi mirror to use, by default None
+    npm_mirror: Optional[str], optional
+        NPM mirror to use, by default None
 
     Returns
     -------
@@ -327,12 +332,12 @@ def generate_spec(
         "/var/scripts/retrieve_docker_creds.py && echo 'Docker logins successful' || echo 'Docker logins failed'",
     ]
     if pypi_mirror is not None:
-        install.append(
-            "mv $CODEBUILD_SRC_DIR/bundle/pypi_mirror_support.py /var/scripts/pypi_mirror_support.py || true"
-        )
-        install.append(
-            f"/var/scripts/pypi_mirror_support.py {pypi_mirror} && echo 'Pypi Mirror Set' || echo 'Pypi Mirrror failed'"
-        )
+        install.append("mv $CODEBUILD_SRC_DIR/bundle/pypi_mirror_support.py /var/scripts/pypi_mirror_support.py")
+        install.append(f"/var/scripts/pypi_mirror_support.py {pypi_mirror} && echo 'Pypi Mirror Set'")
+
+    if npm_mirror:
+        install.append("mv $CODEBUILD_SRC_DIR/bundle/npm_mirror_support.py /var/scripts/npm_mirror_support.py")
+        install.append(f"/var/scripts/npm_mirror_support.py {npm_mirror} && echo 'NPM Mirror Set'")
 
     if "CodeArtifactDomain" in stack_outputs and "CodeArtifactRepository" in stack_outputs:
         install.append(
