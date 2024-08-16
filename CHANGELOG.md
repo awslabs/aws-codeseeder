@@ -9,6 +9,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+
+### Changes
+
+### Fixes
+
+### Breaks
+
+
+## 1.1.0 - (2024-08-15)
+---
+
+### New
 - adds support for npm mirrors to be set
   - the SecretsManager secret name MUST be of the form `*-mirror-credentials`
   - the content must be JSON
