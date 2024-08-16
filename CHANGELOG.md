@@ -15,7 +15,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
   - the content has the form `{
       "npm": { "ssl_token": "base64encodedtoken"},
     }`
-
+  - npm registry is set via `npmMirror`
+    - `ssl_token` and `npmMirrorSecret` are *optional* when using a public mirror.
 ### Changes
 - Add support for explicit secret environment variables for mirrors
 

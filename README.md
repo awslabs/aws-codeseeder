@@ -1,5 +1,9 @@
 # aws-codeseeder
 
+[![PyPi](https://img.shields.io/pypi/v/aws-codeseeder)](https://pypi.org/project/aws-codeseeder/)
+[![Python Version](https://img.shields.io/pypi/pyversions/aws-codeseeder.svg)](https://pypi.org/project/aws-codeseeder/)
+[![License](https://img.shields.io/pypi/l/aws-codeseeder)](https://github.com/awslabs/aws-codeseeder/blob/main/LICENSE)
+
 The `aws-codeseeder` project enables builders to easily "seed" python code to AWS CodeBuild for execution in their cloud environments.
 
 The library and its CLI utility are typically used to simplify the development and deployment of complex __Infrastructure as Code__ projects. These projects may have many dependencies and require multiple CLI utilities to orchestrate their deployments. For example, a project that deploys networking resources with the __AWS CDK__, an Amazon EKS Cluster with the `eskctl` CLI utility, and Kubernetes applications with `kubectl` and `helm` CLI utilities.
