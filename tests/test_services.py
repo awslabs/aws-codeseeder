@@ -12,7 +12,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import datetime as dt
 import os
 
 import boto3
@@ -225,11 +224,11 @@ def test_cloudwatch_get_log_events(logs_client, session):
         logGroupName="test-group",
         logStreamName="test-stream-0",
         logEvents=[
-            {"timestamp": int(unix_time_millis(dt.datetime.now(dt.timezone.utc))), "message": "test-message-0"},
-            {"timestamp": int(unix_time_millis(dt.datetime.now(dt.timezone.utc))), "message": "test-message-1"},
-            {"timestamp": int(unix_time_millis(dt.datetime.now(dt.timezone.utc))), "message": "test-message-2"},
-            {"timestamp": int(unix_time_millis(dt.datetime.now(dt.timezone.utc))), "message": "test-message-3"},
-            {"timestamp": int(unix_time_millis(dt.datetime.now(dt.timezone.utc))), "message": "test-message-4"},
+            {"timestamp": int(unix_time_millis()), "message": "test-message-0"},
+            {"timestamp": int(unix_time_millis()), "message": "test-message-1"},
+            {"timestamp": int(unix_time_millis()), "message": "test-message-2"},
+            {"timestamp": int(unix_time_millis()), "message": "test-message-3"},
+            {"timestamp": int(unix_time_millis()), "message": "test-message-4"},
         ],
     )
     events = cloudwatch.get_log_events(
