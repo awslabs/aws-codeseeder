@@ -12,7 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from datetime import datetime
+import datetime as dt
 
 from aws_codeseeder import _remote
 from aws_codeseeder.services.codebuild import BuildCloudWatchLogs, BuildInfo, BuildPhaseType, BuildStatus
@@ -29,8 +29,8 @@ def test_run(mocker):
                 build_id="test-xxxxxxxx",
                 status=BuildStatus.succeeded,
                 current_phase=BuildPhaseType.completed,
-                start_time=datetime.utcnow(),
-                end_time=datetime.utcnow(),
+                start_time=dt.datetime.now(dt.timezone.utc),
+                end_time=dt.datetime.now(dt.timezone.utc),
                 duration_in_seconds=1.0,
                 exported_env_vars=[],
                 phases=[],
