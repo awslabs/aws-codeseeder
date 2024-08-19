@@ -1,4 +1,4 @@
-awscli~=1.33.40
+awscli~=1.34.0
 certifi~=2024.7.4
 check-manifest~=0.47
 mypy~=1.11.1
