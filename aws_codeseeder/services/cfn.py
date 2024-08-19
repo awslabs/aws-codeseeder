@@ -57,7 +57,7 @@ def _create_changeset(
     parameters: Optional[Dict[str, str]] = None,
     session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> Tuple[str, str]:
-    now = dt.datetime.now.isoformat(tz=dt.timezone.utc)
+    now: str = dt.datetime.now(tz=dt.timezone.utc).isoformat()
     description = f"Created by AWS CodeSeeder CLI at {now} UTC"
     changeset_name = CHANGESET_PREFIX + str(int(time.time()))
     stack_exist, _ = does_stack_exist(stack_name=stack_name, session=session)
