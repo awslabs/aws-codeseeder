@@ -12,9 +12,9 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+import datetime as dt
 import os
 import time
-from datetime import datetime
 from typing import Any, Callable, Dict, Optional, Tuple, Union, cast
 
 import botocore.exceptions
@@ -57,7 +57,7 @@ def _create_changeset(
     parameters: Optional[Dict[str, str]] = None,
     session: Optional[Union[Callable[[], Session], Session]] = None,
 ) -> Tuple[str, str]:
-    now = datetime.utcnow().isoformat()
+    now: str = dt.datetime.now(tz=dt.timezone.utc).isoformat()
     description = f"Created by AWS CodeSeeder CLI at {now} UTC"
     changeset_name = CHANGESET_PREFIX + str(int(time.time()))
     stack_exist, _ = does_stack_exist(stack_name=stack_name, session=session)
