@@ -13,7 +13,6 @@
 #    limitations under the License.
 
 import os
-from datetime import datetime
 
 import boto3
 import pytest
@@ -225,11 +224,11 @@ def test_cloudwatch_get_log_events(logs_client, session):
         logGroupName="test-group",
         logStreamName="test-stream-0",
         logEvents=[
-            {"timestamp": int(unix_time_millis(datetime.utcnow())), "message": "test-message-0"},
-            {"timestamp": int(unix_time_millis(datetime.utcnow())), "message": "test-message-1"},
-            {"timestamp": int(unix_time_millis(datetime.utcnow())), "message": "test-message-2"},
-            {"timestamp": int(unix_time_millis(datetime.utcnow())), "message": "test-message-3"},
-            {"timestamp": int(unix_time_millis(datetime.utcnow())), "message": "test-message-4"},
+            {"timestamp": int(unix_time_millis()), "message": "test-message-0"},
+            {"timestamp": int(unix_time_millis()), "message": "test-message-1"},
+            {"timestamp": int(unix_time_millis()), "message": "test-message-2"},
+            {"timestamp": int(unix_time_millis()), "message": "test-message-3"},
+            {"timestamp": int(unix_time_millis()), "message": "test-message-4"},
         ],
     )
     events = cloudwatch.get_log_events(
