@@ -13,7 +13,7 @@
 #    limitations under the License.
 
 from datetime import datetime, timezone
-from typing import Callable, Dict, List, NamedTuple, Optional, Union, cast
+from typing import Callable, List, NamedTuple, Optional, Union
 
 from boto3 import Session
 
@@ -53,14 +53,14 @@ def get_stream_name_by_prefix(
         Name of the CloudWatch Logs Stream (if found)
     """
     client = boto3_client("logs", session=session)
-    response: Dict[str, Union[str, List[Dict[str, Union[float, str]]]]] = client.describe_log_streams(
+    response = client.describe_log_streams(
         logGroupName=group_name,
         logStreamNamePrefix=prefix,
         orderBy="LogStreamName",
         descending=True,
         limit=1,
     )
-    streams = cast(List[Dict[str, Union[float, str]]], response.get("logStreams", []))
+    streams = response.get("logStreams", [])
     if streams:
         return str(streams[0]["logStreamName"])
     return None
@@ -99,14 +99,14 @@ def get_log_events(
     if start_time is not None:
         args["startTime"] = int(start_time.timestamp() * 1000)
     events: List[CloudWatchEvent] = []
-    response: Dict[str, Union[str, List[Dict[str, Union[float, str]]]]] = client.get_log_events(**args)
+    response = client.get_log_events(**args)  # type: ignore[arg-type]
     previous_token = None
     token = response["nextBackwardToken"]
     while response.get("events"):
-        for event in cast(List[Dict[str, Union[float, str]]], response.get("events", [])):
+        for event in response.get("events", []):
             events.append(
                 CloudWatchEvent(
-                    timestamp=datetime.fromtimestamp(cast(int, event["timestamp"]) / 1000.0).astimezone(timezone.utc),
+                    timestamp=datetime.fromtimestamp(event["timestamp"] / 1000.0).astimezone(timezone.utc),
                     message=str(event.get("message", "")),
                 )
             )
@@ -115,7 +115,7 @@ def get_log_events(
         if token == previous_token:
             break
         args["nextToken"] = token
-        response = client.get_log_events(**args)
+        response = client.get_log_events(**args)  # type: ignore[arg-type]
     events.sort(key=lambda e: e.timestamp, reverse=False)
     return CloudWatchEvents(
         group_name=group_name,

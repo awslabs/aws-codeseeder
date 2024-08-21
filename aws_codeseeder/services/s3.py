@@ -17,7 +17,7 @@ import math
 import random
 import time
 from itertools import repeat
-from typing import Any, Callable, Dict, List, Optional, Union, cast
+from typing import Any, Callable, Dict, List, Optional, TypeVar, Union, cast
 
 from boto3 import Session
 from botocore.exceptions import ClientError
@@ -25,8 +25,12 @@ from botocore.exceptions import ClientError
 from aws_codeseeder import LOGGER
 from aws_codeseeder.services._utils import boto3_client, boto3_resource
 
+ChunkifyItemType = TypeVar("ChunkifyItemType")
 
-def _chunkify(lst: List[Any], num_chunks: int = 1, max_length: Optional[int] = None) -> List[List[Any]]:
+
+def _chunkify(
+    lst: List[ChunkifyItemType], num_chunks: int = 1, max_length: Optional[int] = None
+) -> List[List[ChunkifyItemType]]:
     num: int = num_chunks if max_length is None else int(math.ceil((float(len(lst)) / float(max_length))))
     return [lst[i : i + num] for i in range(0, len(lst), num)]  # noqa: E203
 
@@ -36,11 +40,11 @@ def _delete_objects(
 ) -> None:
     client_s3 = boto3_client("s3", session=session)
     try:
-        client_s3.delete_objects(Bucket=bucket, Delete={"Objects": chunk})
+        client_s3.delete_objects(Bucket=bucket, Delete={"Objects": chunk})  # type: ignore[typeddict-item]
     except client_s3.exceptions.ClientError as ex:
         if "SlowDown" in str(ex):
             time.sleep(random.randint(3, 10))
-            client_s3.delete_objects(Bucket=bucket, Delete={"Objects": chunk})
+            client_s3.delete_objects(Bucket=bucket, Delete={"Objects": chunk})  # type: ignore[typeddict-item]
 
 
 def list_keys(bucket: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> List[Dict[str, str]]:

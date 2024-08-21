@@ -38,6 +38,6 @@ jobs:
       - name: Ruff Check
         run: ruff check --output-format=github .
       - name: Mypy Check
-        run: mypy --ignore-missing-imports .
+        run: mypy .
       - name: PyTest
         run: pytest
