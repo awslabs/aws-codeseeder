@@ -181,7 +181,7 @@ def does_stack_exist(
             return (False, {})
         else:
             output = {o["OutputKey"]: o["OutputValue"] for o in resp["Stacks"][0].get("Outputs", [])}
-            output["StackStatus"] = resp["Stacks"][0].get("StackStatus", None)  # type: ignore[assignment]
+            output["StackStatus"] = resp["Stacks"][0]["StackStatus"]
             return (True, output)
     except botocore.exceptions.ClientError as ex:
         error = ex.response["Error"]
