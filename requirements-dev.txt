@@ -35,7 +35,7 @@ boto3==1.35.14
     #   -c requirements.txt
     #   aws-sam-translator
     #   moto
-boto3-stubs[cloudformation,cloudwatch,codebuild,iam,logs,s3,sts]==1.35.10
+boto3-stubs[cloudformation,cloudwatch,codebuild,iam,logs,s3,sts]==1.35.14
     # via -r requirements-dev.in
 botocore==1.35.14
     # via
@@ -52,7 +52,7 @@ build==1.2.1
     #   check-manifest
     #   pip-tools
     #   pyroma
-cachetools==5.4.0
+cachetools==5.5.0
     # via tox
 certifi==2024.8.30
     # via
@@ -86,6 +86,7 @@ cryptography==43.0.1
     # via
     #   joserfc
     #   moto
+    #   secretstorage
 distlib==0.3.8
     # via virtualenv
 docker==7.0.0
@@ -120,6 +121,10 @@ iniconfig==2.0.0
     # via pytest
 jaraco-classes==3.3.0
     # via keyring
+jeepney==0.8.0
+    # via
+    #   keyring
+    #   secretstorage
 jinja2==3.1.4
     # via
     #   moto
@@ -180,7 +185,7 @@ mdurl==0.1.2
     # via markdown-it-py
 more-itertools==9.1.0
     # via jaraco-classes
-moto[all]==5.0.13
+moto[all]==5.0.14
     # via -r requirements-dev.in
 mpmath==1.3.0
     # via sympy
@@ -245,7 +250,7 @@ pluggy==1.5.0
     #   tox
 ply==3.11
     # via jsonpath-ng
-py-partiql-parser==0.5.5
+py-partiql-parser==0.5.6
     # via moto
 pyasn1==0.6.0
     # via rsa
@@ -330,7 +335,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.7.2
     # via awscli
-ruff==0.6.3
+ruff==0.6.4
     # via -r requirements-dev.in
 s3transfer==0.10.2
     # via
@@ -339,6 +344,8 @@ s3transfer==0.10.2
     #   boto3
 sarif-om==1.0.4
     # via cfn-lint
+secretstorage==3.3.3
+    # via keyring
 six==1.16.0
     # via
     #   -c requirements.txt
@@ -386,7 +393,7 @@ tomli==2.0.1
     #   pyproject-hooks
     #   pytest
     #   tox
-tox==4.18.0
+tox==4.18.1
     # via -r requirements-dev.in
 trove-classifiers==2024.5.22
     # via pyroma
@@ -398,7 +405,7 @@ types-pyyaml==6.0.12.20240808
     # via -r requirements-dev.in
 types-s3transfer==0.10.1
     # via boto3-stubs
-types-setuptools==74.0.0.20240831
+types-setuptools==74.1.0.20240907
     # via -r requirements-dev.in
 typing-extensions==4.7.1
     # via
