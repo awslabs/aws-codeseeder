@@ -24,20 +24,20 @@ aws-sam-translator==1.89.0
     # via cfn-lint
 aws-xray-sdk==2.13.1
     # via moto
-awscli==1.34.14
+awscli==1.34.19
     # via -r requirements-dev.in
 babel==2.12.1
     # via sphinx
 bleach==6.0.0
     # via readme-renderer
-boto3==1.35.14
+boto3==1.35.19
     # via
     #   -c requirements.txt
     #   aws-sam-translator
     #   moto
-boto3-stubs[cloudformation,cloudwatch,codebuild,iam,logs,s3,sts]==1.35.14
+boto3-stubs[cloudformation,cloudwatch,codebuild,iam,logs,s3,sts]==1.35.19
     # via -r requirements-dev.in
-botocore==1.35.14
+botocore==1.35.19
     # via
     #   -c requirements.txt
     #   aws-xray-sdk
@@ -276,7 +276,7 @@ pyproject-hooks==1.0.0
     #   pip-tools
 pyroma==4.2
     # via -r requirements-dev.in
-pytest==8.3.2
+pytest==8.3.3
     # via
     #   -r requirements-dev.in
     #   pytest-cov
@@ -335,7 +335,7 @@ rpds-py==0.18.1
     #   referencing
 rsa==4.7.2
     # via awscli
-ruff==0.6.4
+ruff==0.6.5
     # via -r requirements-dev.in
 s3transfer==0.10.2
     # via
