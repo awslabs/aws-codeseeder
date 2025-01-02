@@ -318,7 +318,7 @@ def remote_function(
                     "cd ${CODEBUILD_SRC_DIR}/bundle",
                 ]
                 if pythonpipx_modules:
-                    cmds_install.append(f"pip install pipx~=1.7.1")
+                    cmds_install.append("pip install pipx~=1.7.1")
                     cmds_install.append(f"pipx install aws-codeseeder~={__version__}")
                 else:
                     cmds_install.append(f"pip install aws-codeseeder~={__version__}")
