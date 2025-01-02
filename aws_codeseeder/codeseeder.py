@@ -91,6 +91,7 @@ def remote_function(
     timeout: Optional[int] = None,
     codebuild_log_callback: Optional[Callable[[str], None]] = None,
     extra_python_modules: Optional[List[str]] = None,
+    extra_pythonpipx_modules: Optional[List[str]] = None,
     extra_local_modules: Optional[Dict[str, str]] = None,
     extra_requirements_files: Optional[Dict[str, str]] = None,
     codebuild_image: Optional[str] = None,
@@ -198,6 +199,7 @@ def remote_function(
         fn_id = f"{fn_module}:{fn_name}"
 
         python_modules = decorator.python_modules  # type: ignore
+        pythonpipx_modules = decorator.pythonpipx_modules  # type: ignore
         local_modules = decorator.local_modules  # type: ignore
         requirements_files = decorator.requirements_files  # type: ignore
         codebuild_image = decorator.codebuild_image  # type: ignore
@@ -228,6 +230,7 @@ def remote_function(
 
         # update modules and requirements after configuration
         python_modules = config_object.python_modules + python_modules
+        pythonpipx_modules = config_object.pythonpipx_modules + pythonpipx_modules
         local_modules = {**cast(Mapping[str, str], config_object.local_modules), **local_modules}
         requirements_files = {**cast(Mapping[str, str], config_object.requirements_files), **requirements_files}
         codebuild_image = codebuild_image if codebuild_image is not None else config_object.codebuild_image
@@ -309,19 +312,21 @@ def remote_function(
                 stack_outputs = registry_entry.stack_outputs
 
                 cmds_install = [
+                    "export PATH=$PATH:/root/.local/bin",
                     "python3 -m venv ~/.venv",
                     ". ~/.venv/bin/activate",
                     "cd ${CODEBUILD_SRC_DIR}/bundle",
                 ]
-
-                cmds_install.append(
-                    f"pip install aws-codeseeder~={__version__}",
-                )
+                if pythonpipx_modules:
+                    cmds_install.append(f"pip install pipx~=1.7.1")
+                    cmds_install.append(f"pipx install aws-codeseeder~={__version__}")
+                else:
+                    cmds_install.append(f"pip install aws-codeseeder~={__version__}")
 
                 # If this local env variable is set, don't attempt install of codeseeder from package repository
                 # This is used so that codeseeder can be installed from a local python module included in the bundle
                 # and is used for codeseeder development when codeartifact isn't used.
-                if os.getenv("AWS_CODESEEDER_DEVELOPMENT"):
+                if os.getenv("AWS_CODESEEDER_DEVELOPMENT") and not pythonpipx_modules:
                     cmds_install.pop()
 
                 if requirements_files:
@@ -330,6 +335,8 @@ def remote_function(
                     cmds_install += [f"pip install {m}/" for m in local_modules.keys()]
                 if python_modules:
                     cmds_install.append(f"pip install {' '.join(python_modules)}")
+                if pythonpipx_modules:
+                    cmds_install.append(f"pipx inject aws-codeseeder {' '.join(pythonpipx_modules)} --include-apps")
 
                 dirs_tuples = [(v, k) for k, v in local_modules.items()] + [(v, k) for k, v in dirs.items()]
                 files_tuples = [(v, f"requirements-{k}") for k, v in requirements_files.items()] + [
@@ -418,6 +425,7 @@ def remote_function(
         return wrapper
 
     decorator.python_modules = [] if extra_python_modules is None else extra_python_modules  # type: ignore
+    decorator.pythonpipx_modules = [] if extra_pythonpipx_modules is None else extra_pythonpipx_modules  # type: ignore
     decorator.local_modules = {} if extra_local_modules is None else extra_local_modules  # type: ignore
     decorator.requirements_files = {} if extra_requirements_files is None else extra_requirements_files  # type: ignore
     decorator.codebuild_image = codebuild_image  # type: ignore
