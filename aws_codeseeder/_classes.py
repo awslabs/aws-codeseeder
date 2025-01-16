@@ -98,7 +98,9 @@ class CodeSeederConfig:
     timeout : Optional[int], optional
         Set the CodeBuild execution timeout, by default 30
     python_modules : Optional[List[str]], optional
-        List of python modules to install during CodeBuild exection, by default None
+        List of python modules to install during CodeBuild execution, by default None
+    pythonpipx_modules : Optional[List[str]], optional
+        List of python modules that leverage CLI to install during CodeBuild execution, by default None
     local_modules : Optional[Dict[str, str]], optional
         Name and Location of local python modules to bundle and install during CodeBuild execution,
         by default None
@@ -147,6 +149,7 @@ class CodeSeederConfig:
 
     timeout: Optional[int] = 30
     python_modules: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
+    pythonpipx_modules: Optional[List[str]] = cast(List[str], dataclasses.field(default_factory=list))
     local_modules: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
     requirements_files: Optional[Dict[str, str]] = cast(Dict[str, str], dataclasses.field(default_factory=dict))
     codebuild_image: Optional[str] = None
