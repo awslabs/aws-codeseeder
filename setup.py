@@ -45,7 +45,7 @@ setup(
     keywords=["aws", "cdk"],
     python_requires=">=3.8, <3.13",
     install_requires=[
-        "boto3>=1.24.0",
+        "boto3>=1.36.0",
         "pyyaml>=5.4",
         "click>=7.1.0",
         "cfn-flip>=1.2.3",

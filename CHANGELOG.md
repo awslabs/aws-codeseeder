@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 - add in support for pipx to isolate the CLI and dependencies for CodeSeeder and make configurable for clients
 
 ### Changes
+- updated jinja lib due to scans
 
 ### Fixes
 
