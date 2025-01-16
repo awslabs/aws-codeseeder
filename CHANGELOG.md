@@ -9,6 +9,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ---
 
 ### New
+
+### Changes
+
+### Fixes
+
+### Breaks
+
+
+## 1.2.0 - (2025-01-16)
+---
+
+### New
 - add in support for pipx to isolate the CLI and dependencies for CodeSeeder and make configurable for clients
 
 ### Changes
