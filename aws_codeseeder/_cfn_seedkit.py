@@ -40,6 +40,7 @@ def synth(
     vpc_id: Optional[str] = None,
     subnet_ids: Optional[List[str]] = None,
     security_group_ids: Optional[List[str]] = None,
+    permissions_boundary_arn: Optional[str] = None,
 ) -> str:
     deploy_id = deploy_id if deploy_id else "".join(random.choice(string.ascii_lowercase) for i in range(6))
     out_dir = create_output_dir(f"seedkit-{deploy_id}")
@@ -61,6 +62,9 @@ def synth(
         del input_template["Resources"]["CodeArtifactRepository"]
         del input_template["Outputs"]["CodeArtifactDomain"]
         del input_template["Outputs"]["CodeArtifactRepository"]
+
+    if permissions_boundary_arn:
+        input_template["Resources"]["CodeBuildRole"]["Properties"]["PermissionsBoundary"] = permissions_boundary_arn
 
     output_template = Template(yaml.dump(input_template, Dumper=yaml_dumper.get_dumper()))
 
