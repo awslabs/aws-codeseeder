@@ -15,16 +15,15 @@
 import logging
 import os
 import shutil
+from importlib.metadata import distribution
 from typing import MutableSet, Optional
-
-import pkg_resources
 
 from aws_codeseeder.__metadata__ import __description__, __license__, __title__
 from aws_codeseeder._classes import EnvVar, EnvVarType
 
 __all__ = ["EnvVar", "EnvVarType"]
 
-__version__: str = pkg_resources.get_distribution(__title__).version
+__version__: str = distribution(__title__).version
 
 LOGGER: logging.Logger = logging.getLogger(__name__)
 

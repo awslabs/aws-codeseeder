@@ -48,6 +48,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 - Add support for explicit secret environment variables for mirrors
 
 ### Fixes
+- No longer depends on the `pkg_resources` module being available from the setuptools package.
 
 ### Breaks
 
