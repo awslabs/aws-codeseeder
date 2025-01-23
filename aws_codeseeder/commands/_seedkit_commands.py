@@ -54,6 +54,7 @@ def deploy_seedkit(
     vpc_id: Optional[str] = None,
     subnet_ids: Optional[List[str]] = None,
     security_group_ids: Optional[List[str]] = None,
+    permissions_boundary_arn: Optional[str] = None,
 ) -> None:
     """Deploys the seedkit resources into the environment.
 
@@ -104,6 +105,7 @@ def deploy_seedkit(
         vpc_id=vpc_id,
         subnet_ids=subnet_ids,
         security_group_ids=security_group_ids,
+        permissions_boundary_arn=permissions_boundary_arn,
     )
     cfn.deploy_template(
         stack_name=stack_name, filename=template_filename, seedkit_tag=f"codeseeder-{seedkit_name}", session=session

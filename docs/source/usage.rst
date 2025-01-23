@@ -33,6 +33,13 @@ A Seedkit can be deployed using the ``codeseedeer`` CLI or within the project us
 
     codeseeder deploy seedkit my-example-deployment
 
+**CLI Deployment attaching Permissions Boundary**
+
+.. code-block:: bash
+
+    codeseeder deploy seedkit my-example-deployment \
+    --permissions-boundary-arn arn:aws:iam::00000000000:policy/YourBoundaryPolicy
+
 **CLI Deployment attaching Managed Policies**
 
 .. code-block:: bash
@@ -48,6 +55,17 @@ A Seedkit can be deployed using the ``codeseedeer`` CLI or within the project us
     from aws_codeseeder import commands
 
     commands.deploy_seedkit(seedkit_name="my-example-deployment")
+
+**Module Deployment attaching Permissions Boundary**
+
+.. code-block:: python
+
+    from aws_codeseeder import commands
+
+    commands.deploy_seedkit(
+        seedkit_name=name,
+        permissions_boundary_arn="arn:aws:iam::00000000000:policy/YourBoundaryPolicy"
+    ])
 
 **Module Deployment attaching Manage Policies**
 

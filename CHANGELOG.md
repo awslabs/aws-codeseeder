@@ -10,6 +10,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### New
 
+- add permissions boundary to seedkit CodeBuild IAM role
+
 ### Changes
 
 - remove subprocess call via system shell
