@@ -12,6 +12,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### Changes
 
+- remove subprocess call via system shell
+
 ### Fixes
 
 ### Breaks
