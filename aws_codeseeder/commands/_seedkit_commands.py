@@ -12,7 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from boto3 import Session
 
@@ -114,9 +114,10 @@ def deploy_seedkit(
         **kwargs,
     )
     if not synthesize:
+        assert template_filename is not None, "Template filename is required"
         cfn.deploy_template(
             stack_name=stack_name,
-            filename=cast(str, template_filename),
+            filename=template_filename,
             seedkit_tag=f"codeseeder-{seedkit_name}",
             session=session,
         )
