@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 - add permissions boundary to seedkit CodeBuild IAM role
 - add `--synth` option to `deploy_seedkit` CLI
 - add `**kwargs` to `deploy_seedkit` API
+- adding support for python 3.13
 
 ### Changes
 
