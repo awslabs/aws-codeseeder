@@ -17,7 +17,7 @@ from typing import Callable, List, NamedTuple, Optional, Union
 
 from boto3 import Session
 
-from aws_codeseeder.services._utils import boto3_client
+from aws_codeseeder.services._utils import boto3_client, try_it
 
 
 class CloudWatchEvent(NamedTuple):
@@ -53,13 +53,18 @@ def get_stream_name_by_prefix(
         Name of the CloudWatch Logs Stream (if found)
     """
     client = boto3_client("logs", session=session)
-    response = client.describe_log_streams(
+
+    response = try_it(
+        f=client.describe_log_streams,
+        ex=client.exceptions.ResourceNotFoundException,
         logGroupName=group_name,
         logStreamNamePrefix=prefix,
         orderBy="LogStreamName",
         descending=True,
         limit=1,
+        base=5.0,
     )
+
     streams = response.get("logStreams", [])
     if streams:
         return str(streams[0]["logStreamName"])

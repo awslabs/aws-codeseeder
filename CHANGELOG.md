@@ -20,6 +20,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### Fixes
 
+- retry if log stream not found
+
 ### Breaks
 
 
