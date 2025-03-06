@@ -18,7 +18,7 @@ setup(
     name="my-example",
     version="0.1.0",
     packages=find_packages(include=["my_example", "my_example.*"]),
-    python_requires=">=3.7, <3.9",
+    python_requires=">=3.7, <3.13",
     install_requires=[
         "aws-codeseeder",
     ],

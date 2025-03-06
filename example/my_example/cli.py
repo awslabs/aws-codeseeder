@@ -1,9 +1,7 @@
 import concurrent.futures
 import logging
 import os
-from typing import Callable, Dict, Optional, Union
-
-from boto3 import Session
+from typing import Dict, Optional
 
 from aws_codeseeder import BUNDLE_ROOT, LOGGER, EnvVar, codeseeder, commands, services
 
@@ -104,7 +102,6 @@ def remote_hello_world_2(name: str) -> str:
     # codebuild_role = "some-other-role"
 
     # Execute this if we're being run by CodeBuild
-    Optional[Union[Callable[[], Session], Session]] = None
     if codeseeder.EXECUTING_REMOTELY:
         LOGGER.info("Executing remotely in CodeBuild")
     else:
