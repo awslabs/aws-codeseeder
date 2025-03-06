@@ -43,7 +43,7 @@ setup(
     license=about["__license__"],
     packages=find_packages(include=["aws_codeseeder", "aws_codeseeder.*"]),
     keywords=["aws", "cdk"],
-    python_requires=">=3.8, <=3.13",
+    python_requires=">=3.8, <3.14",
     install_requires=[
         "boto3>=1.24.0",
         "pyyaml>=5.4",
