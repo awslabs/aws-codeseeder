@@ -21,6 +21,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Fixes
 - No longer depends on the `pkg_resources` module being available from the setuptools package.
 
+- retry if log stream not found
+
 ### Breaks
 
 
