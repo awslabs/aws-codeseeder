@@ -83,6 +83,7 @@ cryptography==43.0.1
     # via
     #   joserfc
     #   moto
+    #   secretstorage
 distlib==0.3.8
     # via virtualenv
 docker==7.0.0
@@ -110,7 +111,11 @@ iniconfig==2.0.0
     # via pytest
 jaraco-classes==3.3.0
     # via keyring
-jinja2==3.1.4
+jeepney==0.9.0
+    # via
+    #   keyring
+    #   secretstorage
+jinja2==3.1.6
     # via
     #   moto
     #   myst-parser
@@ -328,6 +333,8 @@ s3transfer==0.11.2
     #   boto3
 sarif-om==1.0.4
     # via cfn-lint
+secretstorage==3.3.3
+    # via keyring
 six==1.17.0
     # via
     #   -c requirements.txt
