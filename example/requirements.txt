@@ -6,9 +6,9 @@
 #
 aws-codeseeder==1.2.0
     # via my-example (setup.py)
-boto3==1.36.16
+boto3==1.38.3
     # via aws-codeseeder
-botocore==1.36.16
+botocore==1.38.3
     # via
     #   boto3
     #   s3transfer
@@ -22,7 +22,7 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-mypy-extensions==1.0.0
+mypy-extensions==1.1.0
     # via aws-codeseeder
 python-dateutil==2.9.0.post0
     # via botocore
@@ -30,7 +30,7 @@ pyyaml==6.0.2
     # via
     #   aws-codeseeder
     #   cfn-flip
-s3transfer==0.11.2
+s3transfer==0.12.0
     # via boto3
 six==1.17.0
     # via
