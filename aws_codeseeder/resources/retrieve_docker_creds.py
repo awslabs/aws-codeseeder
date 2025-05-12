@@ -34,7 +34,4 @@ if __name__ == "__main__":
     for registry, creds in credentials.items():
         username = creds["username"]
         password = creds["password"]
-        subprocess.call(
-            f"docker login --username {username} --password '{password}' {registry}",
-            shell=True,
-        )
+        subprocess.call(["docker", "login", "--username", username, "--password", password, registry])

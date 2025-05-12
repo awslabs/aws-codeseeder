@@ -106,6 +106,21 @@ def destroy() -> None:
     default=[],
 )
 @click.option(
+    "--permissions-boundary-arn",
+    "-b",
+    help="ARN of a Managed Policy to set as the Permission Boundary on the CodeBuild Role",
+    required=False,
+    default=None,
+)
+@click.option(
+    "--synth/--no-synth",
+    type=bool,
+    default=False,
+    help="Synthesize seedkit template only. Do not deploy",
+    required=False,
+    show_default=True,
+)
+@click.option(
     "--debug/--no-debug",
     default=False,
     help="Enable detailed logging.",
@@ -121,6 +136,8 @@ def deploy_seedkit(
     vpc_id: Optional[str],
     subnet_id: Tuple[str, ...],
     sg_id: Tuple[str, ...],
+    permissions_boundary_arn: Optional[str],
+    synth: bool,
 ) -> None:
     if debug:
         set_log_level(level=logging.DEBUG, format=DEBUG_LOGGING_FORMAT)
@@ -135,6 +152,8 @@ def deploy_seedkit(
         vpc_id=vpc_id,
         subnet_ids=[s for s in subnet_id],
         security_group_ids=[sg for sg in sg_id],
+        permissions_boundary_arn=permissions_boundary_arn,
+        synthesize=synth,
     )
 
 

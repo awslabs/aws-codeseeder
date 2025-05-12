@@ -12,7 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from boto3 import Session
 
@@ -54,6 +54,9 @@ def deploy_seedkit(
     vpc_id: Optional[str] = None,
     subnet_ids: Optional[List[str]] = None,
     security_group_ids: Optional[List[str]] = None,
+    permissions_boundary_arn: Optional[str] = None,
+    synthesize: bool = False,
+    **kwargs: Dict[str, Any],
 ) -> None:
     """Deploys the seedkit resources into the environment.
 
@@ -84,6 +87,8 @@ def deploy_seedkit(
     security_group_ids: Optional[List[str]]
         If deploying codebuild in a VPC, a list of Security Group IDs to use
         (must have vpc-id, subnets, and security_group_ids)
+    synthesize: bool
+        Synthesize seedkit template only. Do not deploy. False by default.
     """
     deploy_id: Optional[str] = None
     stack_exists, stack_name, stack_outputs = seedkit_deployed(seedkit_name=seedkit_name, session=session)
@@ -95,7 +100,7 @@ def deploy_seedkit(
     if stack_exists:
         deploy_id = stack_outputs.get("DeployId")
         LOGGER.info("Seedkit found with DeployId: %s", deploy_id)
-    template_filename: str = _cfn_seedkit.synth(
+    template_filename: Optional[str] = _cfn_seedkit.synth(
         seedkit_name=seedkit_name,
         deploy_id=deploy_id,
         managed_policy_arns=managed_policy_arns,
@@ -104,11 +109,19 @@ def deploy_seedkit(
         vpc_id=vpc_id,
         subnet_ids=subnet_ids,
         security_group_ids=security_group_ids,
+        permissions_boundary_arn=permissions_boundary_arn,
+        synthesize=synthesize,
+        **kwargs,
     )
-    cfn.deploy_template(
-        stack_name=stack_name, filename=template_filename, seedkit_tag=f"codeseeder-{seedkit_name}", session=session
-    )
-    LOGGER.info("Seedkit Deployed")
+    if not synthesize:
+        assert template_filename is not None, "Template filename is required"
+        cfn.deploy_template(
+            stack_name=stack_name,
+            filename=template_filename,
+            seedkit_tag=f"codeseeder-{seedkit_name}",
+            session=session,
+        )
+        LOGGER.info("Seedkit Deployed")
 
 
 def destroy_seedkit(seedkit_name: str, session: Optional[Union[Callable[[], Session], Session]] = None) -> None:

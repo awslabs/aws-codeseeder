@@ -16,6 +16,27 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+## 1.3.0 - (2025-05-12)
+---
+
+### New
+
+- add permissions boundary to seedkit CodeBuild IAM role
+- add `--synth` option to `deploy_seedkit` CLI
+- add `**kwargs` to `deploy_seedkit` API
+- adding support for python 3.13
+
+### Changes
+
+- remove subprocess call via system shell
+
+### Fixes
+
+- retry if log stream not found
+- 
+### Breaks
+
+
 ## 1.2.0 - (2025-01-16)
 ---
 
@@ -45,6 +66,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 - Add support for explicit secret environment variables for mirrors
 
 ### Fixes
+- No longer depends on the `pkg_resources` module being available from the setuptools package.
 
 ### Breaks
 

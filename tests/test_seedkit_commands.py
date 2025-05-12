@@ -12,6 +12,10 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+from typing import Optional
+
+import pytest
+
 from aws_codeseeder.commands import _seedkit_commands
 
 
@@ -21,12 +25,12 @@ def test_seedkit_not_deployed(mocker):
     assert not stack_exists
 
 
-def test_deploy_seedkit(mocker):
+@pytest.mark.parametrize("synthesize", [None, False, True])
+@pytest.mark.parametrize("kwargs", [{}, {"role_prefix": "/test1/", "policy_prefix": "/test2/"}])
+def test_deploy_seedkit(mocker, synthesize: Optional[bool], kwargs):
     mocker.patch("aws_codeseeder.services.cfn.does_stack_exist", return_value=(False, {}))
     mocker.patch("aws_codeseeder.services.cfn.deploy_template", return_value=None)
-    mocker.patch("aws_codeseeder._cfn_seedkit.get_sts_info", return_value=("123456789012", "arn:aws::::", "aws"))
-    mocker.patch("aws_codeseeder._cfn_seedkit.get_region", return_value="us-east-1")
-    _seedkit_commands.deploy_seedkit("test-seedkit")
+    _seedkit_commands.deploy_seedkit("test-seedkit", synthesize=synthesize, **kwargs)
 
 
 def test_seedkit_deployed(mocker):

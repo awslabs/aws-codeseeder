@@ -15,8 +15,9 @@
 import os
 import random
 import string
+import sys
 from string import Template
-from typing import Callable, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import yaml
 from boto3 import Session
@@ -24,7 +25,6 @@ from cfn_flip import yaml_dumper
 from cfn_tools import load_yaml
 
 from aws_codeseeder import CLI_ROOT, LOGGER, create_output_dir
-from aws_codeseeder.services import get_region, get_sts_info
 
 FILENAME = "template.yaml"
 RESOURCES_FILENAME = os.path.join(CLI_ROOT, "resources", FILENAME)
@@ -40,10 +40,14 @@ def synth(
     vpc_id: Optional[str] = None,
     subnet_ids: Optional[List[str]] = None,
     security_group_ids: Optional[List[str]] = None,
-) -> str:
+    permissions_boundary_arn: Optional[str] = None,
+    synthesize: bool = False,
+    **kwargs: Dict[str, Any],
+) -> Optional[str]:
     deploy_id = deploy_id if deploy_id else "".join(random.choice(string.ascii_lowercase) for i in range(6))
     out_dir = create_output_dir(f"seedkit-{deploy_id}")
     output_filename = os.path.join(out_dir, FILENAME)
+    kwargs = {} if kwargs is None else kwargs
 
     LOGGER.debug("Reading %s", RESOURCES_FILENAME)
     with open(RESOURCES_FILENAME, "r") as file:
@@ -62,21 +66,26 @@ def synth(
         del input_template["Outputs"]["CodeArtifactDomain"]
         del input_template["Outputs"]["CodeArtifactRepository"]
 
+    if permissions_boundary_arn:
+        input_template["Resources"]["CodeBuildRole"]["Properties"]["PermissionsBoundary"] = permissions_boundary_arn
+
+    role_prefix = kwargs.get("role_prefix", "/")
+    policy_prefix = kwargs.get("policy_prefix", "/")
+
     output_template = Template(yaml.dump(input_template, Dumper=yaml_dumper.get_dumper()))
+    template = output_template.safe_substitute(
+        seedkit_name=seedkit_name,
+        deploy_id=deploy_id,
+        role_prefix=role_prefix,
+        policy_prefix=policy_prefix,
+    )
 
-    LOGGER.debug("Writing %s", output_filename)
-    os.makedirs(out_dir, exist_ok=True)
-    account_id, _, partition = get_sts_info(session=session)
-    with open(output_filename, "w") as file:
-        file.write(
-            output_template.safe_substitute(
-                seedkit_name=seedkit_name,
-                account_id=account_id,
-                region=get_region(session=session),
-                partition=partition,
-                deploy_id=deploy_id,
-                role_prefix="/",
-            )
-        )
-
-    return output_filename
+    if not synthesize:
+        LOGGER.debug("Writing %s", output_filename)
+        os.makedirs(out_dir, exist_ok=True)
+        with open(output_filename, "w") as file:
+            file.write(template)
+        return output_filename
+    else:
+        sys.stdout.write(template)
+        return None
