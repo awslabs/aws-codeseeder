@@ -8,6 +8,8 @@ Parameters:
 Resources:
   Bucket:
     Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
     Properties:
       BucketName: !Sub codeseeder-${seedkit_name}-${AWS::AccountId}-${deploy_id}
       Tags:
@@ -276,6 +278,8 @@ Resources:
 
   KmsKey:
     Type: AWS::KMS::Key
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       Tags:
         - Key: codeseeder-seedkit-name
