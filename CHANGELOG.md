@@ -10,7 +10,6 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### New
 
 ### Changes
-- added DeletionPolicy and UpdateReplacePolicy to S3 Bucket and KMSKey in seedkit template
 
 ### Fixes
 
