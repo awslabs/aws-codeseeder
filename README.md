@@ -1,5 +1,9 @@
 # aws-codeseeder
 
+#  *** As of June 2, 2025, AWS-CodeSeeder is in Keep The Lights On (KTLO) status.
+## We will not be accepting any Feature Requests for AWS-CodeSeeder. We will be releasing AWS-CodeSeeder based on necessary patches going forward.
+
+
 [![PyPi](https://img.shields.io/pypi/v/aws-codeseeder)](https://pypi.org/project/aws-codeseeder/)
 [![Python Version](https://img.shields.io/pypi/pyversions/aws-codeseeder.svg)](https://pypi.org/project/aws-codeseeder/)
 [![License](https://img.shields.io/pypi/l/aws-codeseeder)](https://github.com/awslabs/aws-codeseeder/blob/main/LICENSE)
