@@ -1,7 +1,11 @@
 # aws-codeseeder
 
-#  *** As of June 2, 2025, AWS-CodeSeeder is in Keep The Lights On (KTLO) status.
-## We will not be accepting any Feature Requests for AWS-CodeSeeder. We will be releasing AWS-CodeSeeder based on necessary patches going forward.
+#  *** As of June 2, 2025, AWS CodeSeeder is in Keep The Lights On (KTLO) status.
+## We will not be accepting any Feature Requests for AWSCodeSeeder. We will be releasing AWS CodeSeeder based on necessary patches going forward.
+
+
+## All logic of AWS Codeseeder has been replicated into [Seed Farmer](https://github.com/awslabs/seed-farmer).  Seed Farmer is not impacted by this change and will continue to operate, receive feature requests, and release on regular intervals with full support.
+
 
 
 [![PyPi](https://img.shields.io/pypi/v/aws-codeseeder)](https://pypi.org/project/aws-codeseeder/)
