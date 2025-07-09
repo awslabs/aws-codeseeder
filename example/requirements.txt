@@ -36,5 +36,5 @@ six==1.17.0
     # via
     #   cfn-flip
     #   python-dateutil
-urllib3==1.26.20
+urllib3==2.5.0
     # via botocore
