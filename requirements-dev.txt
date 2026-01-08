@@ -405,7 +405,7 @@ virtualenv==20.26.3
     # via tox
 webencodings==0.5.1
     # via bleach
-werkzeug==3.0.3
+werkzeug==3.1.5
     # via moto
 wheel==0.44.0
     # via pip-tools
